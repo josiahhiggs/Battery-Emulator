@@ -367,7 +367,7 @@ String advanced_battery_processor(const String& var) {
                                           "CLOSED",      "UNKNOWN(6)",  "WELDED",     "POS_CL",  "NEG_CL",
                                           "UNKNOWN(10)", "UNKNOWN(11)", "UNKNOWN(12)"};
     content += "<h4>Contactor Status: " + String(contactorText[datalayer_extended.tesla.status_contactor]) + "</h4>";
-    static const char* hvilStatusState[] = {"NOT OK",
+    static const char* hvilStatusState[] = {"NOT CHECKED",
                                             "STATUS_OK",
                                             "CURRENT_SOURCE_FAULT",
                                             "INTERNAL_OPEN_FAULT",
