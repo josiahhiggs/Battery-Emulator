@@ -482,15 +482,26 @@ void receive_can_battery(CAN_frame rx_frame) {
       mux = (rx_frame.data.u8[0] & 0x02);  //BMS_energyStatusIndex M : 0|2@1+ (1,0) [0|0] ""  X
 
       if (mux == 0) {
-        battery_nominal_full_pack_energy_m0 = ((rx_frame.data.u8[3] << 8) | rx_frame.data.u8[2]);  //BMS_nominalFullPackEnergy m0 : 16|16@1+ (0.02,0) [0|0] "kWh"  X
-        battery_nominal_energy_remaining_m0 = ((rx_frame.data.u8[5] << 8) | rx_frame.data.u8[4]);  //BMS_nominalEnergyRemaining m0 : 32|16@1+ (0.02,0) [0|0] "kWh"  X
-        battery_ideal_energy_remaining_m0 = ((rx_frame.data.u8[7] << 8) | rx_frame.data.u8[6]);  //BMS_idealEnergyRemaining m0 : 48|16@1+ (0.02,0) [0|0] "kWh"  X
+        battery_nominal_full_pack_energy_m0 =
+            ((rx_frame.data.u8[3] << 8) |
+             rx_frame.data.u8[2]);  //BMS_nominalFullPackEnergy m0 : 16|16@1+ (0.02,0) [0|0] "kWh"  X
+        battery_nominal_energy_remaining_m0 =
+            ((rx_frame.data.u8[5] << 8) |
+             rx_frame.data.u8[4]);  //BMS_nominalEnergyRemaining m0 : 32|16@1+ (0.02,0) [0|0] "kWh"  X
+        battery_ideal_energy_remaining_m0 =
+            ((rx_frame.data.u8[7] << 8) |
+             rx_frame.data.u8[6]);  //BMS_idealEnergyRemaining m0 : 48|16@1+ (0.02,0) [0|0] "kWh"  X
       }
       if (mux == 1) {
         battery_fully_charged = (rx_frame.data.u8[1] & 0x01);  //BMS_fullyCharged m1 : 15|1@1+ (1,0) [0|1] ""  X
-        battery_energy_buffer_m1 = (rx_frame.data.u8[3] | rx_frame.data.u8[2]);  //BMS_energyBuffer m1 : 16|16@1+ (0.01,0) [0|0] "kWh"  X
-        battery_expected_energy_remaining_m1 = (rx_frame.data.u8[5] | rx_frame.data.u8[4]);  //BMS_expectedEnergyRemaining m1 : 32|16@1+ (0.02,0) [0|0] "kWh"  X
-        battery_energy_to_charge_complete_m1 = (rx_frame.data.u8[7] | rx_frame.data.u8[6]);  //BMS_energyToChargeComplete m1 : 48|16@1+ (0.02,0) [0|0] "kWh"  X
+        battery_energy_buffer_m1 =
+            (rx_frame.data.u8[3] | rx_frame.data.u8[2]);  //BMS_energyBuffer m1 : 16|16@1+ (0.01,0) [0|0] "kWh"  X
+        battery_expected_energy_remaining_m1 =
+            (rx_frame.data.u8[5] |
+             rx_frame.data.u8[4]);  //BMS_expectedEnergyRemaining m1 : 32|16@1+ (0.02,0) [0|0] "kWh"  X
+        battery_energy_to_charge_complete_m1 =
+            (rx_frame.data.u8[7] |
+             rx_frame.data.u8[6]);  //BMS_energyToChargeComplete m1 : 48|16@1+ (0.02,0) [0|0] "kWh"  X
       }
       if (mux == 2) {}
       // Additional information needed on this mux, example frame: 02 26 02 20 02 80 00 00 doesn't change
@@ -511,7 +522,7 @@ void receive_can_battery(CAN_frame rx_frame) {
       battery_full_charge_complete =  //BMS_fullChargeComplete : 63|1@1+ (1,0) [0|1] ""//((_d[7] >> 7) & (0x01U));
           ((rx_frame.data.u8[7] & 0x01) >> 7);
       break;
-    case 0x20A: //HVP_contactorState:
+    case 0x20A:                                                           //HVP_contactorState:
       battery_packContNegativeState = (rx_frame.data.u8[0] & 0x07);       //0|3@1+ (1,0) [0|7] ""
       battery_packContPositiveState = (rx_frame.data.u8[0] & 0x38) >> 3;  //3|3@1+ (1,0) [0|7] ""
       battery_contactor = (rx_frame.data.u8[1] & 0x0F);              //HVP_packContactorSetState : 8|4@1+ (1,0) [0|9] ""
@@ -659,7 +670,7 @@ void receive_can_battery(CAN_frame rx_frame) {
       battery_dcdcLvOutputCurrent =
           (((rx_frame.data.u8[4] & 0x0F) << 8) | rx_frame.data.u8[3]);  //24|12@1+ (0.1,0) [0|400] "A"
       break;
-    case 0x292: //BMS_socStatus
+    case 0x292:                                                            //BMS_socStatus
       datalayer.battery.status.CAN_battery_still_alive = CAN_STILL_ALIVE;  //We are getting CAN messages from the BMS
       battery_beginning_of_life =
           (((rx_frame.data.u8[6] & 0x03) << 8) | rx_frame.data.u8[5]) * 0.1;          //40|10@1+ (0.1,0) [0|102.3] "kWh"
