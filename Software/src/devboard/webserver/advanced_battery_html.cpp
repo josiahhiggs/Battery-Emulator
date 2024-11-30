@@ -333,11 +333,11 @@ String advanced_battery_processor(const String& var) {
     content += "<h4>PCS Lv Output: " + String(dcdcLvOutputCurrent) + " A</h4>";
 
     //if using older BMS <2021 and comment 0x352 without MUX
-    //content += "<h4>Nominal Full Pack Energy: " + String(nominal_full_pack_energy) + " kWh</h4>";
-    //content += "<h4>Nominal Energy Remaining: " + String(nominal_energy_remaining) + " kWh</h4>";
-    //content += "<h4>Ideal Energy Remaining: " + String(ideal_energy_remaining) + " kWh</h4>";
-    //content += "<h4>Energy to Charge Complete: " + String(energy_to_charge_complete) + " kWh</h4>";
-    //content += "<h4>Energy Buffer: " + String(energy_buffer) + " kWh</h4>";
+    content += "<h4>Nominal Full Pack Energy: " + String(nominal_full_pack_energy) + " kWh</h4>";
+    content += "<h4>Nominal Energy Remaining: " + String(nominal_energy_remaining) + " kWh</h4>";
+    content += "<h4>Ideal Energy Remaining: " + String(ideal_energy_remaining) + " kWh</h4>";
+    content += "<h4>Energy to Charge Complete: " + String(energy_to_charge_complete) + " kWh</h4>";
+    content += "<h4>Energy Buffer: " + String(energy_buffer) + " kWh</h4>";
 
     //if using newer BMS >2021 and comment 0x352 with MUX
     content += "<h4>Nominal Full Pack Energy m0: " + String(nominal_full_pack_energy_m0) + " kWh</h4>";
