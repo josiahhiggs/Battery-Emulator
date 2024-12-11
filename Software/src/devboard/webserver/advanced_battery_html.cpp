@@ -407,11 +407,16 @@ String advanced_battery_processor(const String& var) {
     static const char* falseTrue[] = {"False", "True"};
     content += "<h4>Closing allowed?: " + String(falseTrue[datalayer_extended.tesla.packCtrsClosingAllowed]) + "</h4>";
     content += "<h4>Pyrotest: " + String(falseTrue[datalayer_extended.tesla.pyroTestInProgress]) + "</h4>";
-    content += "<h4>Contactors Open Now Requested: " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsOpenNowRequested]) + "</h4>";
-    content += "<h4>Contactors Open Requested; " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsOpenRequested]) + "</h4>";
-    content += "<h4>Contactors Request Status; " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsRequestStatus]) + "</h4>";
-    content += "<h4>Contactors Reset Request Required; " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsResetRequestRequired]) + "</h4>";
-    content += "<h4>DC Link Allowed to Energize;" + String(falseTrue[datalayer_extended.tesla.battery_dcLinkAllowedToEnergize]) + "</h4>";
+    content += "<h4>Contactors Open Now Requested: " +
+               String(falseTrue[datalayer_extended.tesla.battery_packCtrsOpenNowRequested]) + "</h4>";
+    content += "<h4>Contactors Open Requested; " +
+               String(falseTrue[datalayer_extended.tesla.battery_packCtrsOpenRequested]) + "</h4>";
+    content += "<h4>Contactors Request Status; " +
+               String(falseTrue[datalayer_extended.tesla.battery_packCtrsRequestStatus]) + "</h4>";
+    content += "<h4>Contactors Reset Request Required; " +
+               String(falseTrue[datalayer_extended.tesla.battery_packCtrsResetRequestRequired]) + "</h4>";
+    content += "<h4>DC Link Allowed to Energize;" +
+               String(falseTrue[datalayer_extended.tesla.battery_dcLinkAllowedToEnergize]) + "</h4>";
     content += "<h4>Faults Alerts;" + String(datalayer_extended.tesla.printFaultCodesIfActive) + "</h4>";
 #endif
 
