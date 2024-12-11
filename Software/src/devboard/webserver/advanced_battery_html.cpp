@@ -324,6 +324,11 @@ String advanced_battery_processor(const String& var) {
     float soc_max = static_cast<float>(datalayer_extended.tesla.battery_soc_max) * 0.1;
     float soc_min = static_cast<float>(datalayer_extended.tesla.battery_soc_min) * 0.1;
     float soc_ui = static_cast<float>(datalayer_extended.tesla.battery_soc_ui) * 0.1;
+    float BrickVoltageMax = static_cast<float>(datalayer_extended.tesla.battery_BrickVoltageMax);
+    float BrickVoltageMin = static_cast<float>(datalayer_extended.tesla.battery_BrickVoltageMin);
+    float BrickModelTMax = static_cast<float>(datalayer_extended.tesla.battery_BrickTempMinNum);
+    float BrickModelTMin = static_cast<float>(datalayer_extended.tesla.battery_BrickModelTMin);
+    float isolationResistance = static_cast<float>(datalayer_extended.tesla.battery_BMS_isolationResistance);
 
     // Comment what data you would like to dislay, order can be changed.
     content += "<h4>Battery Beginning of Life: " + String(beginning_of_life) + " kWh</h4>";
@@ -362,6 +367,14 @@ String advanced_battery_processor(const String& var) {
     content += "<h4>Battery SOC Max: " + String(soc_max) + " </h4>";
     content += "<h4>Battery SOC Min: " + String(soc_min) + " </h4>";
     content += "<h4>Battery SOC UI: " + String(soc_ui) + " </h4>";
+    content += "<h4>:Brick Voltage Max " + String(BrickVoltageMax) + " V</h4>";
+    content += "<h4>:Brick Voltage Min " + String(BrickVoltageMin) + " V</h4>";
+    content += "<h4>:Brick Temp Max Num " + String(datalayer_extended.tesla.battery_BrickTempMaxNum) + " </h4>";
+    content += "<h4>:Brick Temp Min Num " + String(datalayer_extended.tesla.battery_BrickTempMinNum) + " </h4>";
+    content += "<h4>:Brick Temp Max " + String(BrickModelTMax) + " C</h4>";
+    content += "<h4>:Brick Temp Min " + String(BrickModelTMin) + " C</h4>";
+    content += "<h4>:Isolation Resistance " + String(isolationResistance) + " </h4>";
+    //content += "<h4>: " + String() + " </h4>";
 
     static const char* contactorText[] = {"UNKNOWN(0)",  "OPEN",        "CLOSING",    "BLOCKED", "OPENING",
                                           "CLOSED",      "UNKNOWN(6)",  "WELDED",     "POS_CL",  "NEG_CL",
@@ -394,6 +407,12 @@ String advanced_battery_processor(const String& var) {
     static const char* falseTrue[] = {"False", "True"};
     content += "<h4>Closing allowed?: " + String(falseTrue[datalayer_extended.tesla.packCtrsClosingAllowed]) + "</h4>";
     content += "<h4>Pyrotest: " + String(falseTrue[datalayer_extended.tesla.pyroTestInProgress]) + "</h4>";
+    content += "<h4>Contactors Open Now Requested: " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsOpenNowRequested]) + "</h4>";
+    content += "<h4>Contactors Open Requested; " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsOpenRequested]) + "</h4>";
+    content += "<h4>Contactors Request Status; " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsRequestStatus]) + "</h4>";
+    content += "<h4>Contactors Reset Request Required; " + String(falseTrue[datalayer_extended.tesla.battery_packCtrsResetRequestRequired]) + "</h4>";
+    content += "<h4>DC Link Allowed to Energize;" + String(falseTrue[datalayer_extended.tesla.battery_dcLinkAllowedToEnergize]) + "</h4>";
+    content += "<h4>Faults Alerts;" + String(datalayer_extended.tesla.printFaultCodesIfActive) + "</h4>";
 #endif
 
 #ifdef NISSAN_LEAF_BATTERY
