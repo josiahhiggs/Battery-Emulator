@@ -212,6 +212,15 @@ typedef struct {
   uint32_t battery_soc_max = 0;
   uint32_t battery_soc_ave = 0;
   uint32_t battery_soc_ui = 0;
+  uint16_t battery_BrickVoltageMax = 0;
+  uint16_t battery_BrickVoltageMin = 0;
+  uint8_t battery_BrickTempMaxNum = 0;
+  uint8_t battery_BrickTempMinNum = 0;
+  uint8_t battery_BrickModelTMax = 0;
+  uint8_t battery_BrickModelTMin = 0;
+  uint8_t battery_BrickVoltageMaxNum = 0;
+  uint8_t battery_BrickVoltageMinNum = 0;
+  uint16_t battery_BMS_isolationResistance = 0;
 } DATALAYER_INFO_TESLA;
 
 typedef struct {
