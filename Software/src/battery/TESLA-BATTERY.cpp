@@ -837,7 +837,7 @@ void update_values_battery() {  //This function maps all the values fetched via 
   datalayer_extended.tesla.battery_packCtrsResetRequestRequired = battery_packCtrsResetRequestRequired;
   datalayer_extended.tesla.battery_dcLinkAllowedToEnergize = battery_dcLinkAllowedToEnergize;
   datalayer_extended.tesla.battery_BMS_isolationResistance = battery_BMS_isolationResistance;
-  datalayer_extended.tesla.printFaultCodesIfActive = printFaultCodesIfActive;
+  //datalayer_extended.tesla.printFaultCodesIfActive = printFaultCodesIfActive;
 
 #ifdef DEBUG_VIA_USB
 
