@@ -1143,15 +1143,15 @@ void receive_can_battery(CAN_frame rx_frame) {
       break;
     case 0x252:  //Limit //BMS_powerAvailable:
       BMS_regenerative_limit = ((rx_frame.data.u8[1] << 8) | rx_frame.data.u8[0]) *
-                                   0.01;  //0|16@1+ (0.01,0) [0|655.35] "kW"  //Example 4715 * 0.01 = 47.15kW
+                               0.01;  //0|16@1+ (0.01,0) [0|655.35] "kW"  //Example 4715 * 0.01 = 47.15kW
       BMS_discharge_limit = ((rx_frame.data.u8[3] << 8) | rx_frame.data.u8[2]) *
-                                0.013;  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
+                            0.013;  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
       BMS_max_heat_park = (((rx_frame.data.u8[5] & 0x03) << 8) | rx_frame.data.u8[4]) *
-                              0.01;  //32|10@1+ (0.01,0) [0|10.23] "kW"  //Example 500 * 0.01 = 5kW
+                          0.01;  //32|10@1+ (0.01,0) [0|10.23] "kW"  //Example 500 * 0.01 = 5kW
       BMS_hvac_max_power = (((rx_frame.data.u8[7] << 6) | ((rx_frame.data.u8[6] & 0xFC) >> 2))) *
-                               0.02;  //50|10@1+ (0.02,0) [0|20.46] "kW"  //Example 1000 * 0.02 = 20kW?
-                                      //BMS_notEnoughPowerForHeatPump : 42|1@1+ (1,0) [0|1] ""  Receiver
-                                      //BMS_powerLimitsState : 48|1@1+ (1,0) [0|1] ""  Receiver
+                           0.02;  //50|10@1+ (0.02,0) [0|20.46] "kW"  //Example 1000 * 0.02 = 20kW?
+                                  //BMS_notEnoughPowerForHeatPump : 42|1@1+ (1,0) [0|1] ""  Receiver
+                                  //BMS_powerLimitsState : 48|1@1+ (1,0) [0|1] ""  Receiver
       break;
     case 0x132:  //battery amps/volts //HVBattAmpVolt
       battery_volts = ((rx_frame.data.u8[1] << 8) | rx_frame.data.u8[0]) *
@@ -2435,7 +2435,7 @@ void printFaultCodesIfActive_battery2() {
 
 void printDebugIfActive(uint8_t symbol, const char* message) {
   if (symbol == 1) {
-    Serial.println(message);  
+    Serial.println(message);
   }
 }
 
