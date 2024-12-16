@@ -3,6 +3,7 @@
 #include "../datalayer/datalayer.h"
 #include "../datalayer/datalayer_extended.h"  //For Advanced Battery Insights webpage
 #include "../devboard/utils/events.h"
+#include "BATTERIES.h"
 #include "TESLA-BATTERY.h"
 
 /* Do not change code below unless you are sure what you are doing */
@@ -51,10 +52,10 @@ static int16_t battery_amps = 0;                    // A
 static uint16_t battery_raw_amps = 0;               // A
 static uint16_t battery_charge_time_remaining = 0;  // Minutes
 //0x252 594 BMS_powerAvailable
-static uint16_t battery_regenerative_limit = 0;
-static uint16_t battery_discharge_limit = 0;
-static uint16_t battery_max_heat_park = 0;
-static uint16_t battery_hvac_max_power = 0;
+static uint16_t BMS_regenerative_limit = 0;
+static uint16_t BMS_discharge_limit = 0;
+static uint16_t BMS_max_heat_park = 0;
+static uint16_t BMS_hvac_max_power = 0;
 //0x2d2: 722 BMSVAlimits
 static uint16_t battery_max_discharge_current = 0;
 static uint16_t battery_max_charge_current = 0;
@@ -788,6 +789,7 @@ void update_values_battery() {  //This function maps all the values fetched via 
 #endif  // TESLA_MODEL_3Y_BATTERY
 
   // Update webserver datalayer
+  //0x20A
   datalayer_extended.tesla.status_contactor = battery_contactor;
   datalayer_extended.tesla.hvil_status = battery_hvil_status;
   datalayer_extended.tesla.packContNegativeState = battery_packContNegativeState;
@@ -795,11 +797,16 @@ void update_values_battery() {  //This function maps all the values fetched via 
   datalayer_extended.tesla.packContactorSetState = battery_packContactorSetState;
   datalayer_extended.tesla.packCtrsClosingAllowed = battery_packCtrsClosingAllowed;
   datalayer_extended.tesla.pyroTestInProgress = battery_pyroTestInProgress;
-  datalayer_extended.tesla.battery_beginning_of_life = battery_beginning_of_life;  //add from here down
-  datalayer_extended.tesla.battery_battTempPct = battery_battTempPct;
+  datalayer_extended.tesla.battery_packCtrsOpenNowRequested = battery_packCtrsOpenNowRequested;
+  datalayer_extended.tesla.battery_packCtrsOpenRequested = battery_packCtrsOpenRequested;
+  datalayer_extended.tesla.battery_packCtrsRequestStatus = battery_packCtrsRequestStatus;
+  datalayer_extended.tesla.battery_packCtrsResetRequestRequired = battery_packCtrsResetRequestRequired;
+  datalayer_extended.tesla.battery_dcLinkAllowedToEnergize = battery_dcLinkAllowedToEnergize;
+  //0x2B4
   datalayer_extended.tesla.battery_dcdcLvBusVolt = battery_dcdcLvBusVolt;
   datalayer_extended.tesla.battery_dcdcHvBusVolt = battery_dcdcHvBusVolt;
   datalayer_extended.tesla.battery_dcdcLvOutputCurrent = battery_dcdcLvOutputCurrent;
+  //0x352
   datalayer_extended.tesla.battery_nominal_full_pack_energy = battery_nominal_full_pack_energy;
   datalayer_extended.tesla.battery_nominal_full_pack_energy_m0 = battery_nominal_full_pack_energy_m0;
   datalayer_extended.tesla.battery_nominal_energy_remaining = battery_nominal_energy_remaining;
@@ -814,33 +821,120 @@ void update_values_battery() {  //This function maps all the values fetched via 
   datalayer_extended.tesla.battery_total_discharge = battery_total_discharge;
   datalayer_extended.tesla.battery_total_charge = battery_total_charge;
   datalayer_extended.tesla.battery_fully_charged = battery_fully_charged;
+  //0x392
   datalayer_extended.tesla.battery_moduleType = battery_moduleType;
   datalayer_extended.tesla.battery_packMass = battery_packMass;
   datalayer_extended.tesla.battery_platformMaxBusVoltage = battery_platformMaxBusVoltage;
+  //0x2D2
   datalayer_extended.tesla.battery_bms_min_voltage = battery_bms_min_voltage;
   datalayer_extended.tesla.battery_bms_max_voltage = battery_bms_max_voltage;
   datalayer_extended.tesla.battery_max_charge_current = battery_max_charge_current;
   datalayer_extended.tesla.battery_max_discharge_current = battery_max_discharge_current;
+  //0x292
+  datalayer_extended.tesla.battery_beginning_of_life = battery_beginning_of_life;
+  datalayer_extended.tesla.battery_battTempPct = battery_battTempPct;
   datalayer_extended.tesla.battery_soc_ave = battery_soc_ave;
   datalayer_extended.tesla.battery_soc_max = battery_soc_max;
   datalayer_extended.tesla.battery_soc_min = battery_soc_min;
   datalayer_extended.tesla.battery_soc_ui = battery_soc_ui;
+  //0x332
   datalayer_extended.tesla.battery_BrickVoltageMax = battery_BrickVoltageMax;
   datalayer_extended.tesla.battery_BrickVoltageMin = battery_BrickVoltageMin;
   datalayer_extended.tesla.battery_BrickTempMaxNum = battery_BrickTempMaxNum;
   datalayer_extended.tesla.battery_BrickTempMinNum = battery_BrickTempMinNum;
   datalayer_extended.tesla.battery_BrickModelTMax = battery_BrickModelTMax;
   datalayer_extended.tesla.battery_BrickModelTMin = battery_BrickModelTMin;
-  datalayer_extended.tesla.battery_packCtrsOpenNowRequested = battery_packCtrsOpenNowRequested;
-  datalayer_extended.tesla.battery_packCtrsOpenRequested = battery_packCtrsOpenRequested;
-  datalayer_extended.tesla.battery_packCtrsRequestStatus = battery_packCtrsRequestStatus;
-  datalayer_extended.tesla.battery_packCtrsResetRequestRequired = battery_packCtrsResetRequestRequired;
-  datalayer_extended.tesla.battery_dcLinkAllowedToEnergize = battery_dcLinkAllowedToEnergize;
+  //0x212
   datalayer_extended.tesla.battery_BMS_isolationResistance = battery_BMS_isolationResistance;
-  datalayer_extended.tesla.printFaultCodesIfActive = printFaultCodesIfActive;
-
-  printFaultCodesIfActive();
-
+  datalayer_extended.tesla.battery_BMS_contactorState = battery_BMS_contactorState;
+  datalayer_extended.tesla.battery_BMS_state = battery_BMS_state;
+  datalayer_extended.tesla.battery_BMS_hvState = battery_BMS_hvState;
+  datalayer_extended.tesla.battery_BMS_uiChargeStatus = battery_BMS_uiChargeStatus;
+  datalayer_extended.tesla.battery_BMS_diLimpRequest = battery_BMS_diLimpRequest;
+  datalayer_extended.tesla.battery_BMS_chgPowerAvailable = battery_BMS_chgPowerAvailable;
+  datalayer_extended.tesla.battery_BMS_pcsPwmEnabled = battery_BMS_pcsPwmEnabled;
+  //0x224
+  datalayer_extended.tesla.battery_PCS_dcdcPrechargeStatus = battery_PCS_dcdcPrechargeStatus;
+  datalayer_extended.tesla.battery_PCS_dcdc12VSupportStatus = battery_PCS_dcdc12VSupportStatus;
+  datalayer_extended.tesla.battery_PCS_dcdcHvBusDischargeStatus = battery_PCS_dcdcHvBusDischargeStatus;
+  datalayer_extended.tesla.battery_PCS_dcdcMainState = battery_PCS_dcdcMainState;
+  datalayer_extended.tesla.battery_PCS_dcdcSubState = battery_PCS_dcdcSubState;
+  datalayer_extended.tesla.battery_PCS_dcdcFaulted = battery_PCS_dcdcFaulted;
+  datalayer_extended.tesla.battery_PCS_dcdcOutputIsLimited = battery_PCS_dcdcOutputIsLimited;
+  datalayer_extended.tesla.battery_PCS_dcdcMaxOutputCurrentAllowed = battery_PCS_dcdcMaxOutputCurrentAllowed;
+  datalayer_extended.tesla.battery_PCS_dcdcPrechargeRtyCnt = battery_PCS_dcdcPrechargeRtyCnt;
+  datalayer_extended.tesla.battery_PCS_dcdc12VSupportRtyCnt = battery_PCS_dcdc12VSupportRtyCnt;
+  datalayer_extended.tesla.battery_PCS_dcdcDischargeRtyCnt = battery_PCS_dcdcDischargeRtyCnt;
+  datalayer_extended.tesla.battery_PCS_dcdcPwmEnableLine = battery_PCS_dcdcPwmEnableLine;
+  datalayer_extended.tesla.battery_PCS_dcdcSupportingFixedLvTarget = battery_PCS_dcdcSupportingFixedLvTarget;
+  datalayer_extended.tesla.battery_PCS_dcdcPrechargeRestartCnt = battery_PCS_dcdcPrechargeRestartCnt;
+  datalayer_extended.tesla.battery_PCS_dcdcInitialPrechargeSubState = battery_PCS_dcdcInitialPrechargeSubState;
+  //0x252
+  datalayer_extended.tesla.BMS_regenerative_limit = BMS_regenerative_limit;
+  datalayer_extended.tesla.BMS_discharge_limit = BMS_discharge_limit;
+  datalayer_extended.tesla.BMS_max_heat_park = BMS_max_heat_park;
+  datalayer_extended.tesla.BMS_hvac_max_power = BMS_hvac_max_power;
+  //0x312
+  datalayer_extended.tesla.BMS_powerDissipation = BMS_powerDissipation;
+  datalayer_extended.tesla.BMS_flowRequest = BMS_flowRequest;
+  datalayer_extended.tesla.BMS_inletActiveCoolTargetT = BMS_inletActiveCoolTargetT;
+  datalayer_extended.tesla.BMS_inletPassiveTargetT = BMS_inletPassiveTargetT;
+  datalayer_extended.tesla.BMS_inletActiveHeatTargetT = BMS_inletActiveHeatTargetT;
+  datalayer_extended.tesla.BMS_packTMin = BMS_packTMin;
+  datalayer_extended.tesla.BMS_packTMax = BMS_packTMax;
+  datalayer_extended.tesla.BMS_pcsNoFlowRequest = BMS_pcsNoFlowRequest;
+  datalayer_extended.tesla.BMS_noFlowRequest = BMS_noFlowRequest;
+  //0x2A4
+  datalayer_extended.tesla.PCS_dcdcTemp = PCS_dcdcTemp;
+  datalayer_extended.tesla.PCS_ambientTemp = PCS_ambientTemp;
+  //0x2C4
+  datalayer_extended.tesla.PCS_dcdcMaxLvOutputCurrent = PCS_dcdcMaxLvOutputCurrent;
+  datalayer_extended.tesla.PCS_dcdcCurrentLimit = PCS_dcdcCurrentLimit;
+  datalayer_extended.tesla.PCS_dcdcLvOutputCurrentTempLimit = PCS_dcdcLvOutputCurrentTempLimit;
+  datalayer_extended.tesla.PCS_dcdcUnifiedCommand = PCS_dcdcUnifiedCommand;
+  datalayer_extended.tesla.PCS_dcdcCLAControllerOutput = PCS_dcdcCLAControllerOutput;
+  datalayer_extended.tesla.PCS_dcdcTankVoltage = PCS_dcdcTankVoltage;
+  datalayer_extended.tesla.PCS_dcdcTankVoltageTarget = PCS_dcdcTankVoltageTarget;
+  datalayer_extended.tesla.PCS_dcdcClaCurrentFreq = PCS_dcdcClaCurrentFreq;
+  datalayer_extended.tesla.PCS_dcdcTCommMeasured = PCS_dcdcTCommMeasured;
+  datalayer_extended.tesla.PCS_dcdcShortTimeUs = PCS_dcdcShortTimeUs;
+  datalayer_extended.tesla.PCS_dcdcHalfPeriodUs = PCS_dcdcHalfPeriodUs;
+  datalayer_extended.tesla.PCS_dcdcIntervalMaxFrequency = PCS_dcdcIntervalMaxFrequency;
+  datalayer_extended.tesla.PCS_dcdcIntervalMaxHvBusVolt = PCS_dcdcIntervalMaxHvBusVolt;
+  datalayer_extended.tesla.PCS_dcdcIntervalMaxLvBusVolt = PCS_dcdcIntervalMaxLvBusVolt;
+  datalayer_extended.tesla.PCS_dcdcIntervalMaxLvOutputCurr = PCS_dcdcIntervalMaxLvOutputCurr;
+  datalayer_extended.tesla.PCS_dcdcIntervalMinFrequency = PCS_dcdcIntervalMinFrequency;
+  datalayer_extended.tesla.PCS_dcdcIntervalMinHvBusVolt = PCS_dcdcIntervalMinHvBusVolt;
+  datalayer_extended.tesla.PCS_dcdcIntervalMinLvBusVolt = PCS_dcdcIntervalMinLvBusVolt;
+  datalayer_extended.tesla.PCS_dcdcIntervalMinLvOutputCurr = PCS_dcdcIntervalMinLvOutputCurr;
+  datalayer_extended.tesla.PCS_dcdc12vSupportLifetimekWh = PCS_dcdc12vSupportLifetimekWh;
+  //0x7AA
+  datalayer_extended.tesla.HVP_hvp1v5Ref = HVP_hvp1v5Ref;
+  datalayer_extended.tesla.HVP_shuntCurrentDebug = HVP_shuntCurrentDebug;
+  datalayer_extended.tesla.HVP_dcLinkVoltage = HVP_dcLinkVoltage;
+  datalayer_extended.tesla.HVP_packVoltage = HVP_packVoltage;
+  datalayer_extended.tesla.HVP_fcLinkVoltage = HVP_fcLinkVoltage;
+  datalayer_extended.tesla.HVP_packContVoltage = HVP_packContVoltage;
+  datalayer_extended.tesla.HVP_packNegativeV = HVP_packNegativeV;
+  datalayer_extended.tesla.HVP_packPositiveV = HVP_packPositiveV;
+  datalayer_extended.tesla.HVP_pyroAnalog = HVP_pyroAnalog;
+  datalayer_extended.tesla.HVP_dcLinkNegativeV = HVP_dcLinkNegativeV;
+  datalayer_extended.tesla.HVP_dcLinkPositiveV = HVP_dcLinkPositiveV;
+  datalayer_extended.tesla.HVP_fcLinkNegativeV = HVP_fcLinkNegativeV;
+  datalayer_extended.tesla.HVP_fcContCoilCurrent = HVP_fcContCoilCurrent;
+  datalayer_extended.tesla.HVP_fcContVoltage = HVP_fcContVoltage;
+  datalayer_extended.tesla.HVP_hvilInVoltage = HVP_hvilInVoltage;
+  datalayer_extended.tesla.HVP_hvilOutVoltage = HVP_hvilOutVoltage;
+  datalayer_extended.tesla.HVP_fcLinkPositiveV = HVP_fcLinkPositiveV;
+  datalayer_extended.tesla.HVP_packContCoilCurrent = HVP_packContCoilCurrent;
+  datalayer_extended.tesla.HVP_battery12V = HVP_battery12V;
+  datalayer_extended.tesla.HVP_shuntRefVoltageDbg = HVP_shuntRefVoltageDbg;
+  datalayer_extended.tesla.HVP_shuntAuxCurrentDbg = HVP_shuntAuxCurrentDbg;
+  datalayer_extended.tesla.HVP_shuntBarTempDbg = HVP_shuntBarTempDbg;
+  datalayer_extended.tesla.HVP_shuntAsicTempDbg = HVP_shuntAsicTempDbg;
+  datalayer_extended.tesla.HVP_shuntAuxCurrentStatus = HVP_shuntAuxCurrentStatus;
+  datalayer_extended.tesla.HVP_shuntBarTempStatus = HVP_shuntBarTempStatus;
+  datalayer_extended.tesla.HVP_shuntAsicTempStatus = HVP_shuntAsicTempStatus;
 #ifdef DEBUG_VIA_USB
 
   printFaultCodesIfActive();
@@ -1048,13 +1142,13 @@ void receive_can_battery(CAN_frame rx_frame) {
            (0x1FU));  //0 "PWR_UP_INIT" 1 "STANDBY" 2 "12V_SUPPORT_ACTIVE" 3 "DIS_HVBUS" 4 "PCHG_FAST_DIS_HVBUS" 5 "PCHG_SLOW_DIS_HVBUS" 6 "PCHG_DWELL_CHARGE" 7 "PCHG_DWELL_WAIT" 8 "PCHG_DI_RECOVERY_WAIT" 9 "PCHG_ACTIVE" 10 "PCHG_FLT_FAST_DIS_HVBUS" 11 "SHUTDOWN" 12 "12V_SUPPORT_FAULTED" 13 "DIS_HVBUS_FAULTED" 14 "PCHG_FAULTED" 15 "CLEAR_FAULTS" 16 "FAULTED" 17 "NUM" ;
       break;
     case 0x252:  //Limit //BMS_powerAvailable:
-      battery_regenerative_limit = ((rx_frame.data.u8[1] << 8) | rx_frame.data.u8[0]) *
+      BMS_regenerative_limit = ((rx_frame.data.u8[1] << 8) | rx_frame.data.u8[0]) *
                                    0.01;  //0|16@1+ (0.01,0) [0|655.35] "kW"  //Example 4715 * 0.01 = 47.15kW
-      battery_discharge_limit = ((rx_frame.data.u8[3] << 8) | rx_frame.data.u8[2]) *
+      BMS_discharge_limit = ((rx_frame.data.u8[3] << 8) | rx_frame.data.u8[2]) *
                                 0.013;  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
-      battery_max_heat_park = (((rx_frame.data.u8[5] & 0x03) << 8) | rx_frame.data.u8[4]) *
+      BMS_max_heat_park = (((rx_frame.data.u8[5] & 0x03) << 8) | rx_frame.data.u8[4]) *
                               0.01;  //32|10@1+ (0.01,0) [0|10.23] "kW"  //Example 500 * 0.01 = 5kW
-      battery_hvac_max_power = (((rx_frame.data.u8[7] << 6) | ((rx_frame.data.u8[6] & 0xFC) >> 2))) *
+      BMS_hvac_max_power = (((rx_frame.data.u8[7] << 6) | ((rx_frame.data.u8[6] & 0xFC) >> 2))) *
                                0.02;  //50|10@1+ (0.02,0) [0|20.46] "kW"  //Example 1000 * 0.02 = 20kW?
                                       //BMS_notEnoughPowerForHeatPump : 42|1@1+ (1,0) [0|1] ""  Receiver
                                       //BMS_powerLimitsState : 48|1@1+ (1,0) [0|1] ""  Receiver
@@ -1155,7 +1249,7 @@ void receive_can_battery(CAN_frame rx_frame) {
       break;
     case 0x2C4:  // 708 PCS_logging: not all frames are listed, just ones relating to dcdc
       mux = (rx_frame.data.u8[0] & (0x1FU));
-      PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
+      //PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
       if (mux == 6) {
         PCS_dcdcMaxLvOutputCurrent = ((rx_frame.data.u8[4] & (0xFFU)) << 4) |
                                      ((rx_frame.data.u8[3] >> 4) & (0x0FU));  //m6 : 28|12@1+ (0.1,0) [0|0] "A"  X
@@ -1297,7 +1391,7 @@ void receive_can_battery(CAN_frame rx_frame) {
       break;
     case 0x7AA:  //1962 HVP_debugMessage:
       mux = (rx_frame.data.u8[0] & (0x0FU));
-      HVP_debugMessageMultiplexer = (rx_frame.data.u8[0] & (0x0FU));  //0|4@1+ (1,0) [0|6] ""
+      //HVP_debugMessageMultiplexer = (rx_frame.data.u8[0] & (0x0FU));  //0|4@1+ (1,0) [0|6] ""
       if (mux == 0) {
         HVP_gpioPassivePyroDepl = ((rx_frame.data.u8[0] >> 4) & (0x01U));       //: 4|1@1+ (1,0) [0|1] ""  Receiver
         HVP_gpioPyroIsoEn = ((rx_frame.data.u8[0] >> 5) & (0x01U));             //: 5|1@1+ (1,0) [0|1] ""  Receiver
@@ -1549,6 +1643,7 @@ void receive_can_battery(CAN_frame rx_frame) {
         battery_BMS_a179_SW_Hvp_12V_Fault = ((rx_frame.data.u8[7] >> 6) & (0x01U));         //62|1@1+ (1,0) [0|0] ""  X
         battery_BMS_a180_SW_ECU_reset_blocked = ((rx_frame.data.u8[7] >> 7) & (0x01U));     //63|1@1+ (1,0) [0|0] ""  X
       }
+      break;
     default:
       break;
   }
@@ -1862,7 +1957,7 @@ void update_values_battery2() {  //This function maps all the values fetched via
 
   datalayer.battery2.status.cell_min_voltage_mV = battery2_cell_min_v;
 
-  battery2_cell_deviation_mV = (battery2_cell_max_v - battery2_cell_min_v);
+  datalayer.battery2_cell_deviation_mV = (battery2_cell_max_v - battery2_cell_min_v);
 
   /* Value mapping is completed. Start to check all safeties */
 
@@ -2340,7 +2435,7 @@ void printFaultCodesIfActive_battery2() {
 
 void printDebugIfActive(uint8_t symbol, const char* message) {
   if (symbol == 1) {
-    Serial.println(message);
+    Serial.println(message);  
   }
 }
 
