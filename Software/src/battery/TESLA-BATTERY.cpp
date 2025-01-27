@@ -8,8 +8,6 @@
 /* Do not change code below unless you are sure what you are doing */
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
-static unsigned long previousMillis50 = 0;   // will store last time a 50ms CAN Message was send
-static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN Message was send
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 CAN_frame TESLA_221_1 = {
     .FD = false,
@@ -17,17 +15,394 @@ CAN_frame TESLA_221_1 = {
     .DLC = 8,
     .ID = 0x221,
     .data = {0x41, 0x11, 0x01, 0x00, 0x00, 0x00, 0x20, 0x96}};  //Contactor frame 221 - close contactors
+
 CAN_frame TESLA_221_2 = {
     .FD = false,
     .ext_ID = false,
     .DLC = 8,
     .ID = 0x221,
     .data = {0x61, 0x15, 0x01, 0x00, 0x00, 0x00, 0x20, 0xBA}};  //Contactor Frame 221 - hv_up_for_drive
-CAN_frame TESLA_602 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x602,
-                       .data = {0x02, 0x27, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00}};  //Diagnostic request
+
+// Define enumerations based on DBC values for 0x221: VCFRONT_LVPowerState
+enum VCFRONT_LVPowerStateIndex {
+    MUX0 = 0,
+    MUX1 = 1
+};
+
+enum VCFRONT_vehiclePowerState {
+    OFF = 0,
+    CONDITIONING = 1,
+    ACCESSORY = 2,
+    DRIVE = 3
+};
+
+enum VCFRONT_State {
+    STATE_OFF = 0,
+    STATE_ON = 1,
+    GOING_DOWN = 2,
+    FAULT = 3
+};
+
+// Define the message structure
+struct VCFRONT_LVPowerState {
+    VCFRONT_LVPowerStateIndex index;
+    VCFRONT_vehiclePowerState vehiclePowerState;
+    VCFRONT_State parkLVState;
+    VCFRONT_State espLVState;
+    VCFRONT_State radcLVState;
+    VCFRONT_State hvacCompLVState;
+    VCFRONT_State ptcLVRequest;
+    VCFRONT_State sccmLVRequest;
+    VCFRONT_State tpmsLVRequest;
+    VCFRONT_State rcmLVRequest;
+    VCFRONT_State iBoosterLVState;
+    VCFRONT_State tunerLVRequest;
+    VCFRONT_State amplifierLVRequest;
+    VCFRONT_State das1HighCurrentLVState;
+    VCFRONT_State das2HighCurrentLVState;
+    VCFRONT_State diLVRequest;
+    VCFRONT_State disLVState;
+    VCFRONT_State oilPumpFrontLVState;
+    VCFRONT_State oilPumpRearLVRequest;
+    VCFRONT_State ocsLVRequest;
+    VCFRONT_State vcleftHiCurrentLVState;
+    VCFRONT_State vcrightHiCurrentLVState;
+    VCFRONT_State uiHiCurrentLVState;
+    VCFRONT_State uiAudioLVState;
+    VCFRONT_State cpLVRequest;
+    VCFRONT_State epasLVState;
+    VCFRONT_State hvcLVRequest;
+    VCFRONT_State tasLVState;
+    VCFRONT_State pcsLVState;
+    uint8_t counter;
+    uint8_t checksum;
+};
+
+// Function to calculate checksum
+uint8_t calculateChecksum(VCFRONT_LVPowerState &msg) {
+    uint8_t checksum = 0;
+    uint8_t *data = (uint8_t*)&msg;
+    for (int i = 0; i < sizeof(msg) - 1; i++) {
+        checksum += data[i];
+    }
+    return checksum;
+}
+
+// Function to increment counter
+void incrementCounter(VCFRONT_LVPowerState &msg) {
+    msg.counter = (msg.counter + 1) % 16; // 4-bit counter
+}
+
+// Initialize message
+VCFRONT_LVPowerState msg = {MUX0, OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, 0, 0};
+
+// Update CAN frame data
+void updateCANFrame(CAN_frame &frame, VCFRONT_LVPowerState &msg) {
+    incrementCounter(msg);
+    msg.checksum = calculateChecksum(msg);
+    memcpy(frame.data, &msg, sizeof(msg));
+}
+
+void loop() {
+    // Assign values to the fields
+    msg.index = MUX0;  // MUX0; MUX1
+
+    msg.vehiclePowerState = ACCESSORY;  // OFF; CONDITIONING; ACCESSORY; DRIVE
+
+    msg.parkLVState = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.espLVState = STATE_OFF;    // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.radcLVState = STATE_OFF;   // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.hvacCompLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.ptcLVRequest = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.sccmLVRequest = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.tpmsLVRequest = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.rcmLVRequest = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.iBoosterLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.tunerLVRequest = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.amplifierLVRequest = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.das1HighCurrentLVState = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.das2HighCurrentLVState = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.diLVRequest = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.disLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.oilPumpFrontLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.oilPumpRearLVRequest = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.ocsLVRequest = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.vcleftHiCurrentLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.vcrightHiCurrentLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.uiHiCurrentLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    msg.uiAudioLVState = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+
+    // Handle MUX1 signals
+    if (msg.index == MUX1) {
+        msg.cpLVRequest = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+        msg.epasLVState = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+        msg.hvcLVRequest = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+        msg.tasLVState = STATE_OFF;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+        msg.pcsLVState = STATE_ON;  // STATE_OFF; STATE_ON; GOING_DOWN; FAULT
+    }
+
+    // Update CAN frame data with checksum and counter
+    updateCANFrame(TESLA_221_1, msg);
+    updateCANFrame(TESLA_221_2, msg);
+}
+
+// 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
+CAN_frame TESLA_2D1 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 2,
+    .ID = 0x2D1,
+    .data = {0x00, 0x00}}; // 7F 01 is a common message
+
+// Define the structure for the signals
+struct TESLA_2D1_Struct {
+    bool vcleftOkToUseHighPower;
+    bool vcrightOkToUseHighPower;
+    bool das1OkToUseHighPower;
+    bool das2OkToUseHighPower;
+    bool uiOkToUseHighPower;
+    bool uiAudioOkToUseHighPower;
+    bool cpOkToUseHighPower;
+    bool premAudioOkToUseHiPower;
+};
+
+// Function to update the CAN frame data based on the TESLA_2D1_Struct
+void update_CAN_frame(TESLA_2D1_Struct signals) {
+    TESLA_2D1.data[0] = (signals.vcleftOkToUseHighPower << 0) |
+                        (signals.vcrightOkToUseHighPower << 1) |
+                        (signals.das1OkToUseHighPower << 2) |
+                        (signals.das2OkToUseHighPower << 3) |
+                        (signals.uiOkToUseHighPower << 4) |
+                        (signals.uiAudioOkToUseHighPower << 5) |
+                        (signals.cpOkToUseHighPower << 6) |
+                        (signals.premAudioOkToUseHiPower << 7);
+    TESLA_2D1.data[1] = 0x01; // No signals in data[1]
+}
+
+int main() {
+    // Create an instance of TESLA_2D1_Struct
+    TESLA_2D1_Struct signals;
+
+    // Set the desired signal values
+    signals.vcleftOkToUseHighPower = true;
+    signals.vcrightOkToUseHighPower = true;
+    signals.das1OkToUseHighPower = true;
+    signals.das2OkToUseHighPower = true;
+    signals.uiOkToUseHighPower = true;
+    signals.uiAudioOkToUseHighPower = true;
+    signals.cpOkToUseHighPower = true;
+    signals.premAudioOkToUseHiPower = false;
+
+    // Update the CAN frame data based on the signal values
+    update_CAN_frame(signals);
+}
+
+CAN_frame TESLA_3A1 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 8,
+    .ID = 0x3A1,
+    .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};  // 100ms ID929 VCFRONT_vehicleStatus
+
+struct TESLA_3A1_Struct {
+    bool _12vStatusForDrive;
+    bool _2RowCenterUnbuckled;
+    bool _2RowLeftUnbuckled;
+    bool _2RowRightUnbuckled;
+    uint8_t APGlassHeaterState;
+    bool LVLoadRequest;
+    bool batterySupportRequest;
+    bool bmsHvChargeEnable;
+    uint8_t diPowerOnState;
+    bool driverBuckleStatus;
+    bool driverDoorStatus;
+    bool driverIsLeaving;
+    bool driverIsLeavingAnySpeed;
+    uint8_t driverUnbuckled;
+    bool ota12VSupportRequest;
+    uint8_t passengerUnbuckled;
+    float pcs12vVoltageTarget;
+    float pcsEFuseVoltage;
+    bool preconditionRequest;
+    bool standbySupplySupported;
+    bool thermalSystemType;
+    uint8_t vehicleStatusChecksum;
+    uint8_t vehicleStatusCounter;
+};
+
+uint8_t calculateChecksum(TESLA_3A1_Struct &signals) {
+    uint8_t checksum = 0;
+    uint8_t *data = (uint8_t*)&signals;
+    for (int i = 0; i < sizeof(signals) - 2; i++) {
+        checksum += data[i];
+    }
+    return checksum;
+}
+
+uint8_t calculateCounter(TESLA_3A1_Struct &signals) {
+    static uint8_t counter = 0;
+    return counter++;
+}
+
+void update_CAN_frame(TESLA_3A1_Struct signals) {
+    TESLA_3A1.data[0] = (signals.bmsHvChargeEnable << 0) |           // Bit 0, Length 1
+                        (signals.preconditionRequest << 1) |         // Bit 1, Length 1
+                        (signals.APGlassHeaterState << 2);           // Bit 2, Length 3
+    TESLA_3A1.data[1] = (signals.LVLoadRequest << 1) |               // Bit 9, Length 1
+                        (signals.diPowerOnState << 2);               // Bit 10, Length 3
+    TESLA_3A1.data[2] = (signals.driverIsLeavingAnySpeed << 5);      // Bit 13, Length 1
+    TESLA_3A1.data[3] = (signals._12vStatusForDrive << 6) |          // Bit 14, Length 2
+                        (signals.batterySupportRequest << 3) |       // Bit 27, Length 1
+                        (signals.driverIsLeaving << 4) |             // Bit 28, Length 1
+                        (signals.ota12VSupportRequest << 5) |        // Bit 29, Length 1
+                        (signals.driverBuckleStatus << 6) |          // Bit 30, Length 1
+                        (signals.driverDoorStatus << 7);             // Bit 31, Length 1
+    TESLA_3A1.data[4] = (signals.driverUnbuckled << 0) |             // Bit 32, Length 2
+                        (signals.passengerUnbuckled << 2) |          // Bit 34, Length 2
+                        (signals._2RowLeftUnbuckled << 4) |          // Bit 36, Length 2
+                        (signals._2RowCenterUnbuckled << 6);         // Bit 38, Length 2
+    TESLA_3A1.data[5] = (signals._2RowRightUnbuckled << 0) |         // Bit 40, Length 2
+                        ((uint16_t)(signals.pcsEFuseVoltage * 10) & 0x03FF) >> 2; // Bit 42, Length 10 (split across data[5] and data[6])
+    TESLA_3A1.data[6] = (((uint16_t)(signals.pcsEFuseVoltage * 10) & 0x03FF) << 6) | // Bit 42, Length 10 (split across data[5] and data[6])
+                        ((uint16_t)(signals.pcs12vVoltageTarget * 100) & 0xFF); // Bit 16, Length 11 (split across data[6] and data[7])
+    TESLA_3A1.data[7] = (((uint16_t)(signals.pcs12vVoltageTarget * 100) >> 8) & 0x07) | // Bit 27, Length 11 (split across data[6] and data[7])
+                        (signals.standbySupplySupported << 3) |      // Bit 6, Length 1
+                        (signals.thermalSystemType << 4) |           // Bit 5, Length 1
+                        (signals.vehicleStatusCounter << 4) |        // Bit 52, Length 4
+                        (signals.vehicleStatusChecksum << 0);        // Bit 56, Length 8
+}
+
+enum VCFRONT_12vStatusForDrive {
+    NOT_READY_FOR_DRIVE_12V = 0,
+    READY_FOR_DRIVE_12V = 1,
+    EXIT_DRIVE_REQUESTED_12V = 2
+};
+
+enum VCFRONT_2RowCenterUnbuckled {
+    NONE = 0,
+    OCCUPIED_AND_UNBUCKLED = 1,
+    SNA = 2
+};
+
+enum VCFRONT_2RowLeftUnbuckled {
+    NONE = 0,
+    OCCUPIED_AND_UNBUCKLED = 1,
+    SNA = 2
+};
+
+enum VCFRONT_2RowRightUnbuckled {
+    NONE = 0,
+    OCCUPIED_AND_UNBUCKLED = 1,
+    SNA = 2
+};
+
+enum VCFRONT_APGlassHeaterState {
+    SNA = 0,
+    ON = 1,
+    OFF = 2,
+    OFF_UNAVAILABLE = 3,
+    FAULT = 4
+};
+
+enum VCFRONT_diPowerOnState {
+    POWERED_OFF = 0,
+    POWERED_ON_FOR_POST_RUN = 1,
+    POWERED_ON_FOR_STATIONARY_HEAT = 2,
+    POWERED_ON_FOR_DRIVE = 3,
+    POWER_GOING_DOWN = 4
+};
+
+enum VCFRONT_driverBuckleStatus {
+    UNBUCKLED = 0,
+    BUCKLED = 1
+};
+
+enum VCFRONT_driverDoorStatus {
+    OPEN = 0,
+    CLOSED = 1
+};
+
+enum VCFRONT_driverUnbuckled {
+    UNBUCKLED = 0,
+    BUCKLED = 1
+};
+
+int main() {
+    TESLA_3A1_Struct signals;
+    // Set the desired signal values
+    signals._12vStatusForDrive = READY_FOR_DRIVE_12V;
+    signals._2RowCenterUnbuckled = NONE;
+    signals._2RowLeftUnbuckled = NONE;
+    signals._2RowRightUnbuckled = NONE;
+    signals.APGlassHeaterState = OFF;
+    signals.LVLoadRequest = true;
+    signals.batterySupportRequest = false;
+    signals.bmsHvChargeEnable = false;
+    signals.diPowerOnState = POWERED_OFF;
+    signals.driverBuckleStatus = UNBUCKLED;
+    signals.driverDoorStatus = OPEN;
+    signals.driverIsLeaving = false;
+    signals.driverIsLeavingAnySpeed = false;
+    signals.driverUnbuckled = UNBUCKLED;
+    signals.ota12VSupportRequest = false;
+    signals.passengerUnbuckled = UNBUCKLED;
+    signals.pcs12vVoltageTarget = 13.5; // enter value in Volts (e.g. 13.5V)
+    signals.pcsEFuseVoltage = 13.0; // enter value in Volts (e.g. 13.0V)
+    signals.preconditionRequest = false;
+    signals.standbySupplySupported = false;
+    signals.thermalSystemType = false;
+    signals.vehicleStatusChecksum = 0;
+    signals.vehicleStatusCounter = 0;
+
+    update_CAN_frame(signals);
+}
+
+CAN_frame TESLA_333 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 5,
+    .ID = 0x333,
+    .data = {0x84, 0x10, 0x0B, 0x06, 0x03}};  // 500ms ID819 UI_chargeRequest
+
+struct TESLA_333_Struct {
+    uint8_t UI_openChargePortDoorRequest;
+    uint8_t UI_closeChargePortDoorRequest;
+    uint8_t UI_chargeEnableRequest;
+    uint8_t UI_acChargeCurrentLimit;
+    uint16_t UI_chargeTerminationPct;
+};
+
+void update_CAN_frame(TESLA_333_Struct signals) {
+    TESLA_333.data[0] = (signals.UI_openChargePortDoorRequest << 0) |  // Bit 0, Length 1
+                        (signals.UI_closeChargePortDoorRequest << 1) | // Bit 1, Length 1
+                        (signals.UI_chargeEnableRequest << 2);         // Bit 2, Length 1
+    TESLA_333.data[1] = (signals.UI_acChargeCurrentLimit << 0);        // Bit 8, Length 7
+    TESLA_333.data[2] = (signals.UI_chargeTerminationPct & 0xFF);      // Bit 16, Length 10 (split across data[2] and data[3])
+    TESLA_333.data[3] = (signals.UI_chargeTerminationPct >> 8) & 0x03; // Bit 16, Length 10 (split across data[2] and data[3])
+}
+
+int main() {
+    TESLA_333_Struct signals;
+    // Set the desired signal values
+    signals.UI_openChargePortDoorRequest = 1;  // 0 = No, 1 = Yes
+    signals.UI_closeChargePortDoorRequest = 0; // 0 = No, 1 = Yes
+    signals.UI_chargeEnableRequest = 1;        // 0 = No, 1 = Yes
+    signals.UI_acChargeCurrentLimit = 50;      // Example value in Amps
+    signals.UI_chargeTerminationPct = 750;     // Example value (75.0%)
+
+    // Update the CAN frame with the signal values
+    update_CAN_frame(signals);
+}
+
+CAN_frame TESLA_602 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 8,
+    .ID = 0x602,
+    .data = {0x02, 0x27, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00}};  //Diagnostic request
+
+
+
 static uint8_t stateMachineClearIsolationFault = 0xFF;
 static uint16_t sendContactorClosingMessagesStill = 300;
 static uint16_t battery_cell_max_v = 3300;

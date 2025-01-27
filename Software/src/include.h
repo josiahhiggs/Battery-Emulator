@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include <stdint.h>
+#include <string.h>
 #include "../USER_SETTINGS.h"
 #include "system_settings.h"
 
