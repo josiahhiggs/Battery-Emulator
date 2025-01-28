@@ -249,10 +249,10 @@ void update_CAN_frame(TESLA_3A1_Struct msg) {
       (msg._2RowRightUnbuckled << 0) |                       // Bit 40, Length 2
       ((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF) >> 2;  // Bit 42, Length 10 (split across data[5] and data[6])
   TESLA_3A1.data[6] =
-      (((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF)
-       << 6) |                                                 // Bit 42, Length 10 (split across data[5] and data[6])
-      ((uint16_t)(msg.pcs12vVoltageTarget * 100) & 0xFF);      // Bit 16, Length 11 (split across data[6] and data[7])
-  TESLA_3A1.data[7] = (((uint16_t)(msg.pcs12vVoltageTarget * 100) >> 8) & 0x07) |  // Bit 27, Length 11 (split across data[6] and data[7])
+      (((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF) << 6) |  // Bit 42, Length 10 (split across data[5] and data[6])
+      ((uint16_t)(msg.pcs12vVoltageTarget * 100) & 0xFF);       // Bit 16, Length 11 (split across data[6] and data[7])
+  TESLA_3A1.data[7] = (((uint16_t)(msg.pcs12vVoltageTarget * 100) >> 8) &
+                       0x07) |                             // Bit 27, Length 11 (split across data[6] and data[7])
                       (msg.standbySupplySupported << 3) |  // Bit 6, Length 1
                       (msg.thermalSystemType << 4) |       // Bit 5, Length 1
                       (msg.vehicleStatusCounter << 4) |    // Bit 52, Length 4
@@ -332,8 +332,9 @@ void update_CAN_frame(TESLA_333_Struct msg) {
                       (msg.UI_closeChargePortDoorRequest << 1) |  // Bit 1, Length 1
                       (msg.UI_chargeEnableRequest << 2);          // Bit 2, Length 1
   TESLA_333.data[1] = (msg.UI_acChargeCurrentLimit << 0);         // Bit 8, Length 7
-  TESLA_333.data[2] = (msg.UI_chargeTerminationPct & 0xFF);       // Bit 16, Length 10 (split across data[2] and data[3])
-  TESLA_333.data[3] = (msg.UI_chargeTerminationPct >> 8) & 0x03;  // Bit 16, Length 10 (split across data[2] and data[3])
+  TESLA_333.data[2] = (msg.UI_chargeTerminationPct & 0xFF);  // Bit 16, Length 10 (split across data[2] and data[3])
+  TESLA_333.data[3] =
+      (msg.UI_chargeTerminationPct >> 8) & 0x03;  // Bit 16, Length 10 (split across data[2] and data[3])
 }
 
 int main() {
