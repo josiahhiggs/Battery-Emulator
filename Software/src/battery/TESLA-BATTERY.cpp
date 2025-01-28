@@ -350,6 +350,241 @@ int main() {
   update_CAN_frame(msg);
 }
 
+CAN_frame TESLA_1F9 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 1,
+    .ID = 0x1F9,
+    .data = {0x00}};  // 100ms ID505 VCSEC_requests
+
+    //BO_ 505 VCSEC_requests: 1 VEH
+    //SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
+    //SG_ VCSEC_driveAttemptedWithoutAuth : 2|1@1+ (1,0) [0|0] ""  X
+    //VAL_ 505 VCSEC_chargePortRequest 0 "NONE" 1 "OPEN" 2 "CLOSE" 3 "SNA" ;
+    //VAL_ 505 VCSEC_driveAttemptedWithoutAuth 0 "No" 1 "Yes" ;
+ struct TESLA_1F9_Struct {
+  uint8_t VCSEC_chargePortRequest;
+  uint8_t VCSEC_driveAttemptedWithoutAuth;
+};
+
+void update_CAN_frame(TESLA_1F9_Struct msg) {
+  TESLA_1F9.data[0] = (msg.VCSEC_chargePortRequest << 0) |  // Bit 0, Length 2
+                      (msg.VCSEC_driveAttemptedWithoutAuth << 2);  // Bit 2, Length 1
+} 
+
+int main() {
+  TESLA_1F9_Struct msg;
+  // Set the desired signal values
+  msg.VCSEC_chargePortRequest = 2;  // 0 = NONE, 1 = OPEN, 2 = CLOSE, 3 = SNA
+  msg.VCSEC_driveAttemptedWithoutAuth = 1;  // 0 = No, 1 = Yes
+
+  // Update the CAN frame with the signal values
+  update_CAN_frame(msg);
+}
+
+CAN_frame TESLA_339 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 8,
+    .ID = 0x339,
+    .data = {0x5C, 0x41, 0x02, 0x00, 0x00, 0x03, 0x40, 0x03}};  // 100ms ID825 VCSEC_authentication
+
+  //BO_ 825 VCSEC_authentication: 8 VEH
+  //SG_ VCSEC_MCUCommandType : 36|3@1+ (1,0) [0|0] ""  X
+  //SG_ VCSEC_alarmStatus : 43|4@1+ (1,0) [0|0] ""  X
+  //SG_ VCSEC_authRequested : 60|1@1+ (1,0) [0|0] ""  X
+  //SG_ VCSEC_authenticationStatus : 16|2@1+ (1,0) [0|0] ""  X
+  //SG_ VCSEC_chargePortLockStatus : 18|1@1+ (1,0) [0|0] ""  X
+  //SG_ VCSEC_frunkRequest : 34|2@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_immobilizerState : 48|3@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_keyChannelIndexed : 56|4@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_leftFrontLockStatus : 19|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_leftRearLockStatus : 20|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_lockIndicationRequest : 51|3@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_lockRequestType : 24|5@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_numberOfPubKeysOnWhitelist : 6|5@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnDeltaD : 3|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnDeltaP : 39|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnDeltaR : 4|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnHighThresholdC : 0|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnHighThresholdD : 1|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnHighThresholdP : 2|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_prsntRsnHighThresholdR : 5|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_rightFrontLockStatus : 21|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_rightRearLockStatus : 22|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_simpleLockStatus : 54|2@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_summonRequest : 29|3@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_trunkLockStatus : 23|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_trunkRequest : 32|2@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_usingModifiedMACAddress : 40|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCSEC_vehicleLockStatus : 12|4@1+ (1,0) [0|0] ""  X
+ //VAL_ 825 VCSEC_MCUCommandType 0 "NONE" 1 "REMOTE_UNLOCK" 2 "REMOTE_START" 3 "COMMAND3" 4 "COMMAND4" 5 "COMMAND5" ;
+ //VAL_ 825 VCSEC_alarmStatus 0 "DISARMED" 1 "ARMED" 2 "PARTIAL_ARMED" 3 "TRIGGERED_FLASH_ACTIVE" 4 "ERROR" 5 "TRIGGERED_FLASH_INACTIVE" 6 "IMMINENT" 7 "DEFAULT" 15 "SNA" ;
+ //VAL_ 825 VCSEC_authenticationStatus 0 "NONE" 1 "AUTHENTICATED_FOR_UNLOCK" 2 "AUTHENTICATED_FOR_DRIVE" ;
+ //VAL_ 825 VCSEC_chargePortLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+ //VAL_ 825 VCSEC_frunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
+ //VAL_ 825 VCSEC_immobilizerState 0 "IDLE" 1 "PREPARE" 2 "ENCRYPT_BEGIN" 3 "ENCRYPT" 4 "SEND_AUTH_RESPONSE" 5 "SEND_NO_GO_AUTH_RESPONSE" ;
+ //VAL_ 825 VCSEC_keyChannelIndexed 15 "SNA" ;
+ //VAL_ 825 VCSEC_leftFrontLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+ //VAL_ 825 VCSEC_leftRearLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+ //VAL_ 825 VCSEC_lockIndicationRequest 0 "NONE_SNA" 1 "SINGLE" 2 "DOUBLE" 3 "TRIPLE" 4 "HOLD" ;
+ //VAL_ 825 VCSEC_lockRequestType 0 "NONE" 1 "PASSIVE_SHIFT_TO_P_UNLOCK" 2 "PASSIVE_PARKBUTTON_UNLOCK" 3 "PASSIVE_INTERNAL_HANDLE_UNLOCK" 4 "PASSIVE_DRIVE_AWAY_LOCK" 5 "PASSIVE_BLE_WALKUP_UNLOCK" 6 "PASSIVE_BLE_EXTERIOR_CHARGEHANDLEBUTTON_UNLOCK" 7 "PASSIVE_BLE_EXTERIOR_HANDLE_UNLOCK" 8 "PASSIVE_BLE_INTERIOR_HANDLE_UNLOCK" 9 "PASSIVE_BLE_LOCK" 10 "CRASH_UNLOCK" 11 "ACTIVE_UI_BUTTON_UNLOCK" 12 "ACTIVE_UI_BUTTON_LOCK" 13 "ACTIVE_REMOTE_UNLOCK" 14 "ACTIVE_REMOTE_LOCK" 15 "ACTIVE_NFC_UNLOCK" 16 "ACTIVE_NFC_LOCK" 17 "ACTIVE_BLE_UNLOCK" 18 "ACTIVE_BLE_LOCK" 19 "PASSIVE_INTERNAL_LOCK_PROMOTION" ;
+ //VAL_ 825 VCSEC_rightFrontLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+ //VAL_ 825 VCSEC_rightRearLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+ //VAL_ 825 VCSEC_simpleLockStatus 0 "SNA" 1 "UNLOCKED" 2 "LOCKED" ;
+ //VAL_ 825 VCSEC_summonRequest 0 "IDLE" 1 "PRIME" 2 "FORWARD" 3 "BACKWARD" 4 "STOP" 5 "SNA" ;
+ //VAL_ 825 VCSEC_trunkLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+ //VAL_ 825 VCSEC_trunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
+ //VAL_ 825 VCSEC_vehicleLockStatus 0 "SNA" 1 "ACTIVE_NFC_UNLOCKED" 2 "ACTIVE_NFC_LOCKED" 3 "PASSIVE_SELECTIVE_UNLOCKED" 4 "PASSIVE_BLE_UNLOCKED" 5 "PASSIVE_BLE_LOCKED" 6 "ACTIVE_SELECTIVE_UNLOCKED" 7 "ACTIVE_BLE_UNLOCKED" 8 "ACTIVE_BLE_LOCKED" 9 "ACTIVE_UI_UNLOCKED" 10 "ACTIVE_UI_LOCKED" 11 "ACTIVE_REMOTE_UNLOCKED" 12 "ACTIVE_REMOTE_LOCKED" 13 "CRASH_UNLOCKED" 14 "PASSIVE_INTERNAL_UNLOCKED" 15 "PASSIVE_INTERNAL_LOCKED" ;
+    
+struct TESLA_339_Struct {
+  uint8_t VCSEC_MCUCommandType;
+  uint8_t VCSEC_alarmStatus;
+  uint8_t VCSEC_authRequested;
+  uint8_t VCSEC_authenticationStatus;
+  uint8_t VCSEC_chargePortLockStatus;
+  uint8_t VCSEC_frunkRequest;
+  uint8_t VCSEC_immobilizerState;
+  uint8_t VCSEC_keyChannelIndexed;
+  uint8_t VCSEC_leftFrontLockStatus;
+  uint8_t VCSEC_leftRearLockStatus;
+  uint8_t VCSEC_lockIndicationRequest;
+  uint8_t VCSEC_lockRequestType;
+  uint8_t VCSEC_numberOfPubKeysOnWhitelist;
+  uint8_t VCSEC_prsntRsnDeltaD;
+  uint8_t VCSEC_prsntRsnDeltaP;
+  uint8_t VCSEC_prsntRsnDeltaR;
+  uint8_t VCSEC_prsntRsnHighThresholdC;
+  uint8_t VCSEC_prsntRsnHighThresholdD;
+  uint8_t VCSEC_prsntRsnHighThresholdP;
+  uint8_t VCSEC_prsntRsnHighThresholdR;
+  uint8_t VCSEC_rightFrontLockStatus;
+  uint8_t VCSEC_rightRearLockStatus;
+  uint8_t VCSEC_simpleLockStatus;
+  uint8_t VCSEC_summonRequest;
+  uint8_t VCSEC_trunkLockStatus;
+  uint8_t VCSEC_trunkRequest;
+  uint8_t VCSEC_usingModifiedMACAddress;
+  uint8_t VCSEC_vehicleLockStatus;
+};
+
+void update_CAN_frame(TESLA_339_Struct msg) {
+  TESLA_339.data[0] = (msg.VCSEC_MCUCommandType << 4) |  // Bit 36, Length 3
+                      (msg.VCSEC_alarmStatus << 3) |      // Bit 43, Length 4
+                      (msg.VCSEC_authRequested << 0);     // Bit 60, Length 1
+  TESLA_339.data[1] = (msg.VCSEC_authenticationStatus << 0) |  // Bit 16, Length 2
+                      (msg.VCSEC_chargePortLockStatus << 2) |  // Bit 18, Length 1
+                      (msg.VCSEC_frunkRequest << 4) |         // Bit 34, Length 2
+                      (msg.VCSEC_immobilizerState << 6);       // Bit 48, Length 3
+  TESLA_339.data[2] = (msg.VCSEC_keyChannelIndexed << 0) |  // Bit 56, Length 4
+                      (msg.VCSEC_leftFrontLockStatus << 1) |  // Bit 19, Length 1
+                      (msg.VCSEC_leftRearLockStatus << 2) |   // Bit 20, Length 1
+                      (msg.VCSEC_lockIndicationRequest << 3) |  // Bit 51, Length 3
+                      (msg.VCSEC_lockRequestType << 0);        // Bit 24, Length 5
+  TESLA_339.data[3] = (msg.VCSEC_numberOfPubKeysOnWhitelist << 3) |  // Bit 6, Length 5
+                      (msg.VCSEC_prsntRsnDeltaD << 0);               // Bit 3, Length 1
+  TESLA_339.data[4] = (msg.VCSEC_prsntRsnDeltaP << 7) |  // Bit 39, Length 1
+                      (msg.VCSEC_prsntRsnDeltaR << 6) |    // Bit 4, Length 1
+                      (msg.VCSEC_prsntRsnHighThresholdC << 5) |  // Bit 0, Length 1
+                      (msg.VCSEC_prsntRsnHighThresholdD << 4) |  // Bit 1, Length 1
+                      (msg.VCSEC_prsntRsnHighThresholdP << 3) |  // Bit 2, Length 1
+                      (msg.VCSEC_prsntRsnHighThresholdR << 2);   // Bit 5, Length 1
+  TESLA_339.data[5] = (msg.VCSEC_rightFrontLockStatus << 1) |  // Bit 21, Length 1
+                      (msg.VCSEC_rightRearLockStatus << 0);     // Bit 22, Length 1
+  TESLA_339.data[6] = (msg.VCSEC_simpleLockStatus << 4) |  // Bit 54, Length 2
+                      (msg.VCSEC_summonRequest << 1) |       // Bit 29, Length 3
+                      (msg.VCSEC_trunkLockStatus << 0);      // Bit 23, Length 1
+  TESLA_339.data[7] = (msg.VCSEC_trunkRequest << 6) |  // Bit 32, Length 2
+                      (msg.VCSEC_usingModifiedMACAddress << 5) |  // Bit 40, Length 1
+                      (msg.VCSEC_vehicleLockStatus << 0);        // Bit 12, Length 4
+}
+
+int main() {
+  TESLA_339_Struct msg;
+  // Set the desired signal values
+  msg.VCSEC_MCUCommandType = 1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
+  msg.VCSEC_alarmStatus = 1;     // 0 = DISARMED, 1 = ARMED, 2 = PARTIAL_ARMED, 3 = TRIGGERED_FLASH_ACTIVE, 4 = ERROR, 5 = TRIGGERED_FLASH_INACTIVE, 6 = IMMINENT, 7 = DEFAULT, 15 = SNA
+  msg.VCSEC_authRequested = 0;   // 0 = No, 1 = Yes
+  msg.VCSEC_authenticationStatus = 1;  // 0 = NONE, 1 = AUTHENTICATED_FOR_UNLOCK, 2 = AUTHENTICATED_FOR_DRIVE
+  msg.VCSEC_chargePortLockStatus = 0;  // 0 = UNLOCKED, 1 = LOCKED
+  msg.VCSEC_frunkRequest = 0;          // 0 = NONE, 1 = OPEN, 2 = SNA
+  msg.VCSEC_immobilizerState = 0;      // 0 = IDLE, 1 = PREPARE, 2 = ENCRYPT_BEGIN, 3 = ENCRYPT, 4 = SEND_AUTH_RESPONSE, 5 = SEND_NO_GO_AUTH_RESPONSE
+  msg.VCSEC_keyChannelIndexed = 15;    // 15 = SNA
+  msg.VCSEC_leftFrontLockStatus = 0;   // 0 = UNLOCKED, 1 = LOCKED
+  msg.VCSEC_leftRearLockStatus = 0;    // 0 = UNLOCKED, 1 = LOCKED
+  msg.VCSEC_lockIndicationRequest = 0;  // 0 = NONE_SNA, 1 = SINGLE, 2 = DOUBLE, 3 = TRIPLE, 4 = HOLD
+  msg.VCSEC_lockRequestType = 0;        // 0 = NONE, 1 = PASSIVE_SHIFT_TO_P_UNLOCK, 2 = PASSIVE_PARKBUTTON_UNLOCK, 3 = PASSIVE_INTERNAL_HANDLE_UNLOCK, 4 = PASSIVE_DRIVE_AWAY
+
+  // Update the CAN frame with the signal values
+  update_CAN_frame(msg);
+}
+
+CAN_frame TESLA_321 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 8,
+    .ID = 0x321,
+    .data = {0xE6, 0x95, 0xA7, 0x70, 0x02, 0x6A, 0xF0, 0x12}};  // 1000ms ID801 VCFRONT_sensors  
+
+//BO_ 801 VCFRONT_sensors: 8 VEH
+// SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_brakeFluidLevel : 22|2@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_coolantLevel : 21|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_ptSensorIrrational : 49|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_tempAmbient : 24|8@1+ (0.5,-40) [0|0] "degC"  X
+ //SG_ VCFRONT_tempAmbientFiltered : 40|8@1+ (0.5,-40) [0|0] "degC"  X
+ //SG_ VCFRONT_tempCoolantBatInlet : 0|10@1+ (0.125,-40) [0|0] "degC"  X
+ //SG_ VCFRONT_tempCoolantPTInlet : 10|11@1+ (0.125,-40) [0|0] "degC"  X
+ //SG_ VCFRONT_washerFluidLevel : 32|2@1+ (1,0) [0|0] ""  X
+ //VAL_ 801 VCFRONT_brakeFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
+//VAL_ 801 VCFRONT_coolantLevel 0 "NOT_OK" 1 "FILLED" ;
+//VAL_ 801 VCFRONT_tempAmbient 0 "SNA" ;
+//VAL_ 801 VCFRONT_tempAmbientFiltered 0 "SNA" ;
+//VAL_ 801 VCFRONT_tempCoolantBatInlet 1023 "SNA" ;
+//VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
+//VAL_ 801 VCFRONT_washerFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
+
+struct TESLA_321_Struct {
+  uint8_t VCFRONT_battSensorIrrational;
+  uint8_t VCFRONT_brakeFluidLevel;
+  uint8_t VCFRONT_coolantLevel;
+  uint8_t VCFRONT_ptSensorIrrational;
+  float VCFRONT_tempAmbient;
+  float VCFRONT_tempAmbientFiltered;
+  float VCFRONT_tempCoolantBatInlet;
+  float VCFRONT_tempCoolantPTInlet;
+  uint8_t VCFRONT_washerFluidLevel;
+};
+
+void update_CAN_frame(TESLA_321_Struct msg) {
+  TESLA_321.data[0] = (msg.VCFRONT_tempCoolantBatInlet << 0) |  // Bit 0, Length 10
+                      (msg.VCFRONT_tempCoolantPTInlet << 2);    // Bit 10, Length 11
+  TESLA_321.data[1] = (msg.VCFRONT_brakeFluidLevel << 6) |  // Bit 22, Length 2
+                      (msg.VCFRONT_coolantLevel << 5) |      // Bit 21, Length 1
+                      (msg.VCFRONT_tempAmbient << 0);        // Bit 24, Length 8
+  TESLA_321.data[2] = (msg.VCFRONT_tempAmbientFiltered << 0);  // Bit 40, Length 8
+  TESLA_321.data[3] = (msg.VCFRONT_washerFluidLevel << 6) |  // Bit 32, Length 2
+                      (msg.VCFRONT_battSensorIrrational << 0);  // Bit 48, Length 1
+  TESLA_321.data[4] = (msg.VCFRONT_ptSensorIrrational << 1);  // Bit 49, Length 1
+}
+
+int main() {
+  TESLA_321_Struct msg;
+  // Set the desired signal values
+  msg.VCFRONT_battSensorIrrational = 0;  // 0 = No, 1 = Yes
+  msg.VCFRONT_brakeFluidLevel = 2;       // 0 = SNA, 1 = LOW, 2 = NORMAL
+  msg.VCFRONT_coolantLevel = 1;          // 0 = NOT_OK, 1 = FILLED
+  msg.VCFRONT_ptSensorIrrational = 0;    // 0 = No, 1 = Yes
+  msg.VCFRONT_tempAmbient = 25.0;        // Example value in degrees Celsius
+  msg.VCFRONT_tempAmbientFiltered = 25.0;  // Example value in degrees Celsius
+  msg.VCFRONT_tempCoolantBatInlet = 25.0;  // Example value in degrees Celsius
+  msg.VCFRONT_tempCoolantPTInlet = 25.0;   // Example value in degrees Celsius
+  msg.VCFRONT_washerFluidLevel = 2;       // 0 = SNA, 1 = LOW, 2 = NORMAL
+
+  // Update the CAN frame with the signal values
+  update_CAN_frame(msg);
+}
+
 CAN_frame TESLA_602 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
