@@ -9,13 +9,6 @@
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
-CAN_frame TESLA_221 = {
-    .FD = false,
-    .ext_ID = false,
-    .DLC = 8,
-    .ID = 0x221,
-    .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};  // Contactor frame 221 - hv_up_for_drive
-
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
 // SG_ VCFRONT_LVPowerStateCounter : 52|4@1+ (1,0) [0|0] ""  X
@@ -79,6 +72,13 @@ CAN_frame TESLA_221 = {
 //VAL_ 545 VCFRONT_tasLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
 //VAL_ 545 VCFRONT_pcsLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
 
+CAN_frame TESLA_221 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 8,
+    .ID = 0x221,
+    .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+
 struct TESLA_221_Struct {
   uint8_t VCFRONT_LVPowerStateChecksum;
   uint8_t VCFRONT_LVPowerStateCounter;
@@ -116,7 +116,7 @@ struct TESLA_221_Struct {
 uint8_t calculateChecksum(TESLA_221_Struct& msg) {
   uint8_t checksum = 0;
   uint8_t* data = (uint8_t*)&msg;
-  for (int i = 0; i < sizeof(msg) - 2; i++) {
+  for (int i = 0; i < sizeof(msg); i++) {
     checksum += data[i];
   }
   return checksum;
@@ -127,38 +127,52 @@ uint8_t calculateCounter(TESLA_221_Struct& msg) {
   return counter++;
 }
 
-void update_CAN_frame(TESLA_221_Struct msg) {
-  TESLA_221.data[0] = (msg.VCFRONT_LVPowerStateIndex << 0) |       // Bit 0, Length 5
-                      (msg.VCFRONT_vehiclePowerState << 5);        // Bit 5, Length 2
-  TESLA_221.data[1] = (msg.VCFRONT_parkLVState << 0) |             // Bit 8, Length 2
-                      (msg.VCFRONT_espLVState << 2) |              // Bit 10, Length 2
-                      (msg.VCFRONT_radcLVState << 4) |             // Bit 12, Length 2
-                      (msg.VCFRONT_hvacCompLVState << 6);          // Bit 14, Length 2
-  TESLA_221.data[2] = (msg.VCFRONT_ptcLVRequest << 0) |            // Bit 16, Length 2
-                      (msg.VCFRONT_sccmLVRequest << 2) |           // Bit 18, Length 2
-                      (msg.VCFRONT_tpmsLVRequest << 4) |           // Bit 20, Length 2
-                      (msg.VCFRONT_rcmLVRequest << 6);             // Bit 22, Length 2
-  TESLA_221.data[3] = (msg.VCFRONT_iBoosterLVState << 0) |         // Bit 24, Length 2
-                      (msg.VCFRONT_tunerLVRequest << 2) |          // Bit 26, Length 2
-                      (msg.VCFRONT_amplifierLVRequest << 4) |      // Bit 28, Length 2
-                      (msg.VCFRONT_das1HighCurrentLVState << 6);   // Bit 30, Length 2
-  TESLA_221.data[4] = (msg.VCFRONT_das2HighCurrentLVState << 0) |  // Bit 32, Length 2
-                      (msg.VCFRONT_diLVRequest << 2) |             // Bit 34, Length 2
-                      (msg.VCFRONT_disLVState << 4) |              // Bit 36, Length 2
-                      (msg.VCFRONT_oilPumpFrontLVState << 6);      // Bit 38, Length 2
-  TESLA_221.data[5] = (msg.VCFRONT_oilPumpRearLVRequest << 0) |    // Bit 40, Length 2
-                      (msg.VCFRONT_ocsLVRequest << 2) |            // Bit 42, Length 2
-                      (msg.VCFRONT_vcleftHiCurrentLVState << 4) |  // Bit 44, Length 2
-                      (msg.VCFRONT_vcrightHiCurrentLVState << 6);  // Bit 46, Length 2
-  TESLA_221.data[6] = (msg.VCFRONT_uiHiCurrentLVState << 0) |      // Bit 48, Length 2
-                      (msg.VCFRONT_uiAudioLVState << 2) |          // Bit 50, Length 2
-                      (msg.VCFRONT_cpLVRequest << 4) |             // Bit 52, Length 2
-                      (msg.VCFRONT_epasLVState << 6);              // Bit 54, Length 2
-  TESLA_221.data[7] = (msg.VCFRONT_hvcLVRequest << 0) |            // Bit 56, Length 2
-                      (msg.VCFRONT_tasLVState << 2) |              // Bit 58, Length 2
-                      (msg.VCFRONT_pcsLVState << 4) |              // Bit 60, Length 2
-                      (msg.VCFRONT_LVPowerStateCounter << 4) |     // Bit 52, Length 4
-                      (msg.VCFRONT_LVPowerStateChecksum << 0);     // Bit 56, Length 8
+void update_CAN_frame(TESLA_221_Struct &msg) {
+    CAN_frame frame;
+    frame.id = 0x221; // Example CAN ID
+
+    // Set the common signals
+    frame.data[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F);
+    frame.data[1] = (msg.VCFRONT_vehiclePowerState & 0x03) << 5;
+    frame.data[6] = (msg.VCFRONT_LVPowerStateCounter & 0x0F) << 4;
+    frame.data[7] = msg.VCFRONT_LVPowerStateChecksum;
+
+    // Set the signals based on the multiplexer index
+    if (msg.VCFRONT_LVPowerStateIndex == MUX0) {
+        // Set signals for MUX0
+        frame.data[1] |= (msg.VCFRONT_parkLVState & 0x03) << 0;
+        frame.data[1] |= (msg.VCFRONT_espLVState & 0x03) << 2;
+        frame.data[2] = (msg.VCFRONT_radcLVState & 0x03) << 0;
+        frame.data[2] |= (msg.VCFRONT_hvacCompLVState & 0x03) << 2;
+        frame.data[2] |= (msg.VCFRONT_ptcLVRequest & 0x03) << 4;
+        frame.data[2] |= (msg.VCFRONT_sccmLVRequest & 0x03) << 6;
+        frame.data[3] = (msg.VCFRONT_tpmsLVRequest & 0x03) << 0;
+        frame.data[3] |= (msg.VCFRONT_rcmLVRequest & 0x03) << 2;
+        frame.data[3] |= (msg.VCFRONT_iBoosterLVState & 0x03) << 4;
+        frame.data[3] |= (msg.VCFRONT_tunerLVRequest & 0x03) << 6;
+        frame.data[4] = (msg.VCFRONT_amplifierLVRequest & 0x03) << 0;
+        frame.data[4] |= (msg.VCFRONT_das1HighCurrentLVState & 0x03) << 2;
+        frame.data[4] |= (msg.VCFRONT_das2HighCurrentLVState & 0x03) << 4;
+        frame.data[4] |= (msg.VCFRONT_diLVRequest & 0x03) << 6;
+        frame.data[5] = (msg.VCFRONT_disLVState & 0x03) << 0;
+        frame.data[5] |= (msg.VCFRONT_oilPumpFrontLVState & 0x03) << 2;
+        frame.data[5] |= (msg.VCFRONT_oilPumpRearLVRequest & 0x03) << 4;
+        frame.data[5] |= (msg.VCFRONT_ocsLVRequest & 0x03) << 6;
+        frame.data[6] |= (msg.VCFRONT_vcleftHiCurrentLVState & 0x03) << 0;
+        frame.data[6] |= (msg.VCFRONT_vcrightHiCurrentLVState & 0x03) << 2;
+        frame.data[6] |= (msg.VCFRONT_uiHiCurrentLVState & 0x03) << 4;
+        frame.data[6] |= (msg.VCFRONT_uiAudioLVState & 0x03) << 6;
+    } else if (msg.VCFRONT_LVPowerStateIndex == MUX1) {
+        // Set signals for MUX1
+        frame.data[2] = (msg.VCFRONT_cpLVRequest & 0x03) << 0;
+        frame.data[2] |= (msg.VCFRONT_epasLVState & 0x03) << 2;
+        frame.data[2] |= (msg.VCFRONT_hvcLVRequest & 0x03) << 4;
+        frame.data[2] |= (msg.VCFRONT_tasLVState & 0x03) << 6;
+        frame.data[3] = (msg.VCFRONT_pcsLVState & 0x03) << 0;
+    }
+
+    // Send the CAN frame
+    send_CAN_frame(frame);
 }
 
 enum VCFRONT_LVPowerStateIndex { MUX0 = 0, MUX1 = 1 };
@@ -211,50 +225,60 @@ enum VCFRONT_uiAudioLVState { OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3 };
 
 enum VCFRONT_cpLVRequest { OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3 };
 
-enum VCFRONT_epasLVState { OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3 };
-
-enum VCFRONT_hvcLVRequest { OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3 };
-
-enum VCFRONT_tasLVState { OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3 };
-
-enum VCFRONT_pcsLVState { OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3 };
-
 int main() {
   TESLA_221_Struct msg;
-  // Set the desired signal values
-  msg.VCFRONT_LVPowerStateIndex = MUX0;
-  msg.VCFRONT_vehiclePowerState = DRIVE;
-  msg.VCFRONT_parkLVState = ON;
-  msg.VCFRONT_espLVState = ON;
-  msg.VCFRONT_radcLVState = ON;
-  msg.VCFRONT_hvacCompLVState = ON;
-  msg.VCFRONT_ptcLVRequest = ON;
-  msg.VCFRONT_sccmLVRequest = ON;
-  msg.VCFRONT_tpmsLVRequest = ON;
-  msg.VCFRONT_rcmLVRequest = ON;
-  msg.VCFRONT_iBoosterLVState = ON;
-  msg.VCFRONT_tunerLVRequest = ON;
-  msg.VCFRONT_amplifierLVRequest = ON;
-  msg.VCFRONT_das1HighCurrentLVState = ON;
-  msg.VCFRONT_das2HighCurrentLVState = ON;
-  msg.VCFRONT_diLVRequest = ON;
-  msg.VCFRONT_disLVState = ON;
-  msg.VCFRONT_oilPumpFrontLVState = ON;
-  msg.VCFRONT_oilPumpRearLVRequest = ON;
-  msg.VCFRONT_ocsLVRequest = ON;
-  msg.VCFRONT_vcleftHiCurrentLVState = ON;
-  msg.VCFRONT_vcrightHiCurrentLVState = ON;
-  msg.VCFRONT_uiHiCurrentLVState = ON;
-  msg.VCFRONT_uiAudioLVState = ON;
-  msg.VCFRONT_cpLVRequest = ON;
-  msg.VCFRONT_epasLVState = ON;
-  msg.VCFRONT_hvcLVRequest = ON;
-  msg.VCFRONT_tasLVState = ON;
-  msg.VCFRONT_pcsLVState = ON;
-  msg.VCFRONT_LVPowerStateCounter = calculateCounter(msg);
-  msg.VCFRONT_LVPowerStateChecksum = calculateChecksum(msg);
 
-  update_CAN_frame(msg);
+  // Run continuously
+  while (true) {
+    for (int i = 0; i < 2; ++i) {
+      // Set the common signals
+      msg.VCFRONT_vehiclePowerState = 3; // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
+      msg.VCFRONT_LVPowerStateCounter = calculateCounter(msg);
+      msg.VCFRONT_LVPowerStateChecksum = calculateChecksum(msg);
+
+      if (i % 2 == 0) {
+        // Set the multiplexer index to MUX0
+        msg.VCFRONT_LVPowerStateIndex = MUX0;
+
+        // Set the desired signal values for MUX0
+        msg.VCFRONT_parkLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_espLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_radcLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_hvacCompLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_ptcLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_sccmLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_tpmsLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_rcmLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_iBoosterLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_tunerLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_amplifierLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_das1HighCurrentLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_das2HighCurrentLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_diLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_disLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_oilPumpFrontLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_oilPumpRearLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_ocsLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_vcleftHiCurrentLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_vcrightHiCurrentLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_uiHiCurrentLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_uiAudioLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+      } else {
+        // Set the multiplexer index to MUX1
+        msg.VCFRONT_LVPowerStateIndex = MUX1;
+
+        // Set the desired signal values for MUX1
+        msg.VCFRONT_cpLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_epasLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_hvcLVRequest = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_tasLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_pcsLVState = 1; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+      }
+
+      // Update the CAN frame
+      update_CAN_frame(msg);
+    }
+  }
 }
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
@@ -303,11 +327,12 @@ int main() {
   update_CAN_frame(msg);
 }
 
+// 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
 CAN_frame TESLA_3A1 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
                        .ID = 0x3A1,
-                       .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};  // 100ms ID929 VCFRONT_vehicleStatus
+                       .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 struct TESLA_3A1_Struct {
   bool _12vStatusForDrive;
