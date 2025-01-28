@@ -14,7 +14,7 @@ CAN_frame TESLA_221_1 = {
     .ext_ID = false,
     .DLC = 8,
     .ID = 0x221,
-    .data = {0x41, 0x11, 0x01, 0x00, 0x00, 0x00, 0x20, 0x96}};  //Contactor frame 221 - close contactors
+    .data = {0x41, 0x11, 0x01, 0x00, 0x00, 0x00, 0x20, 0x96}};  // Contactor frame 221 - close contactors
 
 CAN_frame TESLA_221_2 = {
     .FD = false,
@@ -90,10 +90,24 @@ VCFRONT_LVPowerState msg = {MUX0,      OFF,       STATE_OFF, STATE_OFF, STATE_OF
 void updateCANFrame(CAN_frame& frame, VCFRONT_LVPowerState& msg) {
   incrementCounter(msg);
   msg.checksum = calculateChecksum(msg);
-  memcpy(static_cast<void*>(frame.data), &msg, sizeof(msg));
+  memcpy(reinterpret_cast<void*>(frame.data), &msg, sizeof(msg));
 }
 
+// Declare and initialize TESLA_221_2
+CAN_frame TESLA_221_2 = {
+    .FD = false,
+    .ext_ID = false,
+    .DLC = 8,
+    .ID = 0x221,
+    .data = {0x61, 0x15, 0x01, 0x00, 0x00, 0x00, 0x20, 0xBA}};  // Contactor Frame 221 - hv_up_for_drive
+
 void loop() {
+  // Initialize message
+  VCFRONT_LVPowerState msg = {MUX0,      OFF,       STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF,
+                              STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF,
+                              STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF,
+                              STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, STATE_OFF, 0,         0};
+
   // Assign values to the fields
   msg.index = MUX0;  // MUX0; MUX1
 
