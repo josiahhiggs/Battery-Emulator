@@ -12,6 +12,7 @@ static unsigned long previousMillis10 = 0;   // will store last time a 50ms CAN 
 static unsigned long previousMillis50 = 0;   // will store last time a 50ms CAN Message was send
 static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN Message was send
 static bool alternate243 = false;
+
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
@@ -331,6 +332,42 @@ int main() {
 }
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
+//BO_ 929 VCFRONT_vehicleStatus: 8 VEH
+//SG_ VCFRONT_12vStatusForDrive : 14|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_2RowCenterUnbuckled : 38|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_2RowLeftUnbuckled : 36|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_2RowRightUnbuckled : 40|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_APGlassHeaterState : 2|3@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_LVLoadRequest : 9|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_batterySupportRequest : 27|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_bmsHvChargeEnable : 0|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_diPowerOnState : 10|3@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_driverBuckleStatus : 30|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_driverDoorStatus : 31|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_driverIsLeaving : 28|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_driverIsLeavingAnySpeed : 13|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_driverUnbuckled : 32|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_ota12VSupportRequest : 29|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_passengerUnbuckled : 34|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_pcs12vVoltageTarget : 16|11@1+ (0.01,0) [0|0] "V"  X
+//SG_ VCFRONT_pcsEFuseVoltage : 42|10@1+ (0.1,0) [0|0] "V"  X
+//SG_ VCFRONT_preconditionRequest : 1|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_standbySupplySupported : 6|1@1+ (1,0) [0|1] ""  X
+//SG_ VCFRONT_thermalSystemType : 5|1@1+ (1,0) [0|1] ""  X
+//SG_ VCFRONT_vehicleStatusChecksum : 56|8@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_vehicleStatusCounter : 52|4@1+ (1,0) [0|0] ""  X
+//VAL_ 929 VCFRONT_12vStatusForDrive 0 "NOT_READY_FOR_DRIVE_12V" 1 "READY_FOR_DRIVE_12V" 2 "EXIT_DRIVE_REQUESTED_12V" ;
+//VAL_ 929 VCFRONT_2RowCenterUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_2RowLeftUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_2RowRightUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_APGlassHeaterState 0 "SNA" 1 "ON" 2 "OFF" 3 "OFF_UNAVAILABLE" 4 "FAULT" ;
+//VAL_ 929 VCFRONT_diPowerOnState 0 "POWERED_OFF" 1 "POWERED_ON_FOR_POST_RUN" 2 "POWERED_ON_FOR_STATIONARY_HEAT" 3 "POWERED_ON_FOR_DRIVE" 4 "POWER_GOING_DOWN" ;
+//VAL_ 929 VCFRONT_driverBuckleStatus 0 "UNBUCKLED" 1 "BUCKLED" ;
+//VAL_ 929 VCFRONT_driverDoorStatus 0 "OPEN" 1 "CLOSED" ;
+//VAL_ 929 VCFRONT_driverUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_passengerUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_pcsEFuseVoltage 1023 "SNA" ;
+
 CAN_frame TESLA_3A1 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
@@ -338,29 +375,29 @@ CAN_frame TESLA_3A1 = {.FD = false,
                        .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 struct TESLA_3A1_Struct {
-  bool _12vStatusForDrive;
-  bool _2RowCenterUnbuckled;
-  bool _2RowLeftUnbuckled;
-  bool _2RowRightUnbuckled;
-  uint8_t APGlassHeaterState;
-  bool LVLoadRequest;
-  bool batterySupportRequest;
-  bool bmsHvChargeEnable;
-  uint8_t diPowerOnState;
-  bool driverBuckleStatus;
-  bool driverDoorStatus;
-  bool driverIsLeaving;
-  bool driverIsLeavingAnySpeed;
-  uint8_t driverUnbuckled;
-  bool ota12VSupportRequest;
-  uint8_t passengerUnbuckled;
-  float pcs12vVoltageTarget;
-  float pcsEFuseVoltage;
-  bool preconditionRequest;
-  bool standbySupplySupported;
-  bool thermalSystemType;
-  uint8_t vehicleStatusChecksum;
-  uint8_t vehicleStatusCounter;
+  bool _12vStatusForDrive;           // Bit 14, Length 2
+  bool _2RowCenterUnbuckled;         // Bit 38, Length 2
+  bool _2RowLeftUnbuckled;           // Bit 36, Length 2
+  bool _2RowRightUnbuckled;          // Bit 40, Length 2
+  uint8_t APGlassHeaterState;        // Bit 2, Length 3
+  bool LVLoadRequest;                // Bit 9, Length 1
+  bool batterySupportRequest;        // Bit 27, Length 1
+  bool bmsHvChargeEnable;            // Bit 0, Length 1
+  uint8_t diPowerOnState;            // Bit 10, Length 3
+  bool driverBuckleStatus;           // Bit 30, Length 1
+  bool driverDoorStatus;             // Bit 31, Length 1
+  bool driverIsLeaving;              // Bit 28, Length 1
+  bool driverIsLeavingAnySpeed;      // Bit 13, Length 1
+  uint8_t driverUnbuckled;           // Bit 32, Length 2
+  bool ota12VSupportRequest;         // Bit 29, Length 1
+  uint8_t passengerUnbuckled;        // Bit 34, Length 2
+  float pcs12vVoltageTarget;         // Bit 16, Length 11 (0.01 scaling)
+  float pcsEFuseVoltage;             // Bit 42, Length 10 (0.1 scaling)
+  bool preconditionRequest;          // Bit 1, Length 1
+  bool standbySupplySupported;       // Bit 6, Length 1
+  bool thermalSystemType;            // Bit 5, Length 1
+  uint8_t vehicleStatusChecksum;     // Bit 56, Length 8
+  uint8_t vehicleStatusCounter;      // Bit 52, Length 4
 };
 
 uint8_t calculateChecksum(TESLA_3A1_Struct& msg) {
@@ -435,33 +472,41 @@ enum VCFRONT_driverUnbuckled { UNBUCKLED = 0, BUCKLED = 1 };
 int main() {
   TESLA_3A1_Struct msg;
   // Set the desired signal values
-  msg._12vStatusForDrive = READY_FOR_DRIVE_12V;
-  msg._2RowCenterUnbuckled = NONE;
-  msg._2RowLeftUnbuckled = NONE;
-  msg._2RowRightUnbuckled = NONE;
-  msg.APGlassHeaterState = OFF;
-  msg.LVLoadRequest = true;
-  msg.batterySupportRequest = false;
-  msg.bmsHvChargeEnable = false;
-  msg.diPowerOnState = POWERED_OFF;
-  msg.driverBuckleStatus = UNBUCKLED;
-  msg.driverDoorStatus = OPEN;
-  msg.driverIsLeaving = false;
-  msg.driverIsLeavingAnySpeed = false;
-  msg.driverUnbuckled = UNBUCKLED;
-  msg.ota12VSupportRequest = false;
-  msg.passengerUnbuckled = UNBUCKLED;
-  msg.pcs12vVoltageTarget = 13.5;  // enter value in Volts (e.g. 13.5V)
-  msg.pcsEFuseVoltage = 13.0;      // enter value in Volts (e.g. 13.0V)
-  msg.preconditionRequest = false;
-  msg.standbySupplySupported = false;
-  msg.thermalSystemType = false;
-  msg.vehicleStatusChecksum = 0;
-  msg.vehicleStatusCounter = 0;
+  msg._12vStatusForDrive = 1;           // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
+  msg._2RowCenterUnbuckled = 0;         // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+  msg._2RowLeftUnbuckled = 0;           // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+  msg._2RowRightUnbuckled = 0;          // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+  msg.APGlassHeaterState = 2;           // SNA = 0, ON = 1, OFF = 2, OFF_UNAVAILABLE = 3, FAULT = 4
+  msg.LVLoadRequest = 1;                // true = 1, false = 0
+  msg.batterySupportRequest = 0;        // true = 1, false = 0
+  msg.bmsHvChargeEnable = 0;            // true = 1, false = 0
+  msg.diPowerOnState = 0;               // POWERED_OFF = 0, POWERED_ON_FOR_POST_RUN = 1, POWERED_ON_FOR_STATIONARY_HEAT = 2, POWERED_ON_FOR_DRIVE = 3, POWER_GOING_DOWN = 4
+  msg.driverBuckleStatus = 0;           // UNBUCKLED = 0, BUCKLED = 1
+  msg.driverDoorStatus = 0;             // OPEN = 0, CLOSED = 1
+  msg.driverIsLeaving = 0;              // true = 1, false = 0
+  msg.driverIsLeavingAnySpeed = 0;      // true = 1, false = 0
+  msg.driverUnbuckled = 0;              // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+  msg.ota12VSupportRequest = 0;         // true = 1, false = 0
+  msg.passengerUnbuckled = 0;           // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+  msg.pcs12vVoltageTarget = 13.5;       // enter value in Volts (e.g. 13.5V)
+  msg.pcsEFuseVoltage = 13.0;           // enter value in Volts (e.g. 13.0V)
+  msg.preconditionRequest = 0;          // true = 1, false = 0
+  msg.standbySupplySupported = 0;       // true = 1, false = 0
+  msg.thermalSystemType = 0;            // true = 1, false = 0
+  msg.vehicleStatusChecksum = 0;        // enter value (e.g. 0)
+  msg.vehicleStatusCounter = 0;         // enter value (e.g. 0)
 
   update_CAN_frame(msg);
 }
 
+// 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
+// BO_ 819 UI_chargeRequest: 4 VEH
+// SG_ UI_acChargeCurrentLimit : 8|7@1+ (1,0) [0|0] "A"  X
+// SG_ UI_chargeEnableRequest : 2|1@1+ (1,0) [0|0] ""  X
+// SG_ UI_chargeTerminationPct : 16|10@1+ (0.1,0) [0|0] "%"  X
+// SG_ UI_closeChargePortDoorRequest : 1|1@1+ (1,0) [0|0] ""  X
+// SG_ UI_openChargePortDoorRequest : 0|1@1+ (1,0) [0|0] ""  X
+// VAL_ 819 UI_acChargeCurrentLimit 127 "SNA" ;
 CAN_frame TESLA_333 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 5,
@@ -499,17 +544,19 @@ int main() {
   update_CAN_frame(msg);
 }
 
+// 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
+//BO_ 505 VCSEC_requests: 1 VEH
+//SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
+//SG_ VCSEC_driveAttemptedWithoutAuth : 2|1@1+ (1,0) [0|0] ""  X
+//VAL_ 505 VCSEC_chargePortRequest 0 "NONE" 1 "OPEN" 2 "CLOSE" 3 "SNA" ;
+//VAL_ 505 VCSEC_driveAttemptedWithoutAuth 0 "No" 1 "Yes" ;
+
 CAN_frame TESLA_1F9 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 1,
                        .ID = 0x1F9,
                        .data = {0x00}};  // 100ms ID505 VCSEC_requests
 
-//BO_ 505 VCSEC_requests: 1 VEH
-//SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_driveAttemptedWithoutAuth : 2|1@1+ (1,0) [0|0] ""  X
-//VAL_ 505 VCSEC_chargePortRequest 0 "NONE" 1 "OPEN" 2 "CLOSE" 3 "SNA" ;
-//VAL_ 505 VCSEC_driveAttemptedWithoutAuth 0 "No" 1 "Yes" ;
 struct TESLA_1F9_Struct {
   uint8_t VCSEC_chargePortRequest;
   uint8_t VCSEC_driveAttemptedWithoutAuth;
@@ -530,12 +577,7 @@ int main() {
   update_CAN_frame(msg);
 }
 
-CAN_frame TESLA_339 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x339,
-                       .data = {0x5C, 0x41, 0x02, 0x00, 0x00, 0x03, 0x40, 0x03}};  // 100ms ID825 VCSEC_authentication
-
+// 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
 //BO_ 825 VCSEC_authentication: 8 VEH
 //SG_ VCSEC_MCUCommandType : 36|3@1+ (1,0) [0|0] ""  X
 //SG_ VCSEC_alarmStatus : 43|4@1+ (1,0) [0|0] ""  X
@@ -584,6 +626,12 @@ CAN_frame TESLA_339 = {.FD = false,
 //VAL_ 825 VCSEC_trunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
 //VAL_ 825 VCSEC_vehicleLockStatus 0 "SNA" 1 "ACTIVE_NFC_UNLOCKED" 2 "ACTIVE_NFC_LOCKED" 3 "PASSIVE_SELECTIVE_UNLOCKED" 4 "PASSIVE_BLE_UNLOCKED" 5 "PASSIVE_BLE_LOCKED" 6 "ACTIVE_SELECTIVE_UNLOCKED" 7 "ACTIVE_BLE_UNLOCKED" 8 "ACTIVE_BLE_LOCKED" 9 "ACTIVE_UI_UNLOCKED" 10 "ACTIVE_UI_LOCKED" 11 "ACTIVE_REMOTE_UNLOCKED" 12 "ACTIVE_REMOTE_LOCKED" 13 "CRASH_UNLOCKED" 14 "PASSIVE_INTERNAL_UNLOCKED" 15 "PASSIVE_INTERNAL_LOCKED" ;
 
+CAN_frame TESLA_339 = {.FD = false,
+                       .ext_ID = false,
+                       .DLC = 8,
+                       .ID = 0x339,
+                       .data = {0x5C, 0x41, 0x02, 0x00, 0x00, 0x03, 0x40, 0x03}};
+
 struct TESLA_339_Struct {
   uint8_t VCSEC_MCUCommandType;
   uint8_t VCSEC_alarmStatus;
@@ -614,6 +662,8 @@ struct TESLA_339_Struct {
   uint8_t VCSEC_usingModifiedMACAddress;
   uint8_t VCSEC_vehicleLockStatus;
 };
+
+extern CAN_frame TESLA_339;
 
 void update_CAN_frame(TESLA_339_Struct msg) {
   TESLA_339.data[0] = (msg.VCSEC_MCUCommandType << 4) |              // Bit 36, Length 3
@@ -670,12 +720,7 @@ int main() {
   update_CAN_frame(msg);
 }
 
-CAN_frame TESLA_321 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x321,
-                       .data = {0xE6, 0x95, 0xA7, 0x70, 0x02, 0x6A, 0xF0, 0x12}};  // 1000ms ID801 VCFRONT_sensors
-
+// 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
 //BO_ 801 VCFRONT_sensors: 8 VEH
 // SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
 // SG_ VCFRONT_brakeFluidLevel : 22|2@1+ (1,0) [0|0] ""  X
@@ -694,6 +739,12 @@ CAN_frame TESLA_321 = {.FD = false,
 //VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
 //VAL_ 801 VCFRONT_washerFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
 
+CAN_frame TESLA_321 = {.FD = false,
+                       .ext_ID = false,
+                       .DLC = 8,
+                       .ID = 0x321,
+                       .data = {0xE6, 0x95, 0xA7, 0x70, 0x02, 0x6A, 0xF0, 0x12}};
+
 struct TESLA_321_Struct {
   uint8_t VCFRONT_battSensorIrrational;
   uint8_t VCFRONT_brakeFluidLevel;
@@ -706,16 +757,24 @@ struct TESLA_321_Struct {
   uint8_t VCFRONT_washerFluidLevel;
 };
 
+// ...existing code...
 void update_CAN_frame(TESLA_321_Struct msg) {
-  TESLA_321.data[0] = (msg.VCFRONT_tempCoolantBatInlet << 0) |  // Bit 0, Length 10
-                      (msg.VCFRONT_tempCoolantPTInlet << 2);    // Bit 10, Length 11
-  TESLA_321.data[1] = (msg.VCFRONT_brakeFluidLevel << 6) |      // Bit 22, Length 2
-                      (msg.VCFRONT_coolantLevel << 5) |         // Bit 21, Length 1
-                      (msg.VCFRONT_tempAmbient << 0);           // Bit 24, Length 8
-  TESLA_321.data[2] = (msg.VCFRONT_tempAmbientFiltered << 0);   // Bit 40, Length 8
-  TESLA_321.data[3] = (msg.VCFRONT_washerFluidLevel << 6) |     // Bit 32, Length 2
+  uint16_t tempCoolantBatInlet = (msg.VCFRONT_tempCoolantBatInlet + 40) / 0.125;
+  uint16_t tempCoolantPTInlet = (msg.VCFRONT_tempCoolantPTInlet + 40) / 0.125;
+  uint8_t tempAmbient = (msg.VCFRONT_tempAmbient + 40) / 0.5;
+  uint8_t tempAmbientFiltered = (msg.VCFRONT_tempAmbientFiltered + 40) / 0.5;
+
+  TESLA_321.data[0] = (tempCoolantBatInlet & 0xFF);  // Bit 0, Length 10
+  TESLA_321.data[1] = ((tempCoolantBatInlet >> 8) & 0x03) |  // Bit 10, Length 11
+                      (tempCoolantPTInlet << 2);
+  TESLA_321.data[2] = ((tempCoolantPTInlet >> 6) & 0xFF);
+  TESLA_321.data[3] = (msg.VCFRONT_brakeFluidLevel << 6) |  // Bit 22, Length 2
+                      (msg.VCFRONT_coolantLevel << 5) |     // Bit 21, Length 1
+                      (tempAmbient << 0);                   // Bit 24, Length 8
+  TESLA_321.data[4] = (tempAmbientFiltered << 0);           // Bit 40, Length 8
+  TESLA_321.data[5] = (msg.VCFRONT_washerFluidLevel << 6) | // Bit 32, Length 2
                       (msg.VCFRONT_battSensorIrrational << 0);  // Bit 48, Length 1
-  TESLA_321.data[4] = (msg.VCFRONT_ptSensorIrrational << 1);    // Bit 49, Length 1
+  TESLA_321.data[6] = (msg.VCFRONT_ptSensorIrrational << 1);    // Bit 49, Length 1
 }
 
 int main() {
