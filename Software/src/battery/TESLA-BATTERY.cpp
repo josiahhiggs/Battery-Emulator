@@ -317,13 +317,13 @@ int main() {
   TESLA_2D1_Struct msg;
 
   // Set the desired signal values
-  msg.vcleftOkToUseHighPower = 1; // 0 = false, 1 = true
-  msg.vcrightOkToUseHighPower = 1; // 0 = false, 1 = true
-  msg.das1OkToUseHighPower = 1; // 0 = false, 1 = true
-  msg.uiOkToUseHighPower = 1; // 0 = false, 1 = true
-  msg.uiAudioOkToUseHighPower = 1; // 0 = false, 1 = true
-  msg.cpOkToUseHighPower = 1; // 0 = false, 1 = true
-  msg.premAudioOkToUseHiPower = 0; // 0 = false, 1 = true
+  msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
+  msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
+  msg.das1OkToUseHighPower = 1;     // 0 = false, 1 = true
+  msg.uiOkToUseHighPower = 1;       // 0 = false, 1 = true
+  msg.uiAudioOkToUseHighPower = 1;  // 0 = false, 1 = true
+  msg.cpOkToUseHighPower = 1;       // 0 = false, 1 = true
+  msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
   // Update the CAN frame data based on the signal values
   update_CAN_frame(msg);
@@ -396,7 +396,8 @@ struct TESLA_3A1_Struct {
   float pcs12vVoltageTarget;      // Bit 16, Length 11 (0.01 scaling)
   uint8_t vehicleStatusCounter;   // Bit 52, Length 4
   uint8_t vehicleStatusChecksum;  // Bit 56, Length 8
-};;
+};
+;
 
 uint8_t calculateChecksum(TESLA_3A1_Struct& msg) {
   uint8_t checksum = 0;
@@ -666,34 +667,34 @@ struct TESLA_339_Struct {
 extern CAN_frame TESLA_339;
 
 void update_CAN_frame(TESLA_339_Struct msg) {
-  TESLA_339.data[0] = (msg.VCSEC_prsntRsnHighThresholdC << 0) |      // Bit 0, Length 1
-                      (msg.VCSEC_prsntRsnHighThresholdD << 1) |      // Bit 1, Length 1
-                      (msg.VCSEC_prsntRsnHighThresholdP << 2) |      // Bit 2, Length 1
-                      (msg.VCSEC_prsntRsnDeltaD << 3);               // Bit 3, Length 1
-  TESLA_339.data[1] = (msg.VCSEC_prsntRsnHighThresholdR << 4) |      // Bit 4, Length 1
-                      (msg.VCSEC_prsntRsnDeltaR << 5) |              // Bit 5, Length 1
-                      (msg.VCSEC_prsntRsnDeltaP << 6) |              // Bit 39, Length 1
-                      (msg.VCSEC_numberOfPubKeysOnWhitelist << 0);   // Bit 6, Length 5
-  TESLA_339.data[2] = (msg.VCSEC_vehicleLockStatus << 0) |           // Bit 12, Length 4
-                      (msg.VCSEC_lockRequestType << 4);              // Bit 24, Length 5
-  TESLA_339.data[3] = (msg.VCSEC_authenticationStatus << 0) |        // Bit 16, Length 2
-                      (msg.VCSEC_chargePortLockStatus << 2) |        // Bit 18, Length 1
-                      (msg.VCSEC_leftFrontLockStatus << 3) |         // Bit 19, Length 1
-                      (msg.VCSEC_leftRearLockStatus << 4) |          // Bit 20, Length 1
-                      (msg.VCSEC_trunkLockStatus << 5);              // Bit 23, Length 1
-  TESLA_339.data[4] = (msg.VCSEC_frunkRequest << 0) |                // Bit 34, Length 2
-                      (msg.VCSEC_MCUCommandType << 4);               // Bit 36, Length 3
-  TESLA_339.data[5] = (msg.VCSEC_lockIndicationRequest << 0) |       // Bit 51, Length 3
-                      (msg.VCSEC_immobilizerState << 3);             // Bit 48, Length 3
-  TESLA_339.data[6] = (msg.VCSEC_rightFrontLockStatus << 0) |        // Bit 21, Length 1
-                      (msg.VCSEC_rightRearLockStatus << 1) |         // Bit 22, Length 1
-                      (msg.VCSEC_simpleLockStatus << 4);             // Bit 54, Length 2
-  TESLA_339.data[7] = (msg.VCSEC_summonRequest << 1) |               // Bit 29, Length 3
-                      (msg.VCSEC_alarmStatus << 3) |                 // Bit 43, Length 4
-                      (msg.VCSEC_keyChannelIndexed << 0) |           // Bit 56, Length 4
-                      (msg.VCSEC_usingModifiedMACAddress << 5) |     // Bit 40, Length 1
-                      (msg.VCSEC_authRequested << 0) |               // Bit 60, Length 1
-                      (msg.VCSEC_trunkRequest << 6);                 // Bit 32, Length 2
+  TESLA_339.data[0] = (msg.VCSEC_prsntRsnHighThresholdC << 0) |     // Bit 0, Length 1
+                      (msg.VCSEC_prsntRsnHighThresholdD << 1) |     // Bit 1, Length 1
+                      (msg.VCSEC_prsntRsnHighThresholdP << 2) |     // Bit 2, Length 1
+                      (msg.VCSEC_prsntRsnDeltaD << 3);              // Bit 3, Length 1
+  TESLA_339.data[1] = (msg.VCSEC_prsntRsnHighThresholdR << 4) |     // Bit 4, Length 1
+                      (msg.VCSEC_prsntRsnDeltaR << 5) |             // Bit 5, Length 1
+                      (msg.VCSEC_prsntRsnDeltaP << 6) |             // Bit 39, Length 1
+                      (msg.VCSEC_numberOfPubKeysOnWhitelist << 0);  // Bit 6, Length 5
+  TESLA_339.data[2] = (msg.VCSEC_vehicleLockStatus << 0) |          // Bit 12, Length 4
+                      (msg.VCSEC_lockRequestType << 4);             // Bit 24, Length 5
+  TESLA_339.data[3] = (msg.VCSEC_authenticationStatus << 0) |       // Bit 16, Length 2
+                      (msg.VCSEC_chargePortLockStatus << 2) |       // Bit 18, Length 1
+                      (msg.VCSEC_leftFrontLockStatus << 3) |        // Bit 19, Length 1
+                      (msg.VCSEC_leftRearLockStatus << 4) |         // Bit 20, Length 1
+                      (msg.VCSEC_trunkLockStatus << 5);             // Bit 23, Length 1
+  TESLA_339.data[4] = (msg.VCSEC_frunkRequest << 0) |               // Bit 34, Length 2
+                      (msg.VCSEC_MCUCommandType << 4);              // Bit 36, Length 3
+  TESLA_339.data[5] = (msg.VCSEC_lockIndicationRequest << 0) |      // Bit 51, Length 3
+                      (msg.VCSEC_immobilizerState << 3);            // Bit 48, Length 3
+  TESLA_339.data[6] = (msg.VCSEC_rightFrontLockStatus << 0) |       // Bit 21, Length 1
+                      (msg.VCSEC_rightRearLockStatus << 1) |        // Bit 22, Length 1
+                      (msg.VCSEC_simpleLockStatus << 4);            // Bit 54, Length 2
+  TESLA_339.data[7] = (msg.VCSEC_summonRequest << 1) |              // Bit 29, Length 3
+                      (msg.VCSEC_alarmStatus << 3) |                // Bit 43, Length 4
+                      (msg.VCSEC_keyChannelIndexed << 0) |          // Bit 56, Length 4
+                      (msg.VCSEC_usingModifiedMACAddress << 5) |    // Bit 40, Length 1
+                      (msg.VCSEC_authRequested << 0) |              // Bit 60, Length 1
+                      (msg.VCSEC_trunkRequest << 6);                // Bit 32, Length 2
 }
 
 int main() {
@@ -767,13 +768,13 @@ void update_CAN_frame(TESLA_321_Struct msg) {
   TESLA_321.data[1] = ((tempCoolantBatInlet >> 8) & 0x03) |  // Bit 10, Length 11
                       (tempCoolantPTInlet << 2);
   TESLA_321.data[2] = ((tempCoolantPTInlet >> 6) & 0xFF);
-  TESLA_321.data[3] = (tempAmbient << 0) |                   // Bit 24, Length 8
-                      (msg.VCFRONT_coolantLevel << 5) |      // Bit 21, Length 1
-                      (msg.VCFRONT_brakeFluidLevel << 6);    // Bit 22, Length 2
-  TESLA_321.data[4] = (tempAmbientFiltered << 0);            // Bit 40, Length 8
+  TESLA_321.data[3] = (tempAmbient << 0) |                       // Bit 24, Length 8
+                      (msg.VCFRONT_coolantLevel << 5) |          // Bit 21, Length 1
+                      (msg.VCFRONT_brakeFluidLevel << 6);        // Bit 22, Length 2
+  TESLA_321.data[4] = (tempAmbientFiltered << 0);                // Bit 40, Length 8
   TESLA_321.data[5] = (msg.VCFRONT_battSensorIrrational << 0) |  // Bit 48, Length 1
-                      (msg.VCFRONT_washerFluidLevel << 6);        // Bit 32, Length 2
-  TESLA_321.data[6] = (msg.VCFRONT_ptSensorIrrational << 1);      // Bit 49, Length 1
+                      (msg.VCFRONT_washerFluidLevel << 6);       // Bit 32, Length 2
+  TESLA_321.data[6] = (msg.VCFRONT_ptSensorIrrational << 1);     // Bit 49, Length 1
 }
 
 int main() {
