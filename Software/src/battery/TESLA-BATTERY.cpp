@@ -8,11 +8,11 @@
 /* Do not change code below unless you are sure what you are doing */
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
-static unsigned long previousMillis10 = 0;   // will store last time a 50ms CAN Message was send
-static unsigned long previousMillis50 = 0;   // will store last time a 50ms CAN Message was send
-static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN Message was send
-static unsigned long previousMillis500 = 0;  // will store last time a 500ms CAN Message was send
-static unsigned long previousMillis1000 = 0; // will store last time a 1000ms CAN Message was send
+static unsigned long previousMillis10 = 0;    // will store last time a 50ms CAN Message was send
+static unsigned long previousMillis50 = 0;    // will store last time a 50ms CAN Message was send
+static unsigned long previousMillis100 = 0;   // will store last time a 100ms CAN Message was send
+static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was send
+static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was send
 
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
@@ -2679,50 +2679,50 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     previousMillis1000 = currentMillis;
     transmit_can_frame(&TESLA_321, can_config.battery);
   }
-  
+
   if (stateMachineClearIsolationFault != 0xFF) {
     //This implementation should be rewritten to actually replying to the UDS replied sent by the BMS
     //While this may work, it is not the correct way to implement this clearing logic
     switch (stateMachineClearIsolationFault) {
       case 0:
-          TESLA_602.data = {0x02, 0x27, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00};
-          transmit_can_frame(&TESLA_602, can_config.battery);
-          stateMachineClearIsolationFault = 1;
-          break;
+        TESLA_602.data = {0x02, 0x27, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00};
+        transmit_can_frame(&TESLA_602, can_config.battery);
+        stateMachineClearIsolationFault = 1;
+        break;
       case 1:
-          TESLA_602.data = {0x30, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00};
-          transmit_can_frame(&TESLA_602, can_config.battery);
-          // BMS should reply 02 50 C0 FF FF FF FF FF
-          stateMachineClearIsolationFault = 2;
-          break;
+        TESLA_602.data = {0x30, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00};
+        transmit_can_frame(&TESLA_602, can_config.battery);
+        // BMS should reply 02 50 C0 FF FF FF FF FF
+        stateMachineClearIsolationFault = 2;
+        break;
       case 2:
-          TESLA_602.data = {0x10, 0x12, 0x27, 0x06, 0x35, 0x34, 0x37, 0x36};
-          transmit_can_frame(&TESLA_602, can_config.battery);
-          // BMS should reply 7E FF FF FF FF FF FF
-          stateMachineClearIsolationFault = 3;
-          break;
+        TESLA_602.data = {0x10, 0x12, 0x27, 0x06, 0x35, 0x34, 0x37, 0x36};
+        transmit_can_frame(&TESLA_602, can_config.battery);
+        // BMS should reply 7E FF FF FF FF FF FF
+        stateMachineClearIsolationFault = 3;
+        break;
       case 3:
-          TESLA_602.data = {0x21, 0x31, 0x30, 0x33, 0x32, 0x3D, 0x3C, 0x3F};
-          transmit_can_frame(&TESLA_602, can_config.battery);
-          stateMachineClearIsolationFault = 4;
-          break;
+        TESLA_602.data = {0x21, 0x31, 0x30, 0x33, 0x32, 0x3D, 0x3C, 0x3F};
+        transmit_can_frame(&TESLA_602, can_config.battery);
+        stateMachineClearIsolationFault = 4;
+        break;
       case 4:
-          TESLA_602.data = {0x22, 0x3E, 0x39, 0x38, 0x3B, 0x3A, 0x00, 0x00};
-          transmit_can_frame(&TESLA_602, can_config.battery);
-          stateMachineClearIsolationFault = 5;
-          break;
+        TESLA_602.data = {0x22, 0x3E, 0x39, 0x38, 0x3B, 0x3A, 0x00, 0x00};
+        transmit_can_frame(&TESLA_602, can_config.battery);
+        stateMachineClearIsolationFault = 5;
+        break;
       case 5:
-          TESLA_602.data = {0x04, 0x31, 0x01, 0x04, 0x0A, 0x00, 0x00, 0x00};
-          transmit_can_frame(&TESLA_602, can_config.battery);
-          stateMachineClearIsolationFault = 0xFF;
-          break;
+        TESLA_602.data = {0x04, 0x31, 0x01, 0x04, 0x0A, 0x00, 0x00, 0x00};
+        transmit_can_frame(&TESLA_602, can_config.battery);
+        stateMachineClearIsolationFault = 0xFF;
+        break;
       default:
-          //Something went wrong. Reset all and cancel
-          stateMachineClearIsolationFault = 0xFF;
-          break;
-      }
+        //Something went wrong. Reset all and cancel
+        stateMachineClearIsolationFault = 0xFF;
+        break;
     }
   }
+}
 }
 
 void print_int_with_units(char* header, int value, char* units) {
