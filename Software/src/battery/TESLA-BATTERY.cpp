@@ -11,6 +11,8 @@
 static unsigned long previousMillis10 = 0;   // will store last time a 50ms CAN Message was send
 static unsigned long previousMillis50 = 0;   // will store last time a 50ms CAN Message was send
 static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN Message was send
+static unsigned long previousMillis500 = 0;  // will store last time a 500ms CAN Message was send
+static unsigned long previousMillis1000 = 0; // will store last time a 1000ms CAN Message was send
 
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
@@ -2593,6 +2595,14 @@ to cause "hv_up_for_drive" I send an additional 221 message 0x61, 0x15, 0x01, 0x
 two 221 messages are being continuously transmitted.   When I want to shut down, I stop the second message and only send 
 the first, for a few cycles, then stop all  messages which causes the contactor to open. */
 
+  const unsigned long INTERVAL_10_MS = 10;
+  const unsigned long INTERVAL_50_MS = 50;
+  const unsigned long INTERVAL_100_MS = 100;
+  const unsigned long INTERVAL_500_MS = 500;
+  const unsigned long INTERVAL_1000_MS = 1000;
+  const unsigned long INTERVAL_50_MS_DELAYED = 100;
+  const unsigned long BOOTUP_TIME = 1000;
+
   unsigned long currentMillis = millis();
 
   if (!cellvoltagesRead) {
@@ -2623,8 +2633,7 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
   //Send 10ms message
   if (currentMillis - previousMillis10 >= INTERVAL_10_MS) {
     previousMillis10 = currentMillis;
-
-    transmit_can_frame(&TESLA_129, can_config.battery);
+    transmit_can_frame();
   }
 
   //Send 50ms message
@@ -2640,8 +2649,7 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     if ((datalayer.system.status.inverter_allows_contactor_closing == true) &&
         (datalayer.battery.status.bms_status != FAULT)) {
       sendContactorClosingMessagesStill = 300;
-      transmit_can_frame(&TESLA_221_1, can_config.battery);
-      transmit_can_frame(&TESLA_221_2, can_config.battery);
+      transmit_can_frame(&TESLA_221, can_config.battery);
     } else {  // Faulted state, or inverter blocks contactor closing
       if (sendContactorClosingMessagesStill > 0) {
         transmit_can_frame(&TESLA_221_1, can_config.battery);
@@ -2650,58 +2658,65 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     }
   }
 
-  //Send 100ms message
+  // Send CAN message every 100 miliseconds
   if (currentMillis - previousMillis100 >= INTERVAL_100_MS) {
     previousMillis100 = currentMillis;
 
-    transmit_can_frame(&TESLA_129, can_config.battery);
-    transmit_can_frame(&TESLA_241, can_config.battery);
-    transmit_can_frame(&TESLA_242, can_config.battery);
-    if (alternate243) {
-      transmit_can_frame(&TESLA_243_1, can_config.battery);
-      alternate243 = false;
-    } else {
-      transmit_can_frame(&TESLA_243_2, can_config.battery);
-      alternate243 = true;
-    }
+    transmit_can_frame(&TESLA_1F9, can_config.battery);
+    transmit_can_frame(&TESLA_2D1, can_config.battery);
+    transmit_can_frame(&TESLA_339, can_config.battery);
+    transmit_can_frame(&TESLA_3A1, can_config.battery);
+  }
 
-    if (stateMachineClearIsolationFault != 0xFF) {
-      //This implementation should be rewritten to actually replying to the UDS replied sent by the BMS
-      //While this may work, it is not the correct way to implement this clearing logic
-      switch (stateMachineClearIsolationFault) {
-        case 0:
+  // Send CAN message every 500 miliseconds
+  if (currentMillis - previousMillis500 >= INTERVAL_500_MS) {
+    previousMillis500 = currentMillis;
+    transmit_can_frame(&TESLA_333, can_config.battery);
+  }
+
+  // Send CAN message every 1 second
+  if (currentMillis - previousMillis1000 >= INTERVAL_1000_MS) {
+    previousMillis1000 = currentMillis;
+    transmit_can_frame(&TESLA_321, can_config.battery);
+  }
+  
+  if (stateMachineClearIsolationFault != 0xFF) {
+    //This implementation should be rewritten to actually replying to the UDS replied sent by the BMS
+    //While this may work, it is not the correct way to implement this clearing logic
+    switch (stateMachineClearIsolationFault) {
+      case 0:
           TESLA_602.data = {0x02, 0x27, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00};
           transmit_can_frame(&TESLA_602, can_config.battery);
           stateMachineClearIsolationFault = 1;
           break;
-        case 1:
+      case 1:
           TESLA_602.data = {0x30, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00};
           transmit_can_frame(&TESLA_602, can_config.battery);
           // BMS should reply 02 50 C0 FF FF FF FF FF
           stateMachineClearIsolationFault = 2;
           break;
-        case 2:
+      case 2:
           TESLA_602.data = {0x10, 0x12, 0x27, 0x06, 0x35, 0x34, 0x37, 0x36};
           transmit_can_frame(&TESLA_602, can_config.battery);
           // BMS should reply 7E FF FF FF FF FF FF
           stateMachineClearIsolationFault = 3;
           break;
-        case 3:
+      case 3:
           TESLA_602.data = {0x21, 0x31, 0x30, 0x33, 0x32, 0x3D, 0x3C, 0x3F};
           transmit_can_frame(&TESLA_602, can_config.battery);
           stateMachineClearIsolationFault = 4;
           break;
-        case 4:
+      case 4:
           TESLA_602.data = {0x22, 0x3E, 0x39, 0x38, 0x3B, 0x3A, 0x00, 0x00};
           transmit_can_frame(&TESLA_602, can_config.battery);
           stateMachineClearIsolationFault = 5;
           break;
-        case 5:
+      case 5:
           TESLA_602.data = {0x04, 0x31, 0x01, 0x04, 0x0A, 0x00, 0x00, 0x00};
           transmit_can_frame(&TESLA_602, can_config.battery);
           stateMachineClearIsolationFault = 0xFF;
           break;
-        default:
+      default:
           //Something went wrong. Reset all and cancel
           stateMachineClearIsolationFault = 0xFF;
           break;
