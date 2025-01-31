@@ -197,7 +197,7 @@ while (true) {
   // Add a delay to simulate the cycle time (e.g., 50ms)
   delay(50);
 }
-}
+
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
 CAN_frame TESLA_2D1 = {.FD = false,
@@ -254,7 +254,7 @@ if (!printed) {
 
   printed = true;
 }
-}
+
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
 //BO_ 929 VCFRONT_vehicleStatus: 8 VEH
@@ -324,7 +324,7 @@ struct TESLA_3A1_Struct {
   uint8_t vehicleStatusCounter;   // Bit 52, Length 4
   uint8_t vehicleStatusChecksum;  // Bit 56, Length 8
 };
-;
+
 
 uint8_t calculateChecksum(TESLA_3A1_Struct& msg) {
   uint8_t checksum = 0;
@@ -435,7 +435,7 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-}
+
 
 // 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
 // BO_ 819 UI_chargeRequest: 4 VEH
@@ -495,7 +495,7 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-}
+
 
 // 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
 //BO_ 505 VCSEC_requests: 1 VEH
@@ -539,7 +539,7 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-}
+
 
 // 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
 //BO_ 825 VCSEC_authentication: 8 VEH
@@ -693,7 +693,7 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-}
+
 
 // 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
 //BO_ 801 VCFRONT_sensors: 8 VEH
@@ -777,7 +777,7 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-}
+
 
 CAN_frame TESLA_602 = {.FD = false,
                        .ext_ID = false,
@@ -2635,7 +2635,7 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
       transmit_can_frame(&TESLA_221, can_config.battery);
     } else {  // Faulted state, or inverter blocks contactor closing
       if (sendContactorClosingMessagesStill > 0) {
-        transmit_can_frame(&TESLA_221_1, can_config.battery);
+        transmit_can_frame(&TESLA_221, can_config.battery);
         sendContactorClosingMessagesStill--;
       }
     }
