@@ -239,15 +239,15 @@ CAN_frame TESLA_2D1 = {.FD = false,
                        .data = {0x00, 0x00}};  // 7F 01 is a common message
 
 // Define the Message struct
-struct Message {
-  int vcleftOkToUseHighPower;
-  int vcrightOkToUseHighPower;
-  int das1OkToUseHighPower;
-  int das2OkToUseHighPower;
-  int uiOkToUseHighPower;
-  int uiAudioOkToUseHighPower;
-  int cpOkToUseHighPower;
-  int premAudioOkToUseHiPower;
+struct TESLA_2D1_Struct {
+  uint8_t vcleftOkToUseHighPower;
+  uint8_t vcrightOkToUseHighPower;
+  uint8_t das1OkToUseHighPower;
+  uint8_t das2OkToUseHighPower;
+  uint8_t uiOkToUseHighPower;
+  uint8_t uiAudioOkToUseHighPower;
+  uint8_t cpOkToUseHighPower;
+  uint8_t premAudioOkToUseHiPower;
 };
 
 // Declare an instance of Message
