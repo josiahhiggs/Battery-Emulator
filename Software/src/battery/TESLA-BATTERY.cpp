@@ -222,23 +222,36 @@ void process_CAN_frames() {
 }
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
+//BO_ 721 VCFRONT_okToUseHighPower: 2 VEH
+ //SG_ VCFRONT_cpOkToUseHighPower : 6|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_das1OkToUseHighPower : 2|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_das2OkToUseHighPower : 3|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_premAudioOkToUseHiPower : 7|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_uiAudioOkToUseHighPower : 5|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_uiOkToUseHighPower : 4|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_vcleftOkToUseHighPower : 0|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_vcrightOkToUseHighPower : 1|1@1+ (1,0) [0|0] ""  X
+
 CAN_frame TESLA_2D1 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 2,
                        .ID = 0x2D1,
                        .data = {0x00, 0x00}};  // 7F 01 is a common message
 
-// Define the structure for the signals
-struct TESLA_2D1_Struct {
-  bool vcleftOkToUseHighPower;
-  bool vcrightOkToUseHighPower;
-  bool das1OkToUseHighPower;
-  bool das2OkToUseHighPower;
-  bool uiOkToUseHighPower;
-  bool uiAudioOkToUseHighPower;
-  bool cpOkToUseHighPower;
-  bool premAudioOkToUseHiPower;
+// Define the Message struct
+struct Message {
+    int vcleftOkToUseHighPower;
+    int vcrightOkToUseHighPower;
+    int das1OkToUseHighPower;
+    int das2OkToUseHighPower;
+    int uiOkToUseHighPower;
+    int uiAudioOkToUseHighPower;
+    int cpOkToUseHighPower;
+    int premAudioOkToUseHiPower;
 };
+
+// Declare an instance of Message
+Message msg;
 
 // Function to update the CAN frame data based on the TESLA_2D1_Struct
 void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
@@ -249,33 +262,32 @@ void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
   TESLA_2D1.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
-// Create an instance of TESLA_2D1_Struct
-TESLA_2D1_Struct msg;
+void update_values_battery() {
+  // Set the desired signal values
+  msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
+  msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
+  msg.das1OkToUseHighPower = 1;     // 0 = false, 1 = true
+  msg.das2OkToUseHighPower = 1;     // 0 = false, 1 = true
+  msg.uiOkToUseHighPower = 1;       // 0 = false, 1 = true
+  msg.uiAudioOkToUseHighPower = 1;  // 0 = false, 1 = true
+  msg.cpOkToUseHighPower = 1;       // 0 = false, 1 = true
+  msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
-// Set the desired signal values
-msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
-msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
-msg.das1OkToUseHighPower = 1;     // 0 = false, 1 = true
-msg.das2OkToUseHighPower = 1;     // 0 = false, 1 = true
-msg.uiOkToUseHighPower = 1;       // 0 = false, 1 = true
-msg.uiAudioOkToUseHighPower = 1;  // 0 = false, 1 = true
-msg.cpOkToUseHighPower = 1;       // 0 = false, 1 = true
-msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
+  // Update the CAN frame data based on the signal values
+  update_CAN_frame_2D1(msg);
 
-// Update the CAN frame data based on the signal values
-update_CAN_frame(msg);
+  // Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 2; ++i) {
+      Serial.print(TESLA_2D1.data.u8[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
 
-// Serial print the updated CAN frame data once and not continue
-static bool printed = false;
-if (!printed) {
-  Serial.print("Updated CAN frame data: ");
-  for (int i = 0; i < 2; ++i) {
-    Serial.print(TESLA_2D1.data.u8[i], HEX);
-    Serial.print(" ");
+    printed = true;
   }
-  Serial.println();
-
-  printed = true;
 }
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
