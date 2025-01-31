@@ -114,8 +114,8 @@ struct TESLA_221_Struct {
   uint8_t hvcLVRequest;
   uint8_t tasLVState;
   uint8_t pcsLVState;
-  uint8_t VCFRONT_LVPowerStateCounter;  // Counter
-  uint8_t VCFRONT_LVPowerStateChecksum; // Checksum
+  uint8_t VCFRONT_LVPowerStateCounter;   // Counter
+  uint8_t VCFRONT_LVPowerStateChecksum;  // Checksum
 };
 
 uint8_t calculate_checksum(const uint8_t* data, size_t length) {
@@ -223,10 +223,10 @@ void process_CAN_frames() {
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
 CAN_frame TESLA_2D1 = {.FD = false,
-             .ext_ID = false,
-             .DLC = 2,
-             .ID = 0x2D1,
-             .data = {0x00, 0x00}};  // 7F 01 is a common message
+                       .ext_ID = false,
+                       .DLC = 2,
+                       .ID = 0x2D1,
+                       .data = {0x00, 0x00}};  // 7F 01 is a common message
 
 // Define the structure for the signals
 struct TESLA_2D1_Struct {
@@ -243,9 +243,9 @@ struct TESLA_2D1_Struct {
 // Function to update the CAN frame data based on the TESLA_2D1_Struct
 void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
   TESLA_2D1.data.u8[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
-             (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) |
-             (msg.uiOkToUseHighPower << 4) | (msg.uiAudioOkToUseHighPower << 5) |
-             (msg.cpOkToUseHighPower << 6) | (msg.premAudioOkToUseHiPower << 7);
+                         (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) |
+                         (msg.uiOkToUseHighPower << 4) | (msg.uiAudioOkToUseHighPower << 5) |
+                         (msg.cpOkToUseHighPower << 6) | (msg.premAudioOkToUseHiPower << 7);
   TESLA_2D1.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
@@ -270,8 +270,8 @@ static bool printed = false;
 if (!printed) {
   Serial.print("Updated CAN frame data: ");
   for (int i = 0; i < 2; ++i) {
-  Serial.print(TESLA_2D1.data.u8[i], HEX);
-  Serial.print(" ");
+    Serial.print(TESLA_2D1.data.u8[i], HEX);
+    Serial.print(" ");
   }
   Serial.println();
 
@@ -316,10 +316,10 @@ if (!printed) {
 //VAL_ 929 VCFRONT_pcsEFuseVoltage 1023 "SNA" ;
 
 CAN_frame TESLA_3A1 = {.FD = false,
-             .ext_ID = false,
-             .DLC = 8,
-             .ID = 0x3A1,
-             .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+                       .ext_ID = false,
+                       .DLC = 8,
+                       .ID = 0x3A1,
+                       .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 struct TESLA_3A1_Struct {
   bool bmsHvChargeEnable;         // Bit 0, Length 1
@@ -351,7 +351,7 @@ uint8_t calculateChecksum(TESLA_3A1_Struct& msg) {
   uint8_t checksum = 0;
   uint8_t* data = (uint8_t*)&msg;
   for (int i = 0; i < sizeof(msg) - 2; i++) {
-  checksum += data[i];
+    checksum += data[i];
   }
   return checksum;
 }
@@ -363,57 +363,61 @@ uint8_t calculateCounter() {
 
 void update_CAN_frame_3A1(TESLA_3A1_Struct msg) {
   TESLA_3A1.data.u8[0] = (msg.bmsHvChargeEnable << 0) |       // Bit 0, Length 1
-             (msg.preconditionRequest << 1) |     // Bit 1, Length 1
-             (msg.APGlassHeaterState << 2);       // Bit 2, Length 3
+                         (msg.preconditionRequest << 1) |     // Bit 1, Length 1
+                         (msg.APGlassHeaterState << 2);       // Bit 2, Length 3
   TESLA_3A1.data.u8[1] = (msg.LVLoadRequest << 1) |           // Bit 9, Length 1
-             (msg.diPowerOnState << 2);           // Bit 10, Length 3
+                         (msg.diPowerOnState << 2);           // Bit 10, Length 3
   TESLA_3A1.data.u8[2] = (msg.driverIsLeavingAnySpeed << 5);  // Bit 13, Length 1
   TESLA_3A1.data.u8[3] = (msg.statusForDrive << 6) |          // Bit 14, Length 2
-             (msg.batterySupportRequest << 3) |   // Bit 27, Length 1
-             (msg.driverIsLeaving << 4) |         // Bit 28, Length 1
-             (msg.ota12VSupportRequest << 5) |    // Bit 29, Length 1
-             (msg.driverBuckleStatus << 6) |      // Bit 30, Length 1
-             (msg.driverDoorStatus << 7);         // Bit 31, Length 1
+                         (msg.batterySupportRequest << 3) |   // Bit 27, Length 1
+                         (msg.driverIsLeaving << 4) |         // Bit 28, Length 1
+                         (msg.ota12VSupportRequest << 5) |    // Bit 29, Length 1
+                         (msg.driverBuckleStatus << 6) |      // Bit 30, Length 1
+                         (msg.driverDoorStatus << 7);         // Bit 31, Length 1
   TESLA_3A1.data.u8[4] = (msg.driverUnbuckled << 0) |         // Bit 32, Length 2
-             (msg.passengerUnbuckled << 2) |      // Bit 34, Length 2
-             (msg.rowLeftUnbuckled << 4) |        // Bit 36, Length 2
-             (msg.rowCenterUnbuckled << 6);       // Bit 38, Length 2
-  TESLA_3A1.data.u8[5] = (msg.rowRightUnbuckled << 0) |       // Bit 40, Length 2
-             ((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF) >> 2;  // Bit 42, Length 10 (split across data[5] and data[6])
-  TESLA_3A1.data.u8[6] = (((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF) << 6) |  // Bit 42, Length 10 (split across data[5] and data[6])
-             ((uint16_t)(msg.pcs12vVoltageTarget * 100) & 0xFF);       // Bit 16, Length 11 (split across data[6] and data[7])
-  TESLA_3A1.data.u8[7] = (((uint16_t)(msg.pcs12vVoltageTarget * 100) >> 8) & 0x07) |  // Bit 27, Length 11 (split across data[6] and data[7])
-             (msg.standbySupplySupported << 3) |  // Bit 6, Length 1
-             (msg.thermalSystemType << 4) |       // Bit 5, Length 1
-             (msg.vehicleStatusCounter << 4) |    // Bit 52, Length 4
-             (msg.vehicleStatusChecksum << 0);    // Bit 56, Length 8
+                         (msg.passengerUnbuckled << 2) |      // Bit 34, Length 2
+                         (msg.rowLeftUnbuckled << 4) |        // Bit 36, Length 2
+                         (msg.rowCenterUnbuckled << 6);       // Bit 38, Length 2
+  TESLA_3A1.data.u8[5] =
+      (msg.rowRightUnbuckled << 0) |                         // Bit 40, Length 2
+      ((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF) >> 2;  // Bit 42, Length 10 (split across data[5] and data[6])
+  TESLA_3A1.data.u8[6] =
+      (((uint16_t)(msg.pcsEFuseVoltage * 10) & 0x03FF) << 6) |  // Bit 42, Length 10 (split across data[5] and data[6])
+      ((uint16_t)(msg.pcs12vVoltageTarget * 100) & 0xFF);       // Bit 16, Length 11 (split across data[6] and data[7])
+  TESLA_3A1.data.u8[7] = (((uint16_t)(msg.pcs12vVoltageTarget * 100) >> 8) &
+                          0x07) |                             // Bit 27, Length 11 (split across data[6] and data[7])
+                         (msg.standbySupplySupported << 3) |  // Bit 6, Length 1
+                         (msg.thermalSystemType << 4) |       // Bit 5, Length 1
+                         (msg.vehicleStatusCounter << 4) |    // Bit 52, Length 4
+                         (msg.vehicleStatusChecksum << 0);    // Bit 56, Length 8
 }
 
 TESLA_3A1_Struct msg;
 // Set the desired signal values
-msg.statusForDrive = 1;     // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
-msg.rowCenterUnbuckled = 0;   // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-msg.rowLeftUnbuckled = 0;     // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-msg.rowRightUnbuckled = 0;    // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.statusForDrive = 1;         // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
+msg.rowCenterUnbuckled = 0;     // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.rowLeftUnbuckled = 0;       // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.rowRightUnbuckled = 0;      // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
 msg.APGlassHeaterState = 2;     // SNA = 0, ON = 1, OFF = 2, OFF_UNAVAILABLE = 3, FAULT = 4
 msg.LVLoadRequest = 1;          // true = 1, false = 0
 msg.batterySupportRequest = 0;  // true = 1, false = 0
 msg.bmsHvChargeEnable = 0;      // true = 1, false = 0
-msg.diPowerOnState = 0;  // POWERED_OFF = 0, POWERED_ON_FOR_POST_RUN = 1, POWERED_ON_FOR_STATIONARY_HEAT = 2, POWERED_ON_FOR_DRIVE = 3, POWER_GOING_DOWN = 4
-msg.driverBuckleStatus = 0;       // UNBUCKLED = 0, BUCKLED = 1
-msg.driverDoorStatus = 0;         // OPEN = 0, CLOSED = 1
-msg.driverIsLeaving = 0;          // true = 1, false = 0
-msg.driverIsLeavingAnySpeed = 0;  // true = 1, false = 0
-msg.driverUnbuckled = 0;          // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-msg.ota12VSupportRequest = 0;     // true = 1, false = 0
-msg.passengerUnbuckled = 0;       // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-msg.pcs12vVoltageTarget = 13.5;   // enter value in Volts (e.g. 13.5V)
-msg.pcsEFuseVoltage = 13.0;       // enter value in Volts (e.g. 13.0V)
-msg.preconditionRequest = 0;      // true = 1, false = 0
-msg.standbySupplySupported = 0;   // true = 1, false = 0
-msg.thermalSystemType = 0;        // true = 1, false = 0
-msg.vehicleStatusChecksum = calculateChecksum(msg);    // calculate checksum
-msg.vehicleStatusCounter = calculateCounter();     // calculate counter
+msg.diPowerOnState =
+    0;  // POWERED_OFF = 0, POWERED_ON_FOR_POST_RUN = 1, POWERED_ON_FOR_STATIONARY_HEAT = 2, POWERED_ON_FOR_DRIVE = 3, POWER_GOING_DOWN = 4
+msg.driverBuckleStatus = 0;                          // UNBUCKLED = 0, BUCKLED = 1
+msg.driverDoorStatus = 0;                            // OPEN = 0, CLOSED = 1
+msg.driverIsLeaving = 0;                             // true = 1, false = 0
+msg.driverIsLeavingAnySpeed = 0;                     // true = 1, false = 0
+msg.driverUnbuckled = 0;                             // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.ota12VSupportRequest = 0;                        // true = 1, false = 0
+msg.passengerUnbuckled = 0;                          // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.pcs12vVoltageTarget = 13.5;                      // enter value in Volts (e.g. 13.5V)
+msg.pcsEFuseVoltage = 13.0;                          // enter value in Volts (e.g. 13.0V)
+msg.preconditionRequest = 0;                         // true = 1, false = 0
+msg.standbySupplySupported = 0;                      // true = 1, false = 0
+msg.thermalSystemType = 0;                           // true = 1, false = 0
+msg.vehicleStatusChecksum = calculateChecksum(msg);  // calculate checksum
+msg.vehicleStatusCounter = calculateCounter();       // calculate counter
 
 update_CAN_frame(msg);
 
@@ -422,8 +426,8 @@ static bool printed = false;
 if (!printed) {
   Serial.print("Updated CAN frame data: ");
   for (int i = 0; i < 8; ++i) {
-  Serial.print(TESLA_3A1.data.u8[i], HEX);
-  Serial.print(" ");
+    Serial.print(TESLA_3A1.data.u8[i], HEX);
+    Serial.print(" ");
   }
   Serial.println();
   printed = true;
@@ -439,10 +443,10 @@ if (!printed) {
 // VAL_ 819 UI_acChargeCurrentLimit 127 "SNA" ;
 
 CAN_frame TESLA_333 = {.FD = false,
-             .ext_ID = false,
-             .DLC = 5,
-             .ID = 0x333,
-             .data = {0x84, 0x90, 0xE8, 0x07, 0x00}};  // 500ms ID819 UI_chargeRequest
+                       .ext_ID = false,
+                       .DLC = 5,
+                       .ID = 0x333,
+                       .data = {0x84, 0x90, 0xE8, 0x07, 0x00}};  // 500ms ID819 UI_chargeRequest
 
 struct TESLA_333_Struct {
   uint8_t UI_openChargePortDoorRequest;
@@ -454,11 +458,11 @@ struct TESLA_333_Struct {
 
 void update_CAN_frame_333(TESLA_333_Struct msg) {
   TESLA_333.data.u8[0] = (msg.UI_openChargePortDoorRequest << 0) |   // Bit 0, Length 1
-             (msg.UI_closeChargePortDoorRequest << 1) |  // Bit 1, Length 1
-             (msg.UI_chargeEnableRequest << 2) |         // Bit 2, Length 1
-             0x80;                                       // Set bit 7 to 1
+                         (msg.UI_closeChargePortDoorRequest << 1) |  // Bit 1, Length 1
+                         (msg.UI_chargeEnableRequest << 2) |         // Bit 2, Length 1
+                         0x80;                                       // Set bit 7 to 1
   TESLA_333.data.u8[1] =
-    (msg.UI_acChargeCurrentLimit << 1) | 0x10;  // Bit 8, Length 7 (shift left by 1) and set bit 4 to 1
+      (msg.UI_acChargeCurrentLimit << 1) | 0x10;  // Bit 8, Length 7 (shift left by 1) and set bit 4 to 1
   uint16_t chargeTerminationPct = msg.UI_chargeTerminationPct * 10;  // Apply factor
   TESLA_333.data.u8[2] = (chargeTerminationPct & 0xFF);       // Bit 16, Length 10 (split across data[2] and data[3])
   TESLA_333.data.u8[3] = (chargeTerminationPct >> 8) & 0x07;  // Bit 16, Length 10 (split across data[2] and data[3])
@@ -481,8 +485,8 @@ static bool printed = false;
 if (!printed) {
   Serial.print("Updated CAN frame data: ");
   for (int i = 0; i < 8; ++i) {
-  Serial.print(TESLA_333.data.u8[i], HEX);
-  Serial.print(" ");
+    Serial.print(TESLA_333.data.u8[i], HEX);
+    Serial.print(" ");
   }
   Serial.println();
   printed = true;
@@ -496,10 +500,10 @@ if (!printed) {
 //VAL_ 505 VCSEC_driveAttemptedWithoutAuth 0 "No" 1 "Yes" ;
 
 CAN_frame TESLA_1F9 = {.FD = false,
-             .ext_ID = false,
-             .DLC = 1,
-             .ID = 0x1F9,
-             .data = {0x00}};  // 100ms ID505 VCSEC_requests
+                       .ext_ID = false,
+                       .DLC = 1,
+                       .ID = 0x1F9,
+                       .data = {0x00}};  // 100ms ID505 VCSEC_requests
 
 struct TESLA_1F9_Struct {
   uint8_t VCSEC_chargePortRequest;
@@ -508,7 +512,7 @@ struct TESLA_1F9_Struct {
 
 void update_CAN_frame_1F9(TESLA_1F9_Struct msg) {
   TESLA_1F9.data.u8[0] = (msg.VCSEC_chargePortRequest & 0x03) |                // Bit 0-1, Length 2
-             ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2);  // Bit 2, Length 1
+                         ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2);  // Bit 2, Length 1
 }
 
 TESLA_1F9_Struct msg;
@@ -524,8 +528,8 @@ static bool printed = false;
 if (!printed) {
   Serial.print("Updated CAN frame data: ");
   for (int i = 0; i < 1; ++i) {
-  Serial.print(TESLA_1F9.data.u8[i], HEX);
-  Serial.print(" ");
+    Serial.print(TESLA_1F9.data.u8[i], HEX);
+    Serial.print(" ");
   }
   Serial.println();
   printed = true;
@@ -581,10 +585,10 @@ if (!printed) {
 //VAL_ 825 VCSEC_vehicleLockStatus 0 "SNA" 1 "ACTIVE_NFC_UNLOCKED" 2 "ACTIVE_NFC_LOCKED" 3 "PASSIVE_SELECTIVE_UNLOCKED" 4 "PASSIVE_BLE_UNLOCKED" 5 "PASSIVE_BLE_LOCKED" 6 "ACTIVE_SELECTIVE_UNLOCKED" 7 "ACTIVE_BLE_UNLOCKED" 8 "ACTIVE_BLE_LOCKED" 9 "ACTIVE_UI_UNLOCKED" 10 "ACTIVE_UI_LOCKED" 11 "ACTIVE_REMOTE_UNLOCKED" 12 "ACTIVE_REMOTE_LOCKED" 13 "CRASH_UNLOCKED" 14 "PASSIVE_INTERNAL_UNLOCKED" 15 "PASSIVE_INTERNAL_LOCKED" ;
 
 CAN_frame TESLA_339 = {.FD = false,
-             .ext_ID = false,
-             .DLC = 8,
-             .ID = 0x339,
-             .data = {0x5C, 0x41, 0x02, 0x00, 0x00, 0x03, 0x40, 0x03}};
+                       .ext_ID = false,
+                       .DLC = 8,
+                       .ID = 0x339,
+                       .data = {0x5C, 0x41, 0x02, 0x00, 0x00, 0x03, 0x40, 0x03}};
 
 struct TESLA_339_Struct {
   uint8_t VCSEC_prsntRsnHighThresholdC;
@@ -619,53 +623,53 @@ struct TESLA_339_Struct {
 
 void update_CAN_frame_339(TESLA_339_Struct msg) {
   TESLA_339.data.u8[0] = (msg.VCSEC_prsntRsnHighThresholdC << 0) |     // Bit 0, Length 1
-             (msg.VCSEC_prsntRsnHighThresholdD << 1) |     // Bit 1, Length 1
-             (msg.VCSEC_prsntRsnHighThresholdP << 2) |     // Bit 2, Length 1
-             (msg.VCSEC_prsntRsnDeltaD << 3);              // Bit 3, Length 1
+                         (msg.VCSEC_prsntRsnHighThresholdD << 1) |     // Bit 1, Length 1
+                         (msg.VCSEC_prsntRsnHighThresholdP << 2) |     // Bit 2, Length 1
+                         (msg.VCSEC_prsntRsnDeltaD << 3);              // Bit 3, Length 1
   TESLA_339.data.u8[1] = (msg.VCSEC_prsntRsnHighThresholdR << 4) |     // Bit 4, Length 1
-             (msg.VCSEC_prsntRsnDeltaR << 5) |             // Bit 5, Length 1
-             (msg.VCSEC_prsntRsnDeltaP << 6) |             // Bit 39, Length 1
-             (msg.VCSEC_numberOfPubKeysOnWhitelist << 0);  // Bit 6, Length 5
+                         (msg.VCSEC_prsntRsnDeltaR << 5) |             // Bit 5, Length 1
+                         (msg.VCSEC_prsntRsnDeltaP << 6) |             // Bit 39, Length 1
+                         (msg.VCSEC_numberOfPubKeysOnWhitelist << 0);  // Bit 6, Length 5
   TESLA_339.data.u8[2] = (msg.VCSEC_vehicleLockStatus << 0) |          // Bit 12, Length 4
-             (msg.VCSEC_lockRequestType << 4);             // Bit 24, Length 5
+                         (msg.VCSEC_lockRequestType << 4);             // Bit 24, Length 5
   TESLA_339.data.u8[3] = (msg.VCSEC_authenticationStatus << 0) |       // Bit 16, Length 2
-             (msg.VCSEC_chargePortLockStatus << 2) |       // Bit 18, Length 1
-             (msg.VCSEC_leftFrontLockStatus << 3) |        // Bit 19, Length 1
-             (msg.VCSEC_leftRearLockStatus << 4) |         // Bit 20, Length 1
-             (msg.VCSEC_trunkLockStatus << 5);             // Bit 23, Length 1
+                         (msg.VCSEC_chargePortLockStatus << 2) |       // Bit 18, Length 1
+                         (msg.VCSEC_leftFrontLockStatus << 3) |        // Bit 19, Length 1
+                         (msg.VCSEC_leftRearLockStatus << 4) |         // Bit 20, Length 1
+                         (msg.VCSEC_trunkLockStatus << 5);             // Bit 23, Length 1
   TESLA_339.data.u8[4] = (msg.VCSEC_frunkRequest << 0) |               // Bit 34, Length 2
-             (msg.VCSEC_MCUCommandType << 4);              // Bit 36, Length 3
+                         (msg.VCSEC_MCUCommandType << 4);              // Bit 36, Length 3
   TESLA_339.data.u8[5] = (msg.VCSEC_lockIndicationRequest << 0) |      // Bit 51, Length 3
-             (msg.VCSEC_immobilizerState << 3);            // Bit 48, Length 3
+                         (msg.VCSEC_immobilizerState << 3);            // Bit 48, Length 3
   TESLA_339.data.u8[6] = (msg.VCSEC_rightFrontLockStatus << 0) |       // Bit 21, Length 1
-             (msg.VCSEC_rightRearLockStatus << 1) |        // Bit 22, Length 1
-             (msg.VCSEC_simpleLockStatus << 4);            // Bit 54, Length 2
+                         (msg.VCSEC_rightRearLockStatus << 1) |        // Bit 22, Length 1
+                         (msg.VCSEC_simpleLockStatus << 4);            // Bit 54, Length 2
   TESLA_339.data.u8[7] = (msg.VCSEC_summonRequest << 1) |              // Bit 29, Length 3
-             (msg.VCSEC_alarmStatus << 3) |                // Bit 43, Length 4
-             (msg.VCSEC_keyChannelIndexed << 0) |          // Bit 56, Length 4
-             (msg.VCSEC_usingModifiedMACAddress << 5) |    // Bit 40, Length 1
-             (msg.VCSEC_authRequested << 0) |              // Bit 60, Length 1
-             (msg.VCSEC_trunkRequest << 6);                // Bit 32, Length 2
+                         (msg.VCSEC_alarmStatus << 3) |                // Bit 43, Length 4
+                         (msg.VCSEC_keyChannelIndexed << 0) |          // Bit 56, Length 4
+                         (msg.VCSEC_usingModifiedMACAddress << 5) |    // Bit 40, Length 1
+                         (msg.VCSEC_authRequested << 0) |              // Bit 60, Length 1
+                         (msg.VCSEC_trunkRequest << 6);                // Bit 32, Length 2
 }
 
 TESLA_339_Struct msg;
 // Set the desired signal values
 msg.VCSEC_MCUCommandType =
-  1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
+    1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
 msg.VCSEC_alarmStatus =
-  1;  // 0 = DISARMED, 1 = ARMED, 2 = PARTIAL_ARMED, 3 = TRIGGERED_FLASH_ACTIVE, 4 = ERROR, 5 = TRIGGERED_FLASH_INACTIVE, 6 = IMMINENT, 7 = DEFAULT, 15 = SNA
+    1;  // 0 = DISARMED, 1 = ARMED, 2 = PARTIAL_ARMED, 3 = TRIGGERED_FLASH_ACTIVE, 4 = ERROR, 5 = TRIGGERED_FLASH_INACTIVE, 6 = IMMINENT, 7 = DEFAULT, 15 = SNA
 msg.VCSEC_authRequested = 0;         // 0 = No, 1 = Yes
 msg.VCSEC_authenticationStatus = 1;  // 0 = NONE, 1 = AUTHENTICATED_FOR_UNLOCK, 2 = AUTHENTICATED_FOR_DRIVE
 msg.VCSEC_chargePortLockStatus = 0;  // 0 = UNLOCKED, 1 = LOCKED
 msg.VCSEC_frunkRequest = 0;          // 0 = NONE, 1 = OPEN, 2 = SNA
 msg.VCSEC_immobilizerState =
-  0;  // 0 = IDLE, 1 = PREPARE, 2 = ENCRYPT_BEGIN, 3 = ENCRYPT, 4 = SEND_AUTH_RESPONSE, 5 = SEND_NO_GO_AUTH_RESPONSE
+    0;  // 0 = IDLE, 1 = PREPARE, 2 = ENCRYPT_BEGIN, 3 = ENCRYPT, 4 = SEND_AUTH_RESPONSE, 5 = SEND_NO_GO_AUTH_RESPONSE
 msg.VCSEC_keyChannelIndexed = 15;     // 15 = SNA
 msg.VCSEC_leftFrontLockStatus = 0;    // 0 = UNLOCKED, 1 = LOCKED
 msg.VCSEC_leftRearLockStatus = 0;     // 0 = UNLOCKED, 1 = LOCKED
 msg.VCSEC_lockIndicationRequest = 0;  // 0 = NONE_SNA, 1 = SINGLE, 2 = DOUBLE, 3 = TRIPLE, 4 = HOLD
 msg.VCSEC_lockRequestType =
-  0;  // 0 = NONE, 1 = PASSIVE_SHIFT_TO_P_UNLOCK, 2 = PASSIVE_PARKBUTTON_UNLOCK, 3 = PASSIVE_INTERNAL_HANDLE_UNLOCK, 4 = PASSIVE_DRIVE_AWAY
+    0;  // 0 = NONE, 1 = PASSIVE_SHIFT_TO_P_UNLOCK, 2 = PASSIVE_PARKBUTTON_UNLOCK, 3 = PASSIVE_INTERNAL_HANDLE_UNLOCK, 4 = PASSIVE_DRIVE_AWAY
 
 // Update the CAN frame with the signal values
 update_CAN_frame(msg);
@@ -675,8 +679,8 @@ static bool printed = false;
 if (!printed) {
   Serial.print("Updated CAN frame data: ");
   for (int i = 0; i < 8; ++i) {
-  Serial.print(TESLA_339.data.u8[i], HEX);
-  Serial.print(" ");
+    Serial.print(TESLA_339.data.u8[i], HEX);
+    Serial.print(" ");
   }
   Serial.println();
   printed = true;
@@ -701,10 +705,10 @@ if (!printed) {
 //VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
 
 CAN_frame TESLA_321 = {.FD = false,
-       .ext_ID = false,
-       .DLC = 8,
-       .ID = 0x321,
-       .data = {0xE6, 0x95, 0xA7, 0x70, 0x02, 0x6A, 0xF0, 0x12}};
+                       .ext_ID = false,
+                       .DLC = 8,
+                       .ID = 0x321,
+                       .data = {0xE6, 0x95, 0xA7, 0x70, 0x02, 0x6A, 0xF0, 0x12}};
 
 struct TESLA_321_Struct {
   uint8_t VCFRONT_battSensorIrrational;
@@ -726,14 +730,14 @@ void update_CAN_frame_321(TESLA_321_Struct msg) {
 
   TESLA_321.data.u8[0] = (tempCoolantBatInlet & 0xFF);          // Bit 0, Length 10
   TESLA_321.data.u8[1] = ((tempCoolantBatInlet >> 8) & 0x03) |  // Bit 10, Length 2
-       (tempCoolantPTInlet << 2);
+                         (tempCoolantPTInlet << 2);
   TESLA_321.data.u8[2] = ((tempCoolantPTInlet >> 6) & 0xFF);
   TESLA_321.data.u8[3] = (tempAmbient << 0) |                       // Bit 24, Length 8
-       (msg.VCFRONT_coolantLevel << 5) |          // Bit 21, Length 1
-       (msg.VCFRONT_brakeFluidLevel << 6);        // Bit 22, Length 2
+                         (msg.VCFRONT_coolantLevel << 5) |          // Bit 21, Length 1
+                         (msg.VCFRONT_brakeFluidLevel << 6);        // Bit 22, Length 2
   TESLA_321.data.u8[4] = (tempAmbientFiltered << 0);                // Bit 40, Length 8
   TESLA_321.data.u8[5] = (msg.VCFRONT_battSensorIrrational << 0) |  // Bit 48, Length 1
-       (msg.VCFRONT_washerFluidLevel << 6);       // Bit 32, Length 2
+                         (msg.VCFRONT_washerFluidLevel << 6);       // Bit 32, Length 2
   TESLA_321.data.u8[6] = (msg.VCFRONT_ptSensorIrrational << 1);     // Bit 49, Length 1
 }
 
@@ -757,8 +761,8 @@ static bool printed = false;
 if (!printed) {
   Serial.print("Updated CAN frame data: ");
   for (int i = 0; i < 8; ++i) {
-  Serial.print(TESLA_321.data.u8[i], HEX);
-  Serial.print(" ");
+    Serial.print(TESLA_321.data.u8[i], HEX);
+    Serial.print(" ");
   }
   Serial.println();
   printed = true;
@@ -1993,8 +1997,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                            rx_frame.data.u8[0]);  //0|16@1+ (0.01,0) [0|655.35] "kW"  //Example 4715 * 0.01 = 47.15kW
       BMS_maxDischargePower =
           ((rx_frame.data.u8[3] << 8) |
-           rx_frame.data.u8
-               [2]);  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
+           rx_frame.data.u8[2]);  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
       BMS_maxStationaryHeatPower =
           (((rx_frame.data.u8[5] & 0x03) << 8) |
            rx_frame.data.u8[4]);  //32|10@1+ (0.01,0) [0|10.23] "kW"  //Example 500 * 0.01 = 5kW
