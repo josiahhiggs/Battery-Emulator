@@ -198,7 +198,6 @@ while (true) {
   delay(50);
 }
 
-
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
 CAN_frame TESLA_2D1 = {.FD = false,
                        .ext_ID = false,
@@ -254,7 +253,6 @@ if (!printed) {
 
   printed = true;
 }
-
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
 //BO_ 929 VCFRONT_vehicleStatus: 8 VEH
@@ -324,7 +322,6 @@ struct TESLA_3A1_Struct {
   uint8_t vehicleStatusCounter;   // Bit 52, Length 4
   uint8_t vehicleStatusChecksum;  // Bit 56, Length 8
 };
-
 
 uint8_t calculateChecksum(TESLA_3A1_Struct& msg) {
   uint8_t checksum = 0;
@@ -436,7 +433,6 @@ if (!printed) {
   printed = true;
 }
 
-
 // 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
 // BO_ 819 UI_chargeRequest: 4 VEH
 // SG_ UI_acChargeCurrentLimit : 8|7@1+ (1,0) [0|0] "A"  X
@@ -496,7 +492,6 @@ if (!printed) {
   printed = true;
 }
 
-
 // 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
 //BO_ 505 VCSEC_requests: 1 VEH
 //SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
@@ -539,7 +534,6 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-
 
 // 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
 //BO_ 825 VCSEC_authentication: 8 VEH
@@ -694,7 +688,6 @@ if (!printed) {
   printed = true;
 }
 
-
 // 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
 //BO_ 801 VCFRONT_sensors: 8 VEH
 // SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
@@ -777,7 +770,6 @@ if (!printed) {
   Serial.println();
   printed = true;
 }
-
 
 CAN_frame TESLA_602 = {.FD = false,
                        .ext_ID = false,
