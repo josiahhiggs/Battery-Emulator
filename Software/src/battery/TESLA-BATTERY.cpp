@@ -14,7 +14,6 @@ static unsigned long previousMillis100 = 0;   // will store last time a 100ms CA
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was send
 static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was send
 
-
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
@@ -134,71 +133,70 @@ void update_CAN_frame(TESLA_221_Struct msg) {
   TESLA_221.data.u8[7] = (msg.hvcLVRequest << 0) | (msg.tasLVState << 2) | (msg.pcsLVState << 4);
 }
 
+TESLA_221_Struct msg;
+bool mux0 = true;
+bool printed_mux0 = false;
+bool printed_mux1 = false;
 
-  TESLA_221_Struct msg;
-  bool mux0 = true;
-  bool printed_mux0 = false;
-  bool printed_mux1 = false;
+while (true) {
+  // Alternate between mux0 and mux1
+  msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
+  msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
+  msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tpmsLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.rcmLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.iBoosterLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tunerLVRequest = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.amplifierLVRequest = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.das1HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.das2HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.diLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.disLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpFrontLVState = 0;                   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
 
-  while (true) {
-    // Alternate between mux0 and mux1
-    msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
-    msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
-    msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.tpmsLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.rcmLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.iBoosterLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.tunerLVRequest = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.amplifierLVRequest = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.das1HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.das2HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.diLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.disLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.oilPumpFrontLVState = 0;                   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  // Update the CAN frame data based on the signal values
+  update_CAN_frame(msg);
 
-    // Update the CAN frame data based on the signal values
-    update_CAN_frame(msg);
-
-    // Serial print the updated CAN frame data once for mux0 and once for mux1
-    if (mux0 && !printed_mux0) {
-      Serial.print("Updated CAN frame data for mux0: ");
-      for (int i = 0; i < 8; ++i) {
-        Serial.print(TESLA_221.data.u8[i], HEX);
-        Serial.print(" ");
-      }
-      Serial.println();
-      printed_mux0 = true;
-      mux0 = false;  // Switch to mux1
-    } else if (!mux0 && !printed_mux1) {
-      Serial.print("Updated CAN frame data for mux1: ");
-      for (int i = 0; i < 8; ++i) {
-        Serial.print(TESLA_221.data.u8[i], HEX);
-        Serial.print(" ");
-      }
-      Serial.println();
-      printed_mux1 = true;
-      break;  // Exit the loop after printing mux1
+  // Serial print the updated CAN frame data once for mux0 and once for mux1
+  if (mux0 && !printed_mux0) {
+    Serial.print("Updated CAN frame data for mux0: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_221.data.u8[i], HEX);
+      Serial.print(" ");
     }
-
-    // Add a delay to simulate the cycle time (e.g., 50ms)
-    delay(50);
+    Serial.println();
+    printed_mux0 = true;
+    mux0 = false;  // Switch to mux1
+  } else if (!mux0 && !printed_mux1) {
+    Serial.print("Updated CAN frame data for mux1: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_221.data.u8[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed_mux1 = true;
+    break;  // Exit the loop after printing mux1
   }
+
+  // Add a delay to simulate the cycle time (e.g., 50ms)
+  delay(50);
+}
 }
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
