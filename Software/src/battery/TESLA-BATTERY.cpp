@@ -228,7 +228,7 @@ void update_CAN_frame(TESLA_2D1_Struct msg) {
   TESLA_2D1.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
-int main() {
+
   // Create an instance of TESLA_2D1_Struct
   TESLA_2D1_Struct msg;
 
@@ -397,7 +397,7 @@ enum VCFRONT_driverDoorStatus { OPEN = 0, CLOSED = 1 };
 
 enum VCFRONT_driverUnbuckled { UNBUCKLED = 0, BUCKLED = 1 };
 
-int main() {
+
   TESLA_3A1_Struct msg;
   // Set the desired signal values
   msg._12vStatusForDrive = 1;     // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
@@ -476,7 +476,7 @@ void update_CAN_frame(TESLA_333_Struct msg) {
   TESLA_333.data.u8[3] |= 0xE0;                               // Set bits 5, 6, and 7 to 1
 }
 
-int main() {
+
   TESLA_333_Struct msg;
   // Set the desired signal values
   msg.UI_openChargePortDoorRequest = 0;   // 0 = No, 1 = Yes
@@ -524,7 +524,7 @@ void update_CAN_frame(TESLA_1F9_Struct msg) {
                          ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2);  // Bit 2, Length 1
 }
 
-int main() {
+
   TESLA_1F9_Struct msg;
   // Set the desired signal values
   msg.VCSEC_chargePortRequest = 2;          // 0 = NONE, 1 = OPEN, 2 = CLOSE, 3 = SNA
@@ -665,7 +665,7 @@ void update_CAN_frame(TESLA_339_Struct msg) {
                          (msg.VCSEC_trunkRequest << 6);                // Bit 32, Length 2
 }
 
-int main() {
+
   TESLA_339_Struct msg;
   // Set the desired signal values
   msg.VCSEC_MCUCommandType =
@@ -757,7 +757,7 @@ void update_CAN_frame(TESLA_321_Struct msg) {
   TESLA_321.data.u8[6] = (msg.VCFRONT_ptSensorIrrational << 1);     // Bit 49, Length 1
 }
 
-int main() {
+
   TESLA_321_Struct msg;
   // Set the desired signal values
   msg.VCFRONT_battSensorIrrational = 0;    // 0 = No, 1 = Yes
