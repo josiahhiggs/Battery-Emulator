@@ -223,14 +223,14 @@ void process_CAN_frames() {
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
 //BO_ 721 VCFRONT_okToUseHighPower: 2 VEH
- //SG_ VCFRONT_cpOkToUseHighPower : 6|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_das1OkToUseHighPower : 2|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_das2OkToUseHighPower : 3|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_premAudioOkToUseHiPower : 7|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_uiAudioOkToUseHighPower : 5|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_uiOkToUseHighPower : 4|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_vcleftOkToUseHighPower : 0|1@1+ (1,0) [0|0] ""  X
- //SG_ VCFRONT_vcrightOkToUseHighPower : 1|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_cpOkToUseHighPower : 6|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_das1OkToUseHighPower : 2|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_das2OkToUseHighPower : 3|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_premAudioOkToUseHiPower : 7|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_uiAudioOkToUseHighPower : 5|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_uiOkToUseHighPower : 4|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_vcleftOkToUseHighPower : 0|1@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_vcrightOkToUseHighPower : 1|1@1+ (1,0) [0|0] ""  X
 
 CAN_frame TESLA_2D1 = {.FD = false,
                        .ext_ID = false,
@@ -240,14 +240,14 @@ CAN_frame TESLA_2D1 = {.FD = false,
 
 // Define the Message struct
 struct Message {
-    int vcleftOkToUseHighPower;
-    int vcrightOkToUseHighPower;
-    int das1OkToUseHighPower;
-    int das2OkToUseHighPower;
-    int uiOkToUseHighPower;
-    int uiAudioOkToUseHighPower;
-    int cpOkToUseHighPower;
-    int premAudioOkToUseHiPower;
+  int vcleftOkToUseHighPower;
+  int vcrightOkToUseHighPower;
+  int das1OkToUseHighPower;
+  int das2OkToUseHighPower;
+  int uiOkToUseHighPower;
+  int uiAudioOkToUseHighPower;
+  int cpOkToUseHighPower;
+  int premAudioOkToUseHiPower;
 };
 
 // Declare an instance of Message
