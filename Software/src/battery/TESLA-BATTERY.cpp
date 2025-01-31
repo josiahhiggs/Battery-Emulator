@@ -14,6 +14,7 @@ static unsigned long previousMillis100 = 0;   // will store last time a 100ms CA
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was send
 static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was send
 
+
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
@@ -133,7 +134,7 @@ void update_CAN_frame(TESLA_221_Struct msg) {
   TESLA_221.data.u8[7] = (msg.hvcLVRequest << 0) | (msg.tasLVState << 2) | (msg.pcsLVState << 4);
 }
 
-int main() {
+
   TESLA_221_Struct msg;
   bool mux0 = true;
   bool printed_mux0 = false;
