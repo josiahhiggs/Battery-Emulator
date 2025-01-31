@@ -253,13 +253,25 @@ struct Message {
 // Declare an instance of Message
 Message msg;
 
+// Define the TESLA_2D1_Struct structure
+struct TESLA_2D1_Struct {
+  uint8_t vcleftOkToUseHighPower;
+  uint8_t vcrightOkToUseHighPower;
+  uint8_t das1OkToUseHighPower;
+  uint8_t das2OkToUseHighPower;
+  uint8_t uiOkToUseHighPower;
+  uint8_t uiAudioOkToUseHighPower;
+  uint8_t cpOkToUseHighPower;
+  uint8_t premAudioOkToUseHiPower;
+};
+
 // Function to update the CAN frame data based on the TESLA_2D1_Struct
 void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
-  TESLA_2D1.data.u8[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
-                         (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) |
-                         (msg.uiOkToUseHighPower << 4) | (msg.uiAudioOkToUseHighPower << 5) |
-                         (msg.cpOkToUseHighPower << 6) | (msg.premAudioOkToUseHiPower << 7);
-  TESLA_2D1.data.u8[1] = 0x01;  // No signals in data[1]
+  TESLA_2D1.data[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
+                      (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) |
+                      (msg.uiOkToUseHighPower << 4) | (msg.uiAudioOkToUseHighPower << 5) |
+                      (msg.cpOkToUseHighPower << 6) | (msg.premAudioOkToUseHiPower << 7);
+  TESLA_2D1.data[1] = 0x01;  // No signals in data[1]
 }
 
 void update_values_battery() {
@@ -274,14 +286,24 @@ void update_values_battery() {
   msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
   // Update the CAN frame data based on the signal values
-  update_CAN_frame_2D1(msg);
+  TESLA_2D1_Struct tesla_msg = {
+    .vcleftOkToUseHighPower = msg.vcleftOkToUseHighPower,
+    .vcrightOkToUseHighPower = msg.vcrightOkToUseHighPower,
+    .das1OkToUseHighPower = msg.das1OkToUseHighPower,
+    .das2OkToUseHighPower = msg.das2OkToUseHighPower,
+    .uiOkToUseHighPower = msg.uiOkToUseHighPower,
+    .uiAudioOkToUseHighPower = msg.uiAudioOkToUseHighPower,
+    .cpOkToUseHighPower = msg.cpOkToUseHighPower,
+    .premAudioOkToUseHiPower = msg.premAudioOkToUseHiPower
+  };
+  update_CAN_frame_2D1(tesla_msg);
 
   // Serial print the updated CAN frame data once and not continue
   static bool printed = false;
   if (!printed) {
     Serial.print("Updated CAN frame data: ");
     for (int i = 0; i < 2; ++i) {
-      Serial.print(TESLA_2D1.data.u8[i], HEX);
+      Serial.print(TESLA_2D1.data[i], HEX);
       Serial.print(" ");
     }
     Serial.println();
@@ -2009,7 +2031,8 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                            rx_frame.data.u8[0]);  //0|16@1+ (0.01,0) [0|655.35] "kW"  //Example 4715 * 0.01 = 47.15kW
       BMS_maxDischargePower =
           ((rx_frame.data.u8[3] << 8) |
-           rx_frame.data.u8[2]);  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
+           rx_frame.data.u8
+               [2]);  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
       BMS_maxStationaryHeatPower =
           (((rx_frame.data.u8[5] & 0x03) << 8) |
            rx_frame.data.u8[4]);  //32|10@1+ (0.01,0) [0|10.23] "kW"  //Example 500 * 0.01 = 5kW
