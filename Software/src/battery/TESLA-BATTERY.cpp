@@ -286,16 +286,14 @@ void update_values_battery() {
   msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
   // Update the CAN frame data based on the signal values
-  TESLA_2D1_Struct tesla_msg = {
-    .vcleftOkToUseHighPower = msg.vcleftOkToUseHighPower,
-    .vcrightOkToUseHighPower = msg.vcrightOkToUseHighPower,
-    .das1OkToUseHighPower = msg.das1OkToUseHighPower,
-    .das2OkToUseHighPower = msg.das2OkToUseHighPower,
-    .uiOkToUseHighPower = msg.uiOkToUseHighPower,
-    .uiAudioOkToUseHighPower = msg.uiAudioOkToUseHighPower,
-    .cpOkToUseHighPower = msg.cpOkToUseHighPower,
-    .premAudioOkToUseHiPower = msg.premAudioOkToUseHiPower
-  };
+  TESLA_2D1_Struct tesla_msg = {.vcleftOkToUseHighPower = msg.vcleftOkToUseHighPower,
+                                .vcrightOkToUseHighPower = msg.vcrightOkToUseHighPower,
+                                .das1OkToUseHighPower = msg.das1OkToUseHighPower,
+                                .das2OkToUseHighPower = msg.das2OkToUseHighPower,
+                                .uiOkToUseHighPower = msg.uiOkToUseHighPower,
+                                .uiAudioOkToUseHighPower = msg.uiAudioOkToUseHighPower,
+                                .cpOkToUseHighPower = msg.cpOkToUseHighPower,
+                                .premAudioOkToUseHiPower = msg.premAudioOkToUseHiPower};
   update_CAN_frame_2D1(tesla_msg);
 
   // Serial print the updated CAN frame data once and not continue
@@ -2031,8 +2029,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                            rx_frame.data.u8[0]);  //0|16@1+ (0.01,0) [0|655.35] "kW"  //Example 4715 * 0.01 = 47.15kW
       BMS_maxDischargePower =
           ((rx_frame.data.u8[3] << 8) |
-           rx_frame.data.u8
-               [2]);  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
+           rx_frame.data.u8[2]);  //16|16@1+ (0.013,0) [0|655.35] "kW"  //Example 2009 * 0.013 = 26.117???
       BMS_maxStationaryHeatPower =
           (((rx_frame.data.u8[5] & 0x03) << 8) |
            rx_frame.data.u8[4]);  //32|10@1+ (0.01,0) [0|10.23] "kW"  //Example 500 * 0.01 = 5kW
