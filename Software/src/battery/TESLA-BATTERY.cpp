@@ -175,9 +175,6 @@ void update_CAN_frame(TESLA_221_Struct& msg) {
     frame.data[2] |= (msg.VCFRONT_tasLVState & 0x03) << 6;
     frame.data[3] = (msg.VCFRONT_pcsLVState & 0x03) << 0;
   }
-
-  // Send the CAN frame
-  send_CAN_frame(frame);
 }
 
 enum VCFRONT_LVPowerStateIndex { MUX0 = 0, MUX1 = 1 };
@@ -246,42 +243,54 @@ int main() {
         msg.VCFRONT_LVPowerStateIndex = MUX0;
 
         // Set the desired signal values for MUX0
-        msg.VCFRONT_parkLVState = 1;              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_espLVState = 1;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_radcLVState = 1;              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_hvacCompLVState = 1;          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_ptcLVRequest = 1;             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_sccmLVRequest = 1;            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_tpmsLVRequest = 1;            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_rcmLVRequest = 1;             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_iBoosterLVState = 1;          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_tunerLVRequest = 1;           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_amplifierLVRequest = 1;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_das1HighCurrentLVState = 1;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_das2HighCurrentLVState = 1;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_diLVRequest = 1;              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_disLVState = 1;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_oilPumpFrontLVState = 1;      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_oilPumpRearLVRequest = 1;     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_ocsLVRequest = 1;             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_vcleftHiCurrentLVState = 1;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_vcrightHiCurrentLVState = 1;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_uiHiCurrentLVState = 1;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_uiAudioLVState = 1;           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_parkLVState = 0;              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_espLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_radcLVState = 0;              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_hvacCompLVState = 0;          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_ptcLVRequest = 0;             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_sccmLVRequest = 0;            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_tpmsLVRequest = 0;            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_rcmLVRequest = 0;             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_iBoosterLVState = 0;          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_tunerLVRequest = 0;           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_amplifierLVRequest = 0;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_das1HighCurrentLVState = 0;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_das2HighCurrentLVState = 0;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_diLVRequest = 0;              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_disLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_oilPumpFrontLVState = 0;      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_oilPumpRearLVRequest = 0;     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_ocsLVRequest = 0;             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_vcleftHiCurrentLVState = 0;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_vcrightHiCurrentLVState = 0;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_uiHiCurrentLVState = 0;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_uiAudioLVState = 0;           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
       } else {
         // Set the multiplexer index to MUX1
         msg.VCFRONT_LVPowerStateIndex = MUX1;
 
         // Set the desired signal values for MUX1
         msg.VCFRONT_cpLVRequest = 1;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_epasLVState = 1;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_hvcLVRequest = 1;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-        msg.VCFRONT_tasLVState = 1;    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_epasLVState = 0;   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_hvcLVRequest = 0;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+        msg.VCFRONT_tasLVState = 0;    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
         msg.VCFRONT_pcsLVState = 1;    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
       }
 
       // Update the CAN frame
       update_CAN_frame(msg);
+
+      // Serial print the updated CAN frame data once and not continue
+      static bool printed = false;
+      if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int j = 0; j < 8; ++j) {
+        Serial.print(frame.data[j], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+    
+    printed = true;
     }
   }
 }
@@ -329,6 +338,19 @@ int main() {
 
   // Update the CAN frame data based on the signal values
   update_CAN_frame(msg);
+
+  // Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 2; ++i) {
+      Serial.print(TESLA_2D1.data[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+
+    printed = true;
+  }
 }
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
@@ -499,6 +521,19 @@ int main() {
   msg.vehicleStatusCounter = 0;     // enter value (e.g. 0)
 
   update_CAN_frame(msg);
+
+  // Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_3A1.data[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed = true;
+  }
+
 }
 
 // 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
@@ -514,7 +549,7 @@ CAN_frame TESLA_333 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 5,
                        .ID = 0x333,
-                       .data = {0x84, 0x10, 0x0B, 0x06, 0x03}};  // 500ms ID819 UI_chargeRequest
+                       .data = {0x84, 0x90, 0xE8, 0x07, 0x00}};  // 500ms ID819 UI_chargeRequest
 
 struct TESLA_333_Struct {
   uint8_t UI_openChargePortDoorRequest;
@@ -527,24 +562,38 @@ struct TESLA_333_Struct {
 void update_CAN_frame(TESLA_333_Struct msg) {
   TESLA_333.data[0] = (msg.UI_openChargePortDoorRequest << 0) |   // Bit 0, Length 1
                       (msg.UI_closeChargePortDoorRequest << 1) |  // Bit 1, Length 1
-                      (msg.UI_chargeEnableRequest << 2);          // Bit 2, Length 1
-  TESLA_333.data[1] = (msg.UI_acChargeCurrentLimit << 0);         // Bit 8, Length 7
-  TESLA_333.data[2] = (msg.UI_chargeTerminationPct & 0xFF);  // Bit 16, Length 10 (split across data[2] and data[3])
-  TESLA_333.data[3] =
-      (msg.UI_chargeTerminationPct >> 8) & 0x03;  // Bit 16, Length 10 (split across data[2] and data[3])
+                      (msg.UI_chargeEnableRequest << 2) |         // Bit 2, Length 1
+                      0x80;                                       // Set bit 7 to 1
+  TESLA_333.data[1] = (msg.UI_acChargeCurrentLimit << 1) | 0x10;  // Bit 8, Length 7 (shift left by 1) and set bit 4 to 1
+  uint16_t chargeTerminationPct = msg.UI_chargeTerminationPct * 10; // Apply factor
+  TESLA_333.data[2] = (chargeTerminationPct & 0xFF);  // Bit 16, Length 10 (split across data[2] and data[3])
+  TESLA_333.data[3] = (chargeTerminationPct >> 8) & 0x07;  // Bit 16, Length 10 (split across data[2] and data[3])
+  TESLA_333.data[3] |= 0xE0;  // Set bits 5, 6, and 7 to 1
 }
 
 int main() {
   TESLA_333_Struct msg;
   // Set the desired signal values
-  msg.UI_openChargePortDoorRequest = 1;   // 0 = No, 1 = Yes
+  msg.UI_openChargePortDoorRequest = 0;   // 0 = No, 1 = Yes
   msg.UI_closeChargePortDoorRequest = 0;  // 0 = No, 1 = Yes
   msg.UI_chargeEnableRequest = 1;         // 0 = No, 1 = Yes
-  msg.UI_acChargeCurrentLimit = 50;       // Example value in Amps
-  msg.UI_chargeTerminationPct = 750;      // Example value (75.0%)
+  msg.UI_acChargeCurrentLimit = 16;       // Example value in Amps
+  msg.UI_chargeTerminationPct = 100;      // Example value (100.0%)
 
   // Update the CAN frame with the signal values
   update_CAN_frame(msg);
+
+  // Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_333.data[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed = true;
+  }
 }
 
 // 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
@@ -566,8 +615,8 @@ struct TESLA_1F9_Struct {
 };
 
 void update_CAN_frame(TESLA_1F9_Struct msg) {
-  TESLA_1F9.data[0] = (msg.VCSEC_chargePortRequest << 0) |         // Bit 0, Length 2
-                      (msg.VCSEC_driveAttemptedWithoutAuth << 2);  // Bit 2, Length 1
+  TESLA_1F9.data[0] = (msg.VCSEC_chargePortRequest & 0x03) |        // Bit 0-1, Length 2
+                      ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2);  // Bit 2, Length 1
 }
 
 int main() {
@@ -578,6 +627,18 @@ int main() {
 
   // Update the CAN frame with the signal values
   update_CAN_frame(msg);
+
+  //Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_1F9.data[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed = true;
+  }
 }
 
 // 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
@@ -721,6 +782,18 @@ int main() {
 
   // Update the CAN frame with the signal values
   update_CAN_frame(msg);
+
+  // Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_339.data[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed = true;
+  }
 }
 
 // 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
@@ -794,6 +867,18 @@ int main() {
 
   // Update the CAN frame with the signal values
   update_CAN_frame(msg);
+
+  // Serial print the updated CAN frame data once and not continue
+  static bool printed = false;
+  if (!printed) {
+    Serial.print("Updated CAN frame data: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_321.data[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed = true;
+  }
 }
 
 CAN_frame TESLA_602 = {.FD = false,
