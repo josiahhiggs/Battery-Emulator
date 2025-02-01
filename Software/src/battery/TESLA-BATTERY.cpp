@@ -8,11 +8,11 @@
 /* Do not change code below unless you are sure what you are doing */
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
-static unsigned long previousMillis10 = 0;    // will store last time a 50ms CAN Message was send
-static unsigned long previousMillis50 = 0;    // will store last time a 50ms CAN Message was send
-static unsigned long previousMillis100 = 0;   // will store last time a 100ms CAN Message was send
-static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was send
-static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was send
+static unsigned long previousMillis10 = 0;    // will store last time a 10ms CAN Message was sent
+static unsigned long previousMillis50 = 0;    // will store last time a 50ms CAN Message was sent
+static unsigned long previousMillis100 = 0;   // will store last time a 100ms CAN Message was sent
+static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was sent
+static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was sent
 
 // Define the Message struct
 struct Message {
@@ -255,13 +255,13 @@ struct TESLA_2D1_Struct {
   uint8_t premAudioOkToUseHiPower;
 };
 
-// Function to update the CAN frame data based on the TESLA_2D1_Struct
-void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
-  TESLA_2D1.data[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
-                      (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) |
-                      (msg.uiOkToUseHighPower << 4) | (msg.uiAudioOkToUseHighPower << 5) |
-                      (msg.cpOkToUseHighPower << 6) | (msg.premAudioOkToUseHiPower << 7);
-  TESLA_2D1.data[1] = 0x01;  // No signals in data[1]
+void update_CAN_frame_2D1(CAN_frame &frame, const TESLA_2D1_Struct &msg) {
+  // Function to update the CAN frame data based on the TESLA_2D1_Struct
+  frame.data[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
+                  (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) |
+                  (msg.uiOkToUseHighPower << 4) | (msg.uiAudioOkToUseHighPower << 5) |
+                  (msg.cpOkToUseHighPower << 6) | (msg.premAudioOkToUseHiPower << 7);
+  frame.data[1] = 0x01;  // No signals in data[1]
 }
 
 void update_values_battery() {
@@ -279,7 +279,7 @@ void update_values_battery() {
   msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
   // Update the CAN frame data based on the signal values
-  update_CAN_frame_2D1(msg);
+  update_CAN_frame_2D1(TESLA_2D1, msg);
 
   // Serial print the updated CAN frame data once and not continue
   static bool printed = false;
