@@ -137,8 +137,7 @@ bool mux0 = true;
 bool printed_mux0 = false;
 bool printed_mux1 = false;
 
-while (true) {
-  // Alternate between mux0 and mux1
+void initialize_msg(TESLA_221_Struct &msg, bool mux0) {
   msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
   msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
   msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
@@ -158,10 +157,16 @@ while (true) {
   msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
   msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
   msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+}
+
+while (true) {
+  initialize_msg(msg, mux0);
 
   // Update the counter and checksum
   msg.VCFRONT_LVPowerStateCounter++;
   msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
+  // ...existing code...
+}
 
   // Update the CAN frame data based on the signal values
   update_CAN_frame(TESLA_221, msg);
