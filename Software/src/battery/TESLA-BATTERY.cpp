@@ -252,9 +252,9 @@ struct TESLA_2D1_Struct {
 void update_CAN_frame_2D1(CAN_frame& frame, const TESLA_2D1_Struct& msg) {
   // Function to update the CAN frame data based on the TESLA_2D1_Struct
   frame.data.u8[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
-                  (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) | (msg.uiOkToUseHighPower << 4) |
-                  (msg.uiAudioOkToUseHighPower << 5) | (msg.cpOkToUseHighPower << 6) |
-                  (msg.premAudioOkToUseHiPower << 7);
+                     (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) | (msg.uiOkToUseHighPower << 4) |
+                     (msg.uiAudioOkToUseHighPower << 5) | (msg.cpOkToUseHighPower << 6) |
+                     (msg.premAudioOkToUseHiPower << 7);
   frame.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
