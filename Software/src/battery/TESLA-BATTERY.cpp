@@ -132,67 +132,67 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[7] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
-  TESLA_221_Struct msg;
-  bool mux0 = true;
-  bool printed_mux0 = false;
-  bool printed_mux1 = false;
+TESLA_221_Struct msg;
+bool mux0 = true;
+bool printed_mux0 = false;
+bool printed_mux1 = false;
 
-  while (true) {
-    // Alternate between mux0 and mux1
-    msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
-    msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
-    msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+while (true) {
+  // Alternate between mux0 and mux1
+  msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
+  msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
+  msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
 
-    // Update the counter and checksum
-    msg.VCFRONT_LVPowerStateCounter++;
-    msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
+  // Update the counter and checksum
+  msg.VCFRONT_LVPowerStateCounter++;
+  msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 
-    // Update the CAN frame data based on the signal values
-    update_CAN_frame(TESLA_221, msg);
+  // Update the CAN frame data based on the signal values
+  update_CAN_frame(TESLA_221, msg);
 
-    // Serial print the updated CAN frame data once for mux0 and once for mux1
-    if (mux0 && !printed_mux0) {
-      Serial.print("Updated CAN frame data for mux0: ");
-      for (int i = 0; i < 8; ++i) {
-        Serial.print(TESLA_221.data.u8[i], HEX);
-        Serial.print(" ");
-      }
-      Serial.println();
-      printed_mux0 = true;
-      mux0 = false;  // Switch to mux1
-    } else if (!mux0 && !printed_mux1) {
-      Serial.print("Updated CAN frame data for mux1: ");
-      for (int i = 0; i < 8; ++i) {
-        Serial.print(TESLA_221.data.u8[i], HEX);
-        Serial.print(" ");
-      }
-      Serial.println();
-      printed_mux1 = true;
-      break;  // Exit the loop after printing mux1
+  // Serial print the updated CAN frame data once for mux0 and once for mux1
+  if (mux0 && !printed_mux0) {
+    Serial.print("Updated CAN frame data for mux0: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_221.data.u8[i], HEX);
+      Serial.print(" ");
     }
-
-    // Add a delay to simulate the cycle time (e.g., 50ms)
-    delay(50);
-
-    // Toggle mux0 for the next cycle
-    mux0 = !mux0;
+    Serial.println();
+    printed_mux0 = true;
+    mux0 = false;  // Switch to mux1
+  } else if (!mux0 && !printed_mux1) {
+    Serial.print("Updated CAN frame data for mux1: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_221.data.u8[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed_mux1 = true;
+    break;  // Exit the loop after printing mux1
   }
+
+  // Add a delay to simulate the cycle time (e.g., 50ms)
+  delay(50);
+
+  // Toggle mux0 for the next cycle
+  mux0 = !mux0;
+}
 }
 
 // Implement the checksum calculation function
@@ -260,34 +260,34 @@ void update_CAN_frame_2D1(CAN_frame& frame, const TESLA_2D1_Struct& msg) {
   frame.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
-  // Declare the msg variable
-  TESLA_2D1_Struct msg;
+// Declare the msg variable
+TESLA_2D1_Struct msg;
 
-  // Set the desired signal values
-  msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
-  msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
-  msg.das1OkToUseHighPower = 1;     // 0 = false, 1 = true
-  msg.das2OkToUseHighPower = 1;     // 0 = false, 1 = true
-  msg.uiOkToUseHighPower = 1;       // 0 = false, 1 = true
-  msg.uiAudioOkToUseHighPower = 1;  // 0 = false, 1 = true
-  msg.cpOkToUseHighPower = 1;       // 0 = false, 1 = true
-  msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
+// Set the desired signal values
+msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
+msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
+msg.das1OkToUseHighPower = 1;     // 0 = false, 1 = true
+msg.das2OkToUseHighPower = 1;     // 0 = false, 1 = true
+msg.uiOkToUseHighPower = 1;       // 0 = false, 1 = true
+msg.uiAudioOkToUseHighPower = 1;  // 0 = false, 1 = true
+msg.cpOkToUseHighPower = 1;       // 0 = false, 1 = true
+msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
-  // Update the CAN frame data based on the signal values
-  update_CAN_frame(TESLA_2D1, msg);
+// Update the CAN frame data based on the signal values
+update_CAN_frame(TESLA_2D1, msg);
 
-  // Serial print the updated CAN frame data once and not continue
-  static bool printed = false;
-  if (!printed) {
-    Serial.print("Updated CAN frame data: ");
-    for (int i = 0; i < 2; ++i) {
-      Serial.print(TESLA_2D1.data.u8[i], HEX);
-      Serial.print(" ");
-    }
-    Serial.println();
-
-    printed = true;
+// Serial print the updated CAN frame data once and not continue
+static bool printed = false;
+if (!printed) {
+  Serial.print("Updated CAN frame data: ");
+  for (int i = 0; i < 2; ++i) {
+    Serial.print(TESLA_2D1.data.u8[i], HEX);
+    Serial.print(" ");
   }
+  Serial.println();
+
+  printed = true;
+}
 }
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
@@ -380,47 +380,47 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
                      (msg.thermalSystemType << 4) | (msg.vehicleStatusCounter << 4) | (msg.vehicleStatusChecksum << 0);
 }
 
-  // Declare the msg variable
-  TESLA_3A1_Struct msg;
+// Declare the msg variable
+TESLA_3A1_Struct msg;
 
-  // Set the desired signal values
-  msg.statusForDrive = 1;         // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
-  msg.rowCenterUnbuckled = 0;     // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.rowLeftUnbuckled = 0;       // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.rowRightUnbuckled = 0;      // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.APGlassHeaterState = 2;     // SNA = 0, ON = 1, OFF = 2, OFF_UNAVAILABLE = 3, FAULT = 4
-  msg.LVLoadRequest = 1;          // true = 1, false = 0
-  msg.batterySupportRequest = 0;  // true = 1, false = 0
-  msg.bmsHvChargeEnable = 0;      // true = 1, false = 0
-  msg.diPowerOnState =
-      0;  // POWERED_OFF = 0, POWERED_ON_FOR_POST_RUN = 1, POWERED_ON_FOR_STATIONARY_HEAT = 2, POWERED_ON_FOR_DRIVE = 3, POWER_GOING_DOWN = 4
-  msg.driverBuckleStatus = 0;                          // UNBUCKLED = 0, BUCKLED = 1
-  msg.driverDoorStatus = 1;                            // OPEN = 0, CLOSED = 1
-  msg.driverIsLeaving = 0;                             // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.driverIsLeavingAnySpeed = 0;                     // true = 1, false = 0
-  msg.ota12VSupportRequest = 0;                        // true = 1, false = 0
-  msg.driverUnbuckled = 0;                             // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.passengerUnbuckled = 0;                          // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.pcsEFuseVoltage = 0;                             // SNA = 1023
-  msg.pcs12vVoltageTarget = 0;                         // SNA = 0
-  msg.standbySupplySupported = 0;                      // true = 1, false = 0
-  msg.thermalSystemType = 0;                           // true = 1, false = 0
-  msg.vehicleStatusCounter = calculateCounter();       // Counter
-  msg.vehicleStatusChecksum = calculateChecksum(msg);  // Checksum
+// Set the desired signal values
+msg.statusForDrive = 1;         // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
+msg.rowCenterUnbuckled = 0;     // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.rowLeftUnbuckled = 0;       // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.rowRightUnbuckled = 0;      // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.APGlassHeaterState = 2;     // SNA = 0, ON = 1, OFF = 2, OFF_UNAVAILABLE = 3, FAULT = 4
+msg.LVLoadRequest = 1;          // true = 1, false = 0
+msg.batterySupportRequest = 0;  // true = 1, false = 0
+msg.bmsHvChargeEnable = 0;      // true = 1, false = 0
+msg.diPowerOnState =
+    0;  // POWERED_OFF = 0, POWERED_ON_FOR_POST_RUN = 1, POWERED_ON_FOR_STATIONARY_HEAT = 2, POWERED_ON_FOR_DRIVE = 3, POWER_GOING_DOWN = 4
+msg.driverBuckleStatus = 0;                          // UNBUCKLED = 0, BUCKLED = 1
+msg.driverDoorStatus = 1;                            // OPEN = 0, CLOSED = 1
+msg.driverIsLeaving = 0;                             // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.driverIsLeavingAnySpeed = 0;                     // true = 1, false = 0
+msg.ota12VSupportRequest = 0;                        // true = 1, false = 0
+msg.driverUnbuckled = 0;                             // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.passengerUnbuckled = 0;                          // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
+msg.pcsEFuseVoltage = 0;                             // SNA = 1023
+msg.pcs12vVoltageTarget = 0;                         // SNA = 0
+msg.standbySupplySupported = 0;                      // true = 1, false = 0
+msg.thermalSystemType = 0;                           // true = 1, false = 0
+msg.vehicleStatusCounter = calculateCounter();       // Counter
+msg.vehicleStatusChecksum = calculateChecksum(msg);  // Checksum
 
-  update_CAN_frame(TESLA_3A1, msg);
+update_CAN_frame(TESLA_3A1, msg);
 
-  // Serial print the updated CAN frame data once and not continue
-  static bool printed = false;
-  if (!printed) {
-    Serial.print("Updated CAN frame data: ");
-    for (int i = 0; i < 8; ++i) {
-      Serial.print(TESLA_3A1.data.u8[i], HEX);
-      Serial.print(" ");
-    }
-    Serial.println();
-    printed = true;
+// Serial print the updated CAN frame data once and not continue
+static bool printed = false;
+if (!printed) {
+  Serial.print("Updated CAN frame data: ");
+  for (int i = 0; i < 8; ++i) {
+    Serial.print(TESLA_3A1.data.u8[i], HEX);
+    Serial.print(" ");
   }
+  Serial.println();
+  printed = true;
+}
 }
 
 uint8_t calculateCounter() {
