@@ -86,7 +86,7 @@ CAN_frame TESLA_221 = {.FD = false,
 
 // Define the Message struct
 struct Message {
-  uint8_t length; // Number of bytes used in data
+  uint8_t length;  // Number of bytes used in data
   uint8_t data[8];
 };
 
@@ -122,7 +122,7 @@ void send_CAN_frame(const Message& can_frame) {
 void update_CAN_frame(const TESLA_221_Struct& msg) {
   // Create a CAN frame
   Message can_frame;
-  can_frame.length = 8; // Assuming the CAN frame length is 8 bytes
+  can_frame.length = 8;  // Assuming the CAN frame length is 8 bytes
 
   // Populate the CAN frame data based on the msg structure
   can_frame.data[0] = msg.VCFRONT_LVPowerStateIndex;
@@ -172,7 +172,7 @@ void process_CAN_frames() {
 
     // Update the counter and checksum
     msg.VCFRONT_LVPowerStateCounter++;
-    msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg); // Implement the checksum calculation
+    msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 
     // Update the CAN frame data based on the signal values
     update_CAN_frame(msg);
