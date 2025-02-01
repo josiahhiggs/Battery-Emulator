@@ -137,35 +137,47 @@ bool mux0 = true;
 bool printed_mux0 = false;
 bool printed_mux1 = false;
 
+void initialize_state(uint8_t& state) {
+  state = 0;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+}
+
 void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
   msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
   msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
-  msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-}
-
-while (true) {
-  initialize_msg(msg, mux0);
-
-  // Update the counter and checksum
+  initialize_state(msg.parkLVState);
+  initialize_state(msg.espLVState);
+  initialize_state(msg.radcLVState);
+  initialize_state(msg.hvacCompLVState);
+  initialize_state(msg.ptcLVRequest);
+  initialize_state(msg.sccmLVRequest);
+  initialize_state(msg.oilPumpRearLVRequest);
+  initialize_state(msg.ocsLVRequest);
+  initialize_state(msg.vcleftHiCurrentLVState);
+  initialize_state(msg.vcrightHiCurrentLVState);
+  initialize_state(msg.uiHiCurrentLVState);
+  initialize_state(msg.uiAudioLVState);
+  initialize_state(msg.cpLVRequest);
+  initialize_state(msg.epasLVState);
+  initialize_state(msg.hvcLVRequest);
+  initialize_state(msg.tasLVState);
+  initialize_state(msg.pcsLVState);
   msg.VCFRONT_LVPowerStateCounter++;
   msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
-  // ...existing code...
+}
+
+void process_messages() {
+  TESLA_221_Struct msg;
+  bool mux0 = true;
+
+  while (true) {
+    initialize_msg(msg, mux0);
+  }
+}
+
+// Add a main function to start the process
+int main() {
+  process_messages();
+  return 0;
 }
 
 // Update the CAN frame data based on the signal values
