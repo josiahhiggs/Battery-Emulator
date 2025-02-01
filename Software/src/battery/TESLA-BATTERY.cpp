@@ -132,7 +132,6 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[7] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
-void process_CAN_frames() {
   TESLA_221_Struct msg;
   bool mux0 = true;
   bool printed_mux0 = false;
@@ -261,7 +260,6 @@ void update_CAN_frame_2D1(CAN_frame& frame, const TESLA_2D1_Struct& msg) {
   frame.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
-void update_values_battery() {
   // Declare the msg variable
   TESLA_2D1_Struct msg;
 
@@ -276,7 +274,7 @@ void update_values_battery() {
   msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
   // Update the CAN frame data based on the signal values
-  update_CAN_frame_2D1(TESLA_2D1, msg);
+  update_CAN_frame(TESLA_2D1, msg);
 
   // Serial print the updated CAN frame data once and not continue
   static bool printed = false;
@@ -382,7 +380,6 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
                      (msg.thermalSystemType << 4) | (msg.vehicleStatusCounter << 4) | (msg.vehicleStatusChecksum << 0);
 }
 
-void process_CAN_frames() {
   // Declare the msg variable
   TESLA_3A1_Struct msg;
 
