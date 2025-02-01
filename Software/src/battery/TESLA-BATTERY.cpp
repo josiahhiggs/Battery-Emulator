@@ -381,7 +381,6 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
                      (msg.thermalSystemType << 4) | (msg.vehicleStatusCounter << 4) | (msg.vehicleStatusChecksum << 0);
 }
 
-void update_values_vehicle() {
   // Declare the msg variable
   TESLA_3A1_Struct msg;
 
@@ -494,7 +493,6 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_333_Struct& msg) {
   TESLA_333.data.u8[3] |= 0xE0;                               // Set bits 5, 6, and 7 to 1
 }
 
-void update_values_vehicle() {
   // Declare the msg variable
   TESLA_333_Struct msg;
   // Set the desired signal values
@@ -518,7 +516,7 @@ void update_values_vehicle() {
     Serial.println();
     printed = true;
   }
-}
+
 
 // 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
 //BO_ 505 VCSEC_requests: 1 VEH
@@ -542,7 +540,7 @@ void update_CAN_frame(CAN_frame& frame, TESLA_1F9_Struct& msg) {
   TESLA_1F9.data.u8[0] = (msg.VCSEC_chargePortRequest & 0x03) |                // Bit 0-1, Length 2
                          ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2);  // Bit 2, Length 1
 }
-void update_values_vehicle() {
+
   // Declare the msg variable
   TESLA_1F9_Struct msg;
   // Set the desired signal values
@@ -678,7 +676,6 @@ void update_values_vehicle() {
                            (msg.VCSEC_trunkRequest << 6);                // Bit 32, Length 2
   }
 
-  void update_values_vehicle() {
     // Declare the msg variable
     TESLA_339_Struct msg;
     // Set the desired signal values
@@ -713,7 +710,7 @@ void update_values_vehicle() {
       Serial.println();
       printed = true;
     }
-  }
+  
 
   // 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
   //BO_ 801 VCFRONT_sensors: 8 VEH
@@ -767,7 +764,6 @@ void update_values_vehicle() {
     TESLA_321.data.u8[6] = (msg.VCFRONT_ptSensorIrrational << 1);     // Bit 49, Length 1
   }
 
-  void update_values_vehicle() {
     // Declare the msg variable
     TESLA_321_Struct msg;
     // Set the desired signal values
