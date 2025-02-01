@@ -14,6 +14,10 @@ static unsigned long previousMillis100 = 0;   // will store last time a 100ms CA
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was sent
 static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was sent
 
+void send_CAN_frame(const CAN_frame& frame) {
+  // Implementation to send the CAN frame
+}
+
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
@@ -111,10 +115,6 @@ struct TESLA_221_Struct {
 
 // Function prototype
 uint8_t calculate_checksum(const TESLA_221_Struct& msg);
-
-void send_CAN_frame(const CAN_frame& frame) {
-  // Implementation to send the CAN frame
-}
 
 void update_CAN_frame(CAN_frame& frame, const TESLA_221_Struct& msg) {
   // Populate the CAN frame data based on the msg structure
@@ -365,10 +365,6 @@ struct TESLA_3A1_Struct {
 uint8_t calculateChecksum(const TESLA_3A1_Struct& msg);
 uint8_t calculateCounter();
 
-void send_CAN_frame(const CAN_frame& frame) {
-  // Implementation to send the CAN frame
-}
-
 void update_CAN_frame(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
   // Populate the CAN frame data based on the msg structure
   frame.data.u8[0] = (msg.bmsHvChargeEnable << 0) | (msg.preconditionRequest << 1) | (msg.APGlassHeaterState << 2);
@@ -485,10 +481,6 @@ struct TESLA_333_Struct {
   uint16_t UI_chargeTerminationPct;
 };
 
-void send_CAN_frame(const CAN_frame& frame) {
-  // Implementation to send the CAN frame
-}
-
 void update_CAN_frame(CAN_frame& frame, const TESLA_333_Struct& msg) {
   TESLA_333.data.u8[0] = (msg.UI_openChargePortDoorRequest << 0) |   // Bit 0, Length 1
                          (msg.UI_closeChargePortDoorRequest << 1) |  // Bit 1, Length 1
@@ -545,10 +537,6 @@ struct TESLA_1F9_Struct {
   uint8_t VCSEC_chargePortRequest;
   uint8_t VCSEC_driveAttemptedWithoutAuth;
 };
-
-void send_CAN_frame(const CAN_frame& frame) {
-  // Implementation to send the CAN frame
-}
 
 void update_CAN_frame(CAN_frame& frame, TESLA_1F9_Struct& msg) {
   TESLA_1F9.data.u8[0] = (msg.VCSEC_chargePortRequest & 0x03) |                // Bit 0-1, Length 2
@@ -659,10 +647,6 @@ void update_values_vehicle() {
     uint8_t VCSEC_trunkRequest;
   };
 
-  void send_CAN_frame(const CAN_frame& frame) {
-    // Implementation to send the CAN frame
-  }
-
   void update_CAN_frame(CAN_frame & TESLA_339, const TESLA_339_Struct& msg) {
     TESLA_339.data.u8[0] = (msg.VCSEC_prsntRsnHighThresholdC << 0) |     // Bit 0, Length 1
                            (msg.VCSEC_prsntRsnHighThresholdD << 1) |     // Bit 1, Length 1
@@ -763,10 +747,6 @@ void update_values_vehicle() {
     uint8_t VCFRONT_tempCoolantPTInlet;
     uint8_t VCFRONT_washerFluidLevel;
   };
-
-  void send_CAN_frame(const CAN_frame& frame) {
-    // Implementation to send the CAN frame
-  }
 
   void update_CAN_frame(CAN_frame & frame, TESLA_321_Struct & msg) {
     uint16_t tempCoolantBatInlet = (msg.VCFRONT_tempCoolantBatInlet + 40) * 8;
