@@ -14,11 +14,6 @@ static unsigned long previousMillis100 = 0;   // will store last time a 100ms CA
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was sent
 static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was sent
 
-// Define the Message struct
-struct Message {
-  uint8_t data[8];
-};
-
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
@@ -89,6 +84,13 @@ CAN_frame TESLA_221 = {.FD = false,
                        .ID = 0x221,
                        .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
+// Define the Message struct
+struct Message {
+  uint8_t length; // Number of bytes used in data
+  uint8_t data[8];
+};
+
+// Define the Message struct
 struct TESLA_221_Struct {
   uint8_t VCFRONT_LVPowerStateIndex;
   uint8_t vehiclePowerState;
@@ -98,16 +100,6 @@ struct TESLA_221_Struct {
   uint8_t hvacCompLVState;
   uint8_t ptcLVRequest;
   uint8_t sccmLVRequest;
-  uint8_t tpmsLVRequest;
-  uint8_t rcmLVRequest;
-  uint8_t iBoosterLVState;
-  uint8_t tunerLVRequest;
-  uint8_t amplifierLVRequest;
-  uint8_t das1HighCurrentLVState;
-  uint8_t das2HighCurrentLVState;
-  uint8_t diLVRequest;
-  uint8_t disLVState;
-  uint8_t oilPumpFrontLVState;
   uint8_t oilPumpRearLVRequest;
   uint8_t ocsLVRequest;
   uint8_t vcleftHiCurrentLVState;
@@ -123,37 +115,31 @@ struct TESLA_221_Struct {
   uint8_t VCFRONT_LVPowerStateChecksum;  // Checksum
 };
 
-uint8_t calculate_checksum(const uint8_t* data, size_t length) {
-  uint8_t checksum = 0;
-  for (size_t i = 0; i < length; ++i) {
-    checksum += data[i];
-  }
-  return checksum;
+void send_CAN_frame(const Message& can_frame) {
+  // Implementation to send the CAN frame
 }
 
-void update_CAN_frame(TESLA_221_Struct msg) {
-  TESLA_221.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex << 0) | (msg.vehiclePowerState << 5);
-  TESLA_221.data.u8[1] =
-      (msg.parkLVState << 0) | (msg.espLVState << 2) | (msg.radcLVState << 4) | (msg.hvacCompLVState << 6);
-  TESLA_221.data.u8[2] =
-      (msg.ptcLVRequest << 0) | (msg.sccmLVRequest << 2) | (msg.tpmsLVRequest << 4) | (msg.rcmLVRequest << 6);
-  TESLA_221.data.u8[3] = (msg.iBoosterLVState << 0) | (msg.tunerLVRequest << 2) | (msg.amplifierLVRequest << 4) |
-                         (msg.das1HighCurrentLVState << 6);
-  TESLA_221.data.u8[4] = (msg.das2HighCurrentLVState << 0) | (msg.diLVRequest << 2) | (msg.disLVState << 4) |
-                         (msg.oilPumpFrontLVState << 6);
-  TESLA_221.data.u8[5] = (msg.oilPumpRearLVRequest << 0) | (msg.ocsLVRequest << 2) | (msg.vcleftHiCurrentLVState << 4) |
-                         (msg.vcrightHiCurrentLVState << 6);
-  TESLA_221.data.u8[6] =
-      (msg.uiHiCurrentLVState << 0) | (msg.uiAudioLVState << 2) | (msg.cpLVRequest << 4) | (msg.epasLVState << 6);
-  TESLA_221.data.u8[7] = (msg.hvcLVRequest << 0) | (msg.tasLVState << 2) | (msg.pcsLVState << 4);
+void update_CAN_frame(const TESLA_221_Struct& msg) {
+  // Create a CAN frame
+  Message can_frame;
+  can_frame.length = 8; // Assuming the CAN frame length is 8 bytes
 
-  // Calculate and set the checksum
-  msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(TESLA_221.data.u8, 8);
-  TESLA_221.data.u8[7] |= (msg.VCFRONT_LVPowerStateChecksum << 4);
+  // Populate the CAN frame data based on the msg structure
+  can_frame.data[0] = msg.VCFRONT_LVPowerStateIndex;
+  can_frame.data[1] = msg.vehiclePowerState;
+  can_frame.data[2] = msg.parkLVState;
+  can_frame.data[3] = msg.espLVState;
+  can_frame.data[4] = msg.radcLVState;
+  can_frame.data[5] = msg.hvacCompLVState;
+  can_frame.data[6] = msg.ptcLVRequest;
+  can_frame.data[7] = msg.sccmLVRequest;
 
-  // Increment and set the counter
-  msg.VCFRONT_LVPowerStateCounter++;
-  TESLA_221.data.u8[7] |= (msg.VCFRONT_LVPowerStateCounter & 0x0F);
+  // Include the counter and checksum
+  can_frame.data[6] = msg.VCFRONT_LVPowerStateCounter;
+  can_frame.data[7] = msg.VCFRONT_LVPowerStateChecksum;
+
+  // Send the CAN frame
+  send_CAN_frame(can_frame);
 }
 
 void process_CAN_frames() {
@@ -172,16 +158,6 @@ void process_CAN_frames() {
     msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.tpmsLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.rcmLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.iBoosterLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.tunerLVRequest = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.amplifierLVRequest = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.das1HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.das2HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.diLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.disLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-    msg.oilPumpFrontLVState = 0;                   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
@@ -193,6 +169,10 @@ void process_CAN_frames() {
     msg.hvcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
     msg.pcsLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+
+    // Update the counter and checksum
+    msg.VCFRONT_LVPowerStateCounter++;
+    msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg); // Implement the checksum calculation
 
     // Update the CAN frame data based on the signal values
     update_CAN_frame(msg);
@@ -224,6 +204,33 @@ void process_CAN_frames() {
     // Toggle mux0 for the next cycle
     mux0 = !mux0;
   }
+}
+
+// Implement the checksum calculation function
+uint8_t calculate_checksum(const TESLA_221_Struct& msg) {
+  // Example checksum calculation (simple sum of all fields)
+  uint8_t checksum = 0;
+  checksum += msg.VCFRONT_LVPowerStateIndex;
+  checksum += msg.vehiclePowerState;
+  checksum += msg.parkLVState;
+  checksum += msg.espLVState;
+  checksum += msg.radcLVState;
+  checksum += msg.hvacCompLVState;
+  checksum += msg.ptcLVRequest;
+  checksum += msg.sccmLVRequest;
+  checksum += msg.oilPumpRearLVRequest;
+  checksum += msg.ocsLVRequest;
+  checksum += msg.vcleftHiCurrentLVState;
+  checksum += msg.vcrightHiCurrentLVState;
+  checksum += msg.uiHiCurrentLVState;
+  checksum += msg.uiAudioLVState;
+  checksum += msg.cpLVRequest;
+  checksum += msg.epasLVState;
+  checksum += msg.hvcLVRequest;
+  checksum += msg.tasLVState;
+  checksum += msg.pcsLVState;
+  checksum += msg.VCFRONT_LVPowerStateCounter;
+  return checksum;
 }
 
 // 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
