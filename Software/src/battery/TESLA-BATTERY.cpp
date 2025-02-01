@@ -335,6 +335,7 @@ CAN_frame TESLA_3A1 = {.FD = false,
                        .ID = 0x3A1,
                        .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
+// Define the Message struct
 struct TESLA_3A1_Struct {
   uint8_t bmsHvChargeEnable;        // Bit 0, Length 1
   uint8_t preconditionRequest;      // Bit 1, Length 1
@@ -381,6 +382,7 @@ void update_CAN_frame(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
                      (msg.thermalSystemType << 4) | (msg.vehicleStatusCounter << 4) | (msg.vehicleStatusChecksum << 0);
 }
 
+void process_CAN_frames() {
 // Declare the msg variable
 TESLA_3A1_Struct msg;
 
