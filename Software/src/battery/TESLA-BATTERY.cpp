@@ -109,6 +109,9 @@ struct TESLA_221_Struct {
   uint8_t VCFRONT_LVPowerStateChecksum;  // Checksum
 };
 
+// Function prototype
+uint8_t calculate_checksum(const TESLA_221_Struct& msg);
+
 void send_CAN_frame(const CAN_frame& frame) {
   // Implementation to send the CAN frame
 }
