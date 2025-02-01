@@ -85,12 +85,6 @@ CAN_frame TESLA_221 = {.FD = false,
                        .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 // Define the Message struct
-struct Message {
-  uint8_t length;  // Number of bytes used in data
-  uint8_t data[8];
-};
-
-// Define the Message struct
 struct TESLA_221_Struct {
   uint8_t VCFRONT_LVPowerStateIndex;
   uint8_t vehiclePowerState;
@@ -115,31 +109,24 @@ struct TESLA_221_Struct {
   uint8_t VCFRONT_LVPowerStateChecksum;  // Checksum
 };
 
-void send_CAN_frame(const Message& can_frame) {
+void send_CAN_frame(const CAN_frame& frame) {
   // Implementation to send the CAN frame
 }
 
-void update_CAN_frame(const TESLA_221_Struct& msg) {
-  // Create a CAN frame
-  Message can_frame;
-  can_frame.length = 8;  // Assuming the CAN frame length is 8 bytes
-
+void update_CAN_frame(CAN_frame& frame, const TESLA_221_Struct& msg) {
   // Populate the CAN frame data based on the msg structure
-  can_frame.data[0] = msg.VCFRONT_LVPowerStateIndex;
-  can_frame.data[1] = msg.vehiclePowerState;
-  can_frame.data[2] = msg.parkLVState;
-  can_frame.data[3] = msg.espLVState;
-  can_frame.data[4] = msg.radcLVState;
-  can_frame.data[5] = msg.hvacCompLVState;
-  can_frame.data[6] = msg.ptcLVRequest;
-  can_frame.data[7] = msg.sccmLVRequest;
+  frame.data.u8[0] = msg.VCFRONT_LVPowerStateIndex;
+  frame.data.u8[1] = msg.vehiclePowerState;
+  frame.data.u8[2] = msg.parkLVState;
+  frame.data.u8[3] = msg.espLVState;
+  frame.data.u8[4] = msg.radcLVState;
+  frame.data.u8[5] = msg.hvacCompLVState;
+  frame.data.u8[6] = msg.ptcLVRequest;
+  frame.data.u8[7] = msg.sccmLVRequest;
 
   // Include the counter and checksum
-  can_frame.data[6] = msg.VCFRONT_LVPowerStateCounter;
-  can_frame.data[7] = msg.VCFRONT_LVPowerStateChecksum;
-
-  // Send the CAN frame
-  send_CAN_frame(can_frame);
+  frame.data.u8[6] = msg.VCFRONT_LVPowerStateCounter;
+  frame.data.u8[7] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
 void process_CAN_frames() {
@@ -175,7 +162,7 @@ void process_CAN_frames() {
     msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 
     // Update the CAN frame data based on the signal values
-    update_CAN_frame(msg);
+    update_CAN_frame(TESLA_221, msg);
 
     // Serial print the updated CAN frame data once for mux0 and once for mux1
     if (mux0 && !printed_mux0) {
@@ -264,11 +251,11 @@ struct TESLA_2D1_Struct {
 
 void update_CAN_frame_2D1(CAN_frame& frame, const TESLA_2D1_Struct& msg) {
   // Function to update the CAN frame data based on the TESLA_2D1_Struct
-  frame.data[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
+  frame.data.u8[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
                   (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) | (msg.uiOkToUseHighPower << 4) |
                   (msg.uiAudioOkToUseHighPower << 5) | (msg.cpOkToUseHighPower << 6) |
                   (msg.premAudioOkToUseHiPower << 7);
-  frame.data[1] = 0x01;  // No signals in data[1]
+  frame.data.u8[1] = 0x01;  // No signals in data[1]
 }
 
 void update_values_battery() {
@@ -2718,7 +2705,6 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
         break;
     }
   }
-}
 }
 
 void print_int_with_units(char* header, int value, char* units) {
