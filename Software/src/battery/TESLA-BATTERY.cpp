@@ -255,21 +255,6 @@ struct TESLA_2D1_Struct {
   uint8_t premAudioOkToUseHiPower;
 };
 
-// Declare an instance of Message
-Message msg;
-
-// Define the TESLA_2D1_Struct structure
-struct TESLA_2D1_Struct {
-  uint8_t vcleftOkToUseHighPower;
-  uint8_t vcrightOkToUseHighPower;
-  uint8_t das1OkToUseHighPower;
-  uint8_t das2OkToUseHighPower;
-  uint8_t uiOkToUseHighPower;
-  uint8_t uiAudioOkToUseHighPower;
-  uint8_t cpOkToUseHighPower;
-  uint8_t premAudioOkToUseHiPower;
-};
-
 // Function to update the CAN frame data based on the TESLA_2D1_Struct
 void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
   TESLA_2D1.data[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
@@ -280,6 +265,9 @@ void update_CAN_frame_2D1(TESLA_2D1_Struct msg) {
 }
 
 void update_values_battery() {
+  // Declare the msg variable
+  TESLA_2D1_Struct msg;
+
   // Set the desired signal values
   msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
   msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
@@ -291,15 +279,7 @@ void update_values_battery() {
   msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
 
   // Update the CAN frame data based on the signal values
-  TESLA_2D1_Struct tesla_msg = {.vcleftOkToUseHighPower = msg.vcleftOkToUseHighPower,
-                                .vcrightOkToUseHighPower = msg.vcrightOkToUseHighPower,
-                                .das1OkToUseHighPower = msg.das1OkToUseHighPower,
-                                .das2OkToUseHighPower = msg.das2OkToUseHighPower,
-                                .uiOkToUseHighPower = msg.uiOkToUseHighPower,
-                                .uiAudioOkToUseHighPower = msg.uiAudioOkToUseHighPower,
-                                .cpOkToUseHighPower = msg.cpOkToUseHighPower,
-                                .premAudioOkToUseHiPower = msg.premAudioOkToUseHiPower};
-  update_CAN_frame_2D1(tesla_msg);
+  update_CAN_frame_2D1(msg);
 
   // Serial print the updated CAN frame data once and not continue
   static bool printed = false;
