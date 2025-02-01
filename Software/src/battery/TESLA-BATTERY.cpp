@@ -137,7 +137,7 @@ bool mux0 = true;
 bool printed_mux0 = false;
 bool printed_mux1 = false;
 
-void initialize_msg(TESLA_221_Struct &msg, bool mux0) {
+void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
   msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
   msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
   msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
@@ -168,35 +168,35 @@ while (true) {
   // ...existing code...
 }
 
-  // Update the CAN frame data based on the signal values
-  update_CAN_frame(TESLA_221, msg);
+// Update the CAN frame data based on the signal values
+update_CAN_frame(TESLA_221, msg);
 
-  // Serial print the updated CAN frame data once for mux0 and once for mux1
-  if (mux0 && !printed_mux0) {
-    Serial.print("Updated CAN frame data for mux0: ");
-    for (int i = 0; i < 8; ++i) {
-      Serial.print(TESLA_221.data.u8[i], HEX);
-      Serial.print(" ");
-    }
-    Serial.println();
-    printed_mux0 = true;
-    mux0 = false;  // Switch to mux1
-  } else if (!mux0 && !printed_mux1) {
-    Serial.print("Updated CAN frame data for mux1: ");
-    for (int i = 0; i < 8; ++i) {
-      Serial.print(TESLA_221.data.u8[i], HEX);
-      Serial.print(" ");
-    }
-    Serial.println();
-    printed_mux1 = true;
-    break;  // Exit the loop after printing mux1
+// Serial print the updated CAN frame data once for mux0 and once for mux1
+if (mux0 && !printed_mux0) {
+  Serial.print("Updated CAN frame data for mux0: ");
+  for (int i = 0; i < 8; ++i) {
+    Serial.print(TESLA_221.data.u8[i], HEX);
+    Serial.print(" ");
   }
+  Serial.println();
+  printed_mux0 = true;
+  mux0 = false;  // Switch to mux1
+} else if (!mux0 && !printed_mux1) {
+  Serial.print("Updated CAN frame data for mux1: ");
+  for (int i = 0; i < 8; ++i) {
+    Serial.print(TESLA_221.data.u8[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
+  printed_mux1 = true;
+  break;  // Exit the loop after printing mux1
+}
 
-  // Add a delay to simulate the cycle time (e.g., 50ms)
-  delay(50);
+// Add a delay to simulate the cycle time (e.g., 50ms)
+delay(50);
 
-  // Toggle mux0 for the next cycle
-  mux0 = !mux0;
+// Toggle mux0 for the next cycle
+mux0 = !mux0;
 }
 }
 
