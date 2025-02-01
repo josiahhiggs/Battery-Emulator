@@ -14,6 +14,11 @@ static unsigned long previousMillis100 = 0;   // will store last time a 100ms CA
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was send
 static unsigned long previousMillis1000 = 0;  // will store last time a 1000ms CAN Message was send
 
+// Define the Message struct
+struct Message {
+  uint8_t data[8];
+};
+
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
