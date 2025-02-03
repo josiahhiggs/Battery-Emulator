@@ -176,27 +176,27 @@ void process_messages() {
       for (int i = 0; i < 8; ++i) {
         Serial.print(TESLA_221.data.u8[i], HEX);
         Serial.print(" ");
+      }
+      Serial.println();
+      printed_mux0 = true;
+      mux0 = false;  // Switch to mux1
+    } else if (!mux0 && !printed_mux1) {
+      Serial.print("Updated CAN frame data for mux1: ");
+      for (int i = 0; i < 8; ++i) {
+        Serial.print(TESLA_221.data.u8[i], HEX);
+        Serial.print(" ");
+      }
+      Serial.println();
+      printed_mux1 = true;
+      // break;  // Exit the loop after printing mux1
     }
-    Serial.println();
-    printed_mux0 = true;
-    mux0 = false;  // Switch to mux1
-  } else if (!mux0 && !printed_mux1) {
-    Serial.print("Updated CAN frame data for mux1: ");
-    for (int i = 0; i < 8; ++i) {
-      Serial.print(TESLA_221.data.u8[i], HEX);
-      Serial.print(" ");
-    }
-    Serial.println();
-    printed_mux1 = true;
-    // break;  // Exit the loop after printing mux1
+
+    // Add a delay to simulate the cycle time (e.g., 50ms)
+    delay(50);
+
+    // Toggle mux0 for the next cycle
+    mux0 = !mux0;
   }
-
-  // Add a delay to simulate the cycle time (e.g., 50ms)
-  delay(50);
-
-  // Toggle mux0 for the next cycle
-  mux0 = !mux0;
- }
 }
 
 // Add a main function to start the process
