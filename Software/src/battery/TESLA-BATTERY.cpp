@@ -8,6 +8,11 @@
 /* Do not change code below unless you are sure what you are doing */
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
+#define INTERVAL_50_MS 50
+#define INTERVAL_100_MS 100
+#define INTERVAL_500_MS 500
+#define INTERVAL_1000_MS 1000
+
 static unsigned long previousMillis50 = 0;    // will store last time a 50ms CAN Message was sent
 static unsigned long previousMillis100 = 0;   // will store last time a 100ms CAN Message was sent
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was sent
