@@ -120,6 +120,7 @@ struct TESLA_221_Struct {
 
 // Function prototype
 uint8_t calculate_checksum(const TESLA_221_Struct& msg);
+uint8_t calculateCounter();
 
 void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   // Populate the CAN frame data based on the msg structure
@@ -188,7 +189,7 @@ void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
   msg.hvcLVRequest = 1;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
   msg.tasLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
   msg.pcsLVState = 1;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.VCFRONT_LVPowerStateCounter = 0;                         // Initialize counter
+  msg.VCFRONT_LVPowerStateCounter = calculateCounter();        // Counter
   msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 }
 
@@ -229,6 +230,11 @@ void initialize_and_print_CAN_frame_221() {
     // Toggle mux0 for the next cycle
     mux0 = !mux0;
   }
+}
+
+uint8_t calculateCounter() {
+  static uint8_t counter = 0;
+  return counter++;
 }
 
 // Implement the checksum calculation function
