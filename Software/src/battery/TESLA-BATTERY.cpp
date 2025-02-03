@@ -159,6 +159,7 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[30] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
+// Change the values of the message struct to see the changes in the CAN frame
 void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
   msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;                // Mux0 = 0, Mux1 = 1
   msg.vehiclePowerState = 2;                                   // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
@@ -325,7 +326,7 @@ void initialize_and_print_CAN_frame_2D1() {
   // Declare the msg variable
   TESLA_2D1_Struct msg;
 
-  // Set the desired signal values
+  // Change the values of the message struct to see the changes in the CAN frame
   msg.vcleftOkToUseHighPower = 1;   // 0 = false, 1 = true
   msg.vcrightOkToUseHighPower = 1;  // 0 = false, 1 = true
   msg.das1OkToUseHighPower = 1;     // 0 = false, 1 = true
@@ -447,7 +448,7 @@ void initialize_and_print_CAN_frame_3A1() {
   // Declare the msg variable
   TESLA_3A1_Struct msg;
 
-  // Set the desired signal values
+  // Change the values of the message struct to see the changes in the CAN frame
   msg.statusForDrive = 1;         // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
   msg.rowCenterUnbuckled = 0;     // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
   msg.rowLeftUnbuckled = 0;       // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
@@ -486,11 +487,6 @@ void initialize_and_print_CAN_frame_3A1() {
     Serial.println();
     printed = true;
   }
-}
-
-uint8_t calculateCounter() {
-  static uint8_t counter = 0;
-  return counter++;
 }
 
 uint8_t calculateChecksum(const TESLA_3A1_Struct& msg) {
@@ -539,7 +535,7 @@ CAN_frame TESLA_333 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 5,
                        .ID = 0x333,
-                       .data = {0x84, 0x90, 0xE8, 0x07, 0x00}};  // 500ms ID819 UI_chargeRequest
+                       .data = {0x00, 0x00, 0x00, 0x00, 0x00}};  // 500ms ID819 UI_chargeRequest
 
 struct TESLA_333_Struct {
   uint8_t UI_openChargePortDoorRequest;
@@ -566,7 +562,7 @@ void initialize_and_print_CAN_frame_333() {
   // Declare the msg variable
   TESLA_333_Struct msg;
 
-  // Set the desired signal values
+  // Change the values of the message struct to see the changes in the CAN frame
   msg.UI_openChargePortDoorRequest = 0;   // 0 = No, 1 = Yes
   msg.UI_closeChargePortDoorRequest = 0;  // 0 = No, 1 = Yes
   msg.UI_chargeEnableRequest = 1;         // 0 = No, 1 = Yes
@@ -617,7 +613,7 @@ void initialize_and_print_CAN_frame_1F9() {
   // Declare the msg variable
   TESLA_1F9_Struct msg;
 
-  // Set the desired signal values
+  // Change the values of the message struct to see the changes in the CAN frame
   msg.VCSEC_chargePortRequest = 2;          // 0 = NONE, 1 = OPEN, 2 = CLOSE, 3 = SNA
   msg.VCSEC_driveAttemptedWithoutAuth = 1;  // 0 = No, 1 = Yes
 
@@ -691,7 +687,7 @@ CAN_frame TESLA_339 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
                        .ID = 0x339,
-                       .data = {0x5C, 0x41, 0x02, 0x00, 0x00, 0x03, 0x40, 0x03}};
+                       .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 struct TESLA_339_Struct {
   uint8_t VCSEC_prsntRsnHighThresholdC;
@@ -759,7 +755,7 @@ void initialize_and_print_CAN_frame_339() {
   // Declare the msg variable
   TESLA_339_Struct msg;
 
-  // Set the desired signal values
+  // Change the values of the message struct to see the changes in the CAN frame
   msg.VCSEC_MCUCommandType =
       1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
   msg.VCSEC_alarmStatus =
@@ -820,6 +816,7 @@ void initialize_and_print_CAN_frame_339() {
 //SG_ VCFRONT_tempCoolantBatInlet : 0|10@1+ (0.125,-40) [0|0] "degC"  X
 //SG_ VCFRONT_tempCoolantPTInlet : 10|11@1+ (0.125,-40) [0|0] "degC"  X
 //SG_ VCFRONT_washerFluidLevel : 32|2@1+ (1,0) [0|0] ""  X
+
 //VAL_ 801 VCFRONT_brakeFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
 //VAL_ 801 VCFRONT_coolantLevel 0 "NOT_OK" 1 "FILLED" ;
 //VAL_ 801 VCFRONT_tempAmbient 0 "SNA" ;
@@ -831,7 +828,7 @@ CAN_frame TESLA_321 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
                        .ID = 0x321,
-                       .data = {0xE6, 0x95, 0xA7, 0x70, 0x02, 0x6A, 0xF0, 0x12}};
+                       .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
 struct TESLA_321_Struct {
   uint8_t VCFRONT_battSensorIrrational;
@@ -868,7 +865,7 @@ void initialize_and_print_CAN_frame_321() {
   // Declare the msg variable
   TESLA_321_Struct msg;
 
-  // Set the desired signal values
+  // Change the values of the message struct to see the changes in the CAN frame
   msg.VCFRONT_battSensorIrrational = 0;  // 0 = No, 1 = Yes
   msg.VCFRONT_brakeFluidLevel = 2;       // 0 = SNA, 1 = LOW, 2 = NORMAL
   msg.VCFRONT_coolantLevel = 1;          // 0 = NOT_OK, 1 = FILLED
