@@ -93,6 +93,16 @@ struct TESLA_221_Struct {
   uint8_t hvacCompLVState;
   uint8_t ptcLVRequest;
   uint8_t sccmLVRequest;
+  uint8_t tpmsLVRequest;
+  uint8_t rcmLVRequest;
+  uint8_t iBoosterLVState;
+  uint8_t tunerLVRequest;
+  uint8_t amplifierLVRequest;
+  uint8_t das1HighCurrentLVState;
+  uint8_t das2HighCurrentLVState;
+  uint8_t diLVRequest;
+  uint8_t disLVState;
+  uint8_t oilPumpFrontLVState;
   uint8_t oilPumpRearLVRequest;
   uint8_t ocsLVRequest;
   uint8_t vcleftHiCurrentLVState;
@@ -121,37 +131,64 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[5] = msg.hvacCompLVState;
   frame.data.u8[6] = msg.ptcLVRequest;
   frame.data.u8[7] = msg.sccmLVRequest;
+  frame.data.u8[8] = msg.tpmsLVRequest;
+  frame.data.u8[9] = msg.rcmLVRequest;
+  frame.data.u8[10] = msg.iBoosterLVState;
+  frame.data.u8[11] = msg.tunerLVRequest;
+  frame.data.u8[12] = msg.amplifierLVRequest;
+  frame.data.u8[13] = msg.das1HighCurrentLVState;
+  frame.data.u8[14] = msg.das2HighCurrentLVState;
+  frame.data.u8[15] = msg.diLVRequest;
+  frame.data.u8[16] = msg.disLVState;
+  frame.data.u8[17] = msg.oilPumpFrontLVState;
+  frame.data.u8[18] = msg.oilPumpRearLVRequest;
+  frame.data.u8[19] = msg.ocsLVRequest;
+  frame.data.u8[20] = msg.vcleftHiCurrentLVState;
+  frame.data.u8[21] = msg.vcrightHiCurrentLVState;
+  frame.data.u8[22] = msg.uiHiCurrentLVState;
+  frame.data.u8[23] = msg.uiAudioLVState;
+  frame.data.u8[24] = msg.cpLVRequest;
+  frame.data.u8[25] = msg.epasLVState;
+  frame.data.u8[26] = msg.hvcLVRequest;
+  frame.data.u8[27] = msg.tasLVState;
+  frame.data.u8[28] = msg.pcsLVState;
 
   // Include the counter and checksum
-  frame.data.u8[6] = msg.VCFRONT_LVPowerStateCounter;
-  frame.data.u8[7] = msg.VCFRONT_LVPowerStateChecksum;
+  frame.data.u8[29] = msg.VCFRONT_LVPowerStateCounter;
+  frame.data.u8[30] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
-void initialize_state(uint8_t& state) {
-  state = 0;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-}
-
-void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
+vvoid initialize_msg(TESLA_221_Struct& msg, bool mux0) {
   msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
-  msg.vehiclePowerState = 3;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
-  initialize_state(msg.parkLVState);
-  initialize_state(msg.espLVState);
-  initialize_state(msg.radcLVState);
-  initialize_state(msg.hvacCompLVState);
-  initialize_state(msg.ptcLVRequest);
-  initialize_state(msg.sccmLVRequest);
-  initialize_state(msg.oilPumpRearLVRequest);
-  initialize_state(msg.ocsLVRequest);
-  initialize_state(msg.vcleftHiCurrentLVState);
-  initialize_state(msg.vcrightHiCurrentLVState);
-  initialize_state(msg.uiHiCurrentLVState);
-  initialize_state(msg.uiAudioLVState);
-  initialize_state(msg.cpLVRequest);
-  initialize_state(msg.epasLVState);
-  initialize_state(msg.hvcLVRequest);
-  initialize_state(msg.tasLVState);
-  initialize_state(msg.pcsLVState);
-  msg.VCFRONT_LVPowerStateCounter++;
+  msg.vehiclePowerState = 2;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
+  msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tpmsLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.rcmLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.iBoosterLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tunerLVRequest = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.amplifierLVRequest = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.das1HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.das2HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.diLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.disLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpFrontLVState = 0;                   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvcLVRequest = 1;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.pcsLVState = 1;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.VCFRONT_LVPowerStateCounter = 0;           // Initialize counter
   msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 }
 
@@ -206,6 +243,16 @@ uint8_t calculate_checksum(const TESLA_221_Struct& msg) {
   checksum += msg.hvacCompLVState;
   checksum += msg.ptcLVRequest;
   checksum += msg.sccmLVRequest;
+  checksum += msg.tpmsLVRequest;
+  checksum += msg.rcmLVRequest;
+  checksum += msg.iBoosterLVState;
+  checksum += msg.tunerLVRequest;
+  checksum += msg.amplifierLVRequest;
+  checksum += msg.das1HighCurrentLVState;
+  checksum += msg.das2HighCurrentLVState;
+  checksum += msg.diLVRequest;
+  checksum += msg.disLVState;
+  checksum += msg.oilPumpFrontLVState;
   checksum += msg.oilPumpRearLVRequest;
   checksum += msg.ocsLVRequest;
   checksum += msg.vcleftHiCurrentLVState;
