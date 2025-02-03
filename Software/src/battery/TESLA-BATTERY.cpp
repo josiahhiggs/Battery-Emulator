@@ -209,7 +209,6 @@ delay(50);
 // Toggle mux0 for the next cycle
 mux0 = !mux0;
 
-
 // Implement the checksum calculation function
 uint8_t calculate_checksum(const TESLA_221_Struct& msg) {
   // Example checksum calculation (simple sum of all fields)
