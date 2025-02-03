@@ -8,7 +8,6 @@
 /* Do not change code below unless you are sure what you are doing */
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
-static unsigned long previousMillis10 = 0;    // will store last time a 10ms CAN Message was sent
 static unsigned long previousMillis50 = 0;    // will store last time a 50ms CAN Message was sent
 static unsigned long previousMillis100 = 0;   // will store last time a 100ms CAN Message was sent
 static unsigned long previousMillis500 = 0;   // will store last time a 500ms CAN Message was sent
@@ -2658,14 +2657,6 @@ to cause "hv_up_for_drive" I send an additional 221 message 0x61, 0x15, 0x01, 0x
 two 221 messages are being continuously transmitted.   When I want to shut down, I stop the second message and only send 
 the first, for a few cycles, then stop all  messages which causes the contactor to open. */
 
-  const unsigned long INTERVAL_10_MS = 10;
-  const unsigned long INTERVAL_50_MS = 50;
-  const unsigned long INTERVAL_100_MS = 100;
-  const unsigned long INTERVAL_500_MS = 500;
-  const unsigned long INTERVAL_1000_MS = 1000;
-  const unsigned long INTERVAL_50_MS_DELAYED = 100;
-  const unsigned long BOOTUP_TIME = 1000;
-
   unsigned long currentMillis = millis();
 
   if (!cellvoltagesRead) {
@@ -2692,12 +2683,6 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     index_118 = 0;
   }
 #endif  //defined(TESLA_MODEL_SX_BATTERY) || defined(EXP_TESLA_BMS_DIGITAL_HVIL)
-
-  //Send 10ms message
-  if (currentMillis - previousMillis10 >= INTERVAL_10_MS) {
-    previousMillis10 = currentMillis;
-    transmit_can_frame();
-  }
 
   //Send 50ms message
   if (currentMillis - previousMillis50 >= INTERVAL_50_MS) {
