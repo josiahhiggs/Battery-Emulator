@@ -505,7 +505,6 @@ uint8_t calculateChecksum(const TESLA_3A1_Struct& msg) {
 // VAL_ 819 UI_acChargeCurrentLimit 127 "SNA" ;
 // VAL_ 819 UI_chargeTerminationPct 1023 "SNA" ;
 
-
 CAN_frame TESLA_333 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 5,
@@ -743,33 +742,38 @@ void initialize_and_print_CAN_frame_339() {
   TESLA_339_Struct msg;
 
   // Set the desired signal values
-  msg.VCSEC_MCUCommandType = 1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
-  msg.VCSEC_alarmStatus = 1;     // 0 = DISARMED, 1 = ARMED, 2 = PARTIAL_ARMED, 3 = TRIGGERED_FLASH_ACTIVE, 4 = ERROR, 5 = TRIGGERED_FLASH_INACTIVE, 6 = IMMINENT, 7 = DEFAULT, 15 = SNA
+  msg.VCSEC_MCUCommandType =
+      1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
+  msg.VCSEC_alarmStatus =
+      1;  // 0 = DISARMED, 1 = ARMED, 2 = PARTIAL_ARMED, 3 = TRIGGERED_FLASH_ACTIVE, 4 = ERROR, 5 = TRIGGERED_FLASH_INACTIVE, 6 = IMMINENT, 7 = DEFAULT, 15 = SNA
   msg.VCSEC_authRequested = 0;         // 0 = No, 1 = Yes
   msg.VCSEC_authenticationStatus = 1;  // 0 = NONE, 1 = AUTHENTICATED_FOR_UNLOCK, 2 = AUTHENTICATED_FOR_DRIVE
   msg.VCSEC_chargePortLockStatus = 0;  // 0 = UNLOCKED, 1 = LOCKED
   msg.VCSEC_frunkRequest = 0;          // 0 = NONE, 1 = OPEN, 2 = SNA
-  msg.VCSEC_immobilizerState = 0;      // 0 = IDLE, 1 = PREPARE, 2 = ENCRYPT_BEGIN, 3 = ENCRYPT, 4 = SEND_AUTH_RESPONSE, 5 = SEND_NO_GO_AUTH_RESPONSE
-  msg.VCSEC_keyChannelIndexed = 15;    // 15 = SNA
-  msg.VCSEC_leftFrontLockStatus = 0;   // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_leftRearLockStatus = 0;    // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_lockIndicationRequest = 0; // 0 = NONE_SNA, 1 = SINGLE, 2 = DOUBLE, 3 = TRIPLE, 4 = HOLD
-  msg.VCSEC_lockRequestType = 0;       // 0 = NONE, 1 = PASSIVE_SHIFT_TO_P_UNLOCK, 2 = PASSIVE_PARKBUTTON_UNLOCK, 3 = PASSIVE_INTERNAL_HANDLE_UNLOCK, 4 = PASSIVE_DRIVE_AWAY
-  msg.VCSEC_prsntRsnHighThresholdC = 0; // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnHighThresholdD = 0; // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnHighThresholdP = 0; // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnDeltaD = 0;        // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnHighThresholdR = 0; // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnDeltaR = 0;       // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnDeltaP = 0;      // 0 = No, 1 = Yes
+  msg.VCSEC_immobilizerState =
+      0;  // 0 = IDLE, 1 = PREPARE, 2 = ENCRYPT_BEGIN, 3 = ENCRYPT, 4 = SEND_AUTH_RESPONSE, 5 = SEND_NO_GO_AUTH_RESPONSE
+  msg.VCSEC_keyChannelIndexed = 15;     // 15 = SNA
+  msg.VCSEC_leftFrontLockStatus = 0;    // 0 = UNLOCKED, 1 = LOCKED
+  msg.VCSEC_leftRearLockStatus = 0;     // 0 = UNLOCKED, 1 = LOCKED
+  msg.VCSEC_lockIndicationRequest = 0;  // 0 = NONE_SNA, 1 = SINGLE, 2 = DOUBLE, 3 = TRIPLE, 4 = HOLD
+  msg.VCSEC_lockRequestType =
+      0;  // 0 = NONE, 1 = PASSIVE_SHIFT_TO_P_UNLOCK, 2 = PASSIVE_PARKBUTTON_UNLOCK, 3 = PASSIVE_INTERNAL_HANDLE_UNLOCK, 4 = PASSIVE_DRIVE_AWAY
+  msg.VCSEC_prsntRsnHighThresholdC = 0;      // 0 = No, 1 = Yes
+  msg.VCSEC_prsntRsnHighThresholdD = 0;      // 0 = No, 1 = Yes
+  msg.VCSEC_prsntRsnHighThresholdP = 0;      // 0 = No, 1 = Yes
+  msg.VCSEC_prsntRsnDeltaD = 0;              // 0 = No, 1 = Yes
+  msg.VCSEC_prsntRsnHighThresholdR = 0;      // 0 = No, 1 = Yes
+  msg.VCSEC_prsntRsnDeltaR = 0;              // 0 = No, 1 = Yes
+  msg.VCSEC_prsntRsnDeltaP = 0;              // 0 = No, 1 = Yes
   msg.VCSEC_numberOfPubKeysOnWhitelist = 0;  // 0 = No, 1 = Yes
-  msg.VCSEC_vehicleLockStatus = 0;          // 0 = SNA, 1 = ACTIVE_NFC_UNLOCKED, 2 = ACTIVE_NFC_LOCKED, 3 = PASSIVE_SELECTIVE_UNLOCKED, 4 = PASSIVE_BLE_UNLOCKED, 5 = PASSIVE_BLE_LOCKED, 6 = ACTIVE_SELECTIVE_UNLOCKED, 7 = ACTIVE_BLE_UNLOCKED, 8 = ACTIVE_BLE_LOCKED, 9 = ACTIVE_UI_UNLOCKED, 10 = ACTIVE_UI_LOCKED, 11 = ACTIVE_REMOTE_UNLOCKED, 12 = ACTIVE_REMOTE_LOCKED, 13 = CRASH_UNLOCKED, 14 = PASSIVE_INTERNAL_UNLOCKED, 15 = PASSIVE_INTERNAL_LOCKED
-  msg.VCSEC_rightFrontLockStatus = 0;      // 0 = UNLOCKED, 1 = LOCKED
+  msg.VCSEC_vehicleLockStatus =
+      0;  // 0 = SNA, 1 = ACTIVE_NFC_UNLOCKED, 2 = ACTIVE_NFC_LOCKED, 3 = PASSIVE_SELECTIVE_UNLOCKED, 4 = PASSIVE_BLE_UNLOCKED, 5 = PASSIVE_BLE_LOCKED, 6 = ACTIVE_SELECTIVE_UNLOCKED, 7 = ACTIVE_BLE_UNLOCKED, 8 = ACTIVE_BLE_LOCKED, 9 = ACTIVE_UI_UNLOCKED, 10 = ACTIVE_UI_LOCKED, 11 = ACTIVE_REMOTE_UNLOCKED, 12 = ACTIVE_REMOTE_LOCKED, 13 = CRASH_UNLOCKED, 14 = PASSIVE_INTERNAL_UNLOCKED, 15 = PASSIVE_INTERNAL_LOCKED
+  msg.VCSEC_rightFrontLockStatus = 0;     // 0 = UNLOCKED, 1 = LOCKED
   msg.VCSEC_rightRearLockStatus = 0;      // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_simpleLockStatus = 0;        // 0 = SNA, 1 = UNLOCKED, 2 = LOCKED
-  msg.VCSEC_summonRequest = 0;          // 0 = IDLE, 1 = PRIME, 2 = FORWARD, 3 = BACKWARD, 4 = STOP, 5 = SNA
-  msg.VCSEC_usingModifiedMACAddress = 0; // 0 = No, 1 = Yes
-  msg.VCSEC_trunkRequest = 0;          // 0 = NONE, 1 = OPEN, 2 = SNA
+  msg.VCSEC_simpleLockStatus = 0;         // 0 = SNA, 1 = UNLOCKED, 2 = LOCKED
+  msg.VCSEC_summonRequest = 0;            // 0 = IDLE, 1 = PRIME, 2 = FORWARD, 3 = BACKWARD, 4 = STOP, 5 = SNA
+  msg.VCSEC_usingModifiedMACAddress = 0;  // 0 = No, 1 = Yes
+  msg.VCSEC_trunkRequest = 0;             // 0 = NONE, 1 = OPEN, 2 = SNA
 
   // Update the CAN frame with the signal values
   update_CAN_frame_339(TESLA_339, msg);
@@ -853,15 +857,15 @@ void initialize_and_print_CAN_frame_321() {
   TESLA_321_Struct msg;
 
   // Set the desired signal values
-  msg.VCFRONT_battSensorIrrational = 0;    // 0 = No, 1 = Yes
-  msg.VCFRONT_brakeFluidLevel = 2;         // 0 = SNA, 1 = LOW, 2 = NORMAL
-  msg.VCFRONT_coolantLevel = 1;            // 0 = NOT_OK, 1 = FILLED
-  msg.VCFRONT_ptSensorIrrational = 0;      // 0 = No, 1 = Yes
-  msg.VCFRONT_tempAmbient = 25;            // Example value in degrees Celsius
-  msg.VCFRONT_tempAmbientFiltered = 25;    // Example value in degrees Celsius
-  msg.VCFRONT_tempCoolantBatInlet = 25;    // Example value in degrees Celsius
-  msg.VCFRONT_tempCoolantPTInlet = 25;     // Example value in degrees Celsius
-  msg.VCFRONT_washerFluidLevel = 2;        // 0 = SNA, 1 = LOW, 2 = NORMAL
+  msg.VCFRONT_battSensorIrrational = 0;  // 0 = No, 1 = Yes
+  msg.VCFRONT_brakeFluidLevel = 2;       // 0 = SNA, 1 = LOW, 2 = NORMAL
+  msg.VCFRONT_coolantLevel = 1;          // 0 = NOT_OK, 1 = FILLED
+  msg.VCFRONT_ptSensorIrrational = 0;    // 0 = No, 1 = Yes
+  msg.VCFRONT_tempAmbient = 25;          // Example value in degrees Celsius
+  msg.VCFRONT_tempAmbientFiltered = 25;  // Example value in degrees Celsius
+  msg.VCFRONT_tempCoolantBatInlet = 25;  // Example value in degrees Celsius
+  msg.VCFRONT_tempCoolantPTInlet = 25;   // Example value in degrees Celsius
+  msg.VCFRONT_washerFluidLevel = 2;      // 0 = SNA, 1 = LOW, 2 = NORMAL
 
   // Update the CAN frame with the signal values
   update_CAN_frame_321(TESLA_321, msg);
