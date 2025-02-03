@@ -13,10 +13,6 @@ static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN
 static unsigned long previousMillis500 = 0;  // will store last time a 500ms CAN Message was sent
 static unsigned long previousMillis1s = 0;   // will store last time a 1000ms CAN Message was sent
 
-void send_CAN_frame(const CAN_frame& frame) {
-  // Implementation to send the CAN frame
-}
-
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
 // SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
