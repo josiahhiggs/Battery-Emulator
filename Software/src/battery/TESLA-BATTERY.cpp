@@ -158,37 +158,37 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[30] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
-vvoid initialize_msg(TESLA_221_Struct& msg, bool mux0) {
-  msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Mux0 = 0, Mux1 = 1
-  msg.vehiclePowerState = 2;                     // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
-  msg.parkLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.espLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.radcLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.hvacCompLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.ptcLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.sccmLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tpmsLVRequest = 0;                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.rcmLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.iBoosterLVState = 0;                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tunerLVRequest = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.amplifierLVRequest = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.das1HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.das2HighCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.diLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.disLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.oilPumpFrontLVState = 0;                   // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.oilPumpRearLVRequest = 0;                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.ocsLVRequest = 0;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.vcleftHiCurrentLVState = 0;                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.vcrightHiCurrentLVState = 0;               // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.uiHiCurrentLVState = 0;                    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.uiAudioLVState = 0;                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.cpLVRequest = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.epasLVState = 0;                           // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.hvcLVRequest = 1;                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tasLVState = 0;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.pcsLVState = 1;                            // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.VCFRONT_LVPowerStateCounter = 0;           // Initialize counter
+void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
+  msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;                // Mux0 = 0, Mux1 = 1
+  msg.vehiclePowerState = 2;                                   // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
+  msg.parkLVState = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.espLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.radcLVState = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvacCompLVState = 0;                                     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ptcLVRequest = 0;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.sccmLVRequest = 0;                                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tpmsLVRequest = 0;                                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.rcmLVRequest = 0;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.iBoosterLVState = 0;                                     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tunerLVRequest = 0;                                      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.amplifierLVRequest = 0;                                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.das1HighCurrentLVState = 0;                              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.das2HighCurrentLVState = 0;                              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.diLVRequest = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.disLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpFrontLVState = 0;                                 // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.oilPumpRearLVRequest = 0;                                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.ocsLVRequest = 0;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcleftHiCurrentLVState = 0;                              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.vcrightHiCurrentLVState = 0;                             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiHiCurrentLVState = 0;                                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.uiAudioLVState = 0;                                      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.cpLVRequest = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.epasLVState = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.hvcLVRequest = 1;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.tasLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.pcsLVState = 1;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+  msg.VCFRONT_LVPowerStateCounter = 0;                         // Initialize counter
   msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 }
 
