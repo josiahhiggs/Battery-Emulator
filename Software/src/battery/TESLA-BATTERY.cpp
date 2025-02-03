@@ -132,11 +132,6 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[7] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
-TESLA_221_Struct msg;
-bool mux0 = true;
-bool printed_mux0 = false;
-bool printed_mux1 = false;
-
 void initialize_state(uint8_t& state) {
   state = 0;  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
 }
@@ -168,10 +163,40 @@ void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
 void process_messages() {
   TESLA_221_Struct msg;
   bool mux0 = true;
+  bool printed_mux0 = false;
+  bool printed_mux1 = false;
 
   while (true) {
     initialize_msg(msg, mux0);
+    update_CAN_frame_221(TESLA_221, msg);
+
+    // Serial print the updated CAN frame data once for mux0 and once for mux1
+    if (mux0 && !printed_mux0) {
+      Serial.print("Updated CAN frame data for mux0: ");
+      for (int i = 0; i < 8; ++i) {
+        Serial.print(TESLA_221.data.u8[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+    printed_mux0 = true;
+    mux0 = false;  // Switch to mux1
+  } else if (!mux0 && !printed_mux1) {
+    Serial.print("Updated CAN frame data for mux1: ");
+    for (int i = 0; i < 8; ++i) {
+      Serial.print(TESLA_221.data.u8[i], HEX);
+      Serial.print(" ");
+    }
+    Serial.println();
+    printed_mux1 = true;
+    // break;  // Exit the loop after printing mux1
   }
+
+  // Add a delay to simulate the cycle time (e.g., 50ms)
+  delay(50);
+
+  // Toggle mux0 for the next cycle
+  mux0 = !mux0;
+ }
 }
 
 // Add a main function to start the process
@@ -179,35 +204,6 @@ int main() {
   process_messages();
   return 0;
 }
-
-update_CAN_frame_221(TESLA_221, msg);
-
-// Serial print the updated CAN frame data once for mux0 and once for mux1
-if (mux0 && !printed_mux0) {
-  Serial.print("Updated CAN frame data for mux0: ");
-  for (int i = 0; i < 8; ++i) {
-    Serial.print(TESLA_221.data.u8[i], HEX);
-    Serial.print(" ");
-  }
-  Serial.println();
-  printed_mux0 = true;
-  mux0 = false;  // Switch to mux1
-} else if (!mux0 && !printed_mux1) {
-  Serial.print("Updated CAN frame data for mux1: ");
-  for (int i = 0; i < 8; ++i) {
-    Serial.print(TESLA_221.data.u8[i], HEX);
-    Serial.print(" ");
-  }
-  Serial.println();
-  printed_mux1 = true;
-  break;  // Exit the loop after printing mux1
-}
-
-// Add a delay to simulate the cycle time (e.g., 50ms)
-delay(50);
-
-// Toggle mux0 for the next cycle
-mux0 = !mux0;
 
 // Implement the checksum calculation function
 uint8_t calculate_checksum(const TESLA_221_Struct& msg) {
