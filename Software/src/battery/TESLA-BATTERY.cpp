@@ -199,12 +199,6 @@ void initialize_and_print_CAN_frame_221() {
   }
 }
 
-// Add a main function to start the process
-int main() {
-  initialize_and_print_CAN_frame_221();
-  return 0;
-}
-
 // Implement the checksum calculation function
 uint8_t calculate_checksum(const TESLA_221_Struct& msg) {
   // Example checksum calculation (simple sum of all fields)
@@ -308,12 +302,6 @@ void initialize_and_print_CAN_frame_2D1() {
 
     printed = true;
   }
-}
-
-// Add a main function to start the process
-int main() {
-  initialize_and_print_CAN_frame_2D1();
-  return 0;
 }
 
 // 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
@@ -452,12 +440,6 @@ void initialize_and_print_CAN_frame_3A1() {
   }
 }
 
-// Add a main function to start the process
-int main() {
-  initialize_and_print_CAN_frame_3A1();
-  return 0;
-}
-
 uint8_t calculateCounter() {
   static uint8_t counter = 0;
   return counter++;
@@ -559,12 +541,6 @@ void initialize_and_print_CAN_frame_333() {
   }
 }
 
-// Add a main function to start the process
-int main() {
-  initialize_and_print_CAN_frame_333();
-  return 0;
-}
-
 // 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
 //BO_ 505 VCSEC_requests: 1 VEH
 //SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
@@ -611,12 +587,6 @@ void initialize_and_print_CAN_frame_1F9() {
     Serial.println();
     printed = true;
   }
-}
-
-// Add a main function to start the process
-int main() {
-  initialize_and_print_CAN_frame_1F9();
-  return 0;
 }
 
 // 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
@@ -791,12 +761,6 @@ void initialize_and_print_CAN_frame_339() {
   }
 }
 
-// Add a main function to start the process
-int main() {
-  initialize_and_print_CAN_frame_339();
-  return 0;
-}
-
 // 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
 //BO_ 801 VCFRONT_sensors: 8 VEH
 // SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
@@ -885,7 +849,13 @@ void initialize_and_print_CAN_frame_321() {
 
 // Add a main function to start the process
 int main() {
-  initialize_and_print_CAN_frame_321();
+  initialize_and_print_CAN_frame_221();
+  initialize_and_print_CAN_frame_2D1();
+  initialize_and_print_CAN_frame_3A1();
+  initialize_and_print_CAN_frame_333();
+  initialize_and_print_CAN_frame_1F9();
+  initialize_and_print_CAN_frame_339();
+  initialize_and_print_CAN_frame_321(); 
   return 0;
 }
 
