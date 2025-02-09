@@ -33,7 +33,13 @@ std::condition_variable cv;
 bool ready = false;
 
 // Function prototypes
-void transmit_can_frame(CAN_frame* frame, const CAN_config& config);
+void transmit_can_frame(CAN_frame* frame, const CAN_config& config) {
+  // Example implementation for transmitting a CAN frame
+  // This is a placeholder and should be replaced with actual CAN transmission code
+  std::cout << "Transmitting CAN frame with ID: " << frame->ID << std::endl;
+  std::cout << "Bitrate: " << config.bitrate << ", Mode: " << config.mode << std::endl;
+  // Add actual CAN transmission logic here
+}
 
 //0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
 //BO_ 545 VCFRONT_LVPowerState: 8 VEH
@@ -1889,27 +1895,6 @@ inline const char* getPCSChgInternalPhaseConfig(int index) {
   }
 }
 
-inline const char* getPCSChgPhAState(int index) {
-  switch (index) {
-    case 0:
-      return "INIT";
-    case 1:
-      return "IDLE";
-    case 2:
-      return "PRECHARGE";
-    case 3:
-      return "ENABLE";
-    case 4:
-      return "FAULT";
-    case 5:
-      return "CLEAR_FAULTS";
-    case 6:
-      return "SHUTTING_DOWN";
-    default:
-      return "UNKNOWN";
-  }
-}
-
 inline const char* getPCSChgPhBState(int index) {
   switch (index) {
     case 0:
@@ -1947,49 +1932,6 @@ inline const char* getPCSChgPhCState(int index) {
       return "CLEAR_FAULTS";
     case 6:
       return "SHUTTING_DOWN";
-    default:
-      return "UNKNOWN";
-  }
-}
-
-inline const char* getPCSChgPhALastShutdownReason(int index) {
-  switch (index) {
-    case 0:
-      return "REASON_NONE";
-    case 1:
-      return "SW_ENABLE";
-    case 2:
-      return "HW_ENABLE";
-    case 3:
-      return "SW_FAULT";
-    case 4:
-      return "HW_FAULT";
-    case 5:
-      return "PLL_NOT_LOCKED";
-    case 6:
-      return "INPUT_UV";
-    case 7:
-      return "INPUT_OV";
-    case 8:
-      return "OUTPUT_UV";
-    case 9:
-      return "OUTPUT_OV";
-    case 10:
-      return "PRECHARGE_TIMEOUT";
-    case 11:
-      return "INT_BUS_UV";
-    case 12:
-      return "CONTROL_REGULATION_FAULT";
-    case 13:
-      return "OVER_TEMPERATURE";
-    case 14:
-      return "TEMP_IRRATIONAL";
-    case 15:
-      return "SENSOR_IRRATIONAL";
-    case 16:
-      return "FREQ_OUT_OF_RANGE";
-    case 17:
-      return "LINE_TRANSIENT_FAULT";
     default:
       return "UNKNOWN";
   }
@@ -2887,7 +2829,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
     case 0x2C4:  // 708 PCS_logging:
       mux = (rx_frame.data.u8[0] & (0x1FU));
       const char* mux_description = getPCSLogMessageSelect(mux);
-      //PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
+        PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
       if (mux == 0) {
         PCS_chgPhAInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
                               ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m0 : 5|9@1+ (0.1,0) [0|0] "A"  X
