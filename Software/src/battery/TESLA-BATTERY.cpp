@@ -372,6 +372,7 @@ void initialize_and_update_CAN_frame_2D1() {
 //SG_ VCFRONT_driverIsLeaving : 28|1@1+ (1,0) [0|0] ""  X
 //SG_ VCFRONT_driverIsLeavingAnySpeed : 13|1@1+ (1,0) [0|0] ""  X
 //SG_ VCFRONT_driverUnbuckled : 32|2@1+ (1,0) [0|0] ""  X
+//SG_ VCFRONT_is12VBatterySupported: 5|1@1+ (1,0) [0|0] "" X
 //SG_ VCFRONT_ota12VSupportRequest : 29|1@1+ (1,0) [0|0] ""  X
 //SG_ VCFRONT_passengerUnbuckled : 34|2@1+ (1,0) [0|0] ""  X
 //SG_ VCFRONT_pcs12vVoltageTarget : 16|11@1+ (0.01,0) [0|0] "V"  X
@@ -406,6 +407,7 @@ struct TESLA_3A1_Struct {
   uint8_t bmsHvChargeEnable : 1;        // 1 bit
   uint8_t preconditionRequest : 1;      // 1 bit
   uint8_t APGlassHeaterState : 3;       // 3 bits
+  uint8_t is12VBatterySupported : 1;    // 1 bit
   uint8_t standbySupplySupported : 1;   // 1 bit
   uint8_t thermalSystemType : 1;        // 1 bit
   uint8_t LVLoadRequest : 1;            // 1 bit
@@ -439,6 +441,7 @@ void initialize_msg(TESLA_3A1_Struct& msg) {
   msg.bmsHvChargeEnable = 1;       // true = 1, false = 0
   msg.preconditionRequest = 0;     // true = 1, false = 0
   msg.APGlassHeaterState = 2;      // SNA = 0, ON = 1, OFF = 2, OFF_UNAVAILABLE = 3, FAULT = 4
+  msg.is12VBatterySupported = 1;    // true = 1, false = 0
   msg.standbySupplySupported = 0;  // true = 1, false = 0
   msg.thermalSystemType = 0;       // true = 1, false = 0
   msg.LVLoadRequest = 1;           // true = 1, false = 0
@@ -464,17 +467,32 @@ void initialize_msg(TESLA_3A1_Struct& msg) {
 
 // Function to update the CAN frame 0x3A1 with the signal values
 void update_CAN_frame_3A1(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
-  frame.data.u8[0] = (msg.bmsHvChargeEnable << 0) | (msg.preconditionRequest << 1) | (msg.APGlassHeaterState << 2);
-  frame.data.u8[1] = (msg.LVLoadRequest << 1) | (msg.diPowerOnState << 2);
-  frame.data.u8[2] = (msg.driverIsLeavingAnySpeed << 5);
-  frame.data.u8[3] = (msg.statusForDrive << 6) | (msg.batterySupportRequest << 3) | (msg.driverIsLeaving << 4) |
-                     (msg.ota12VSupportRequest << 5) | (msg.driverBuckleStatus << 6) | (msg.driverDoorStatus << 7);
-  frame.data.u8[4] = (msg.driverUnbuckled << 0) | (msg.passengerUnbuckled << 2) | (msg.rowLeftUnbuckled << 4) |
+  frame.data.u8[0] = (msg.bmsHvChargeEnable << 0) | 
+                     (msg.preconditionRequest << 1) | 
+                     (msg.APGlassHeaterState << 2) |
+                     (msg.is12VBatterySupported << 5) |
+                     (msg.standbySupplySupported << 6) |
+                     (msg.thermalSystemType << 7);
+  frame.data.u8[1] = (msg.LVLoadRequest << 1) | 
+                     (msg.diPowerOnState << 2);
+  frame.data.u8[2] = (msg.driverIsLeavingAnySpeed << 5) |
+                     (msg.statusForDrive << 6);
+  frame.data.u8[3] = (msg.batterySupportRequest << 3) | 
+                     (msg.driverIsLeaving << 4) | 
+                     (msg.ota12VSupportRequest << 5) | 
+                     (msg.driverBuckleStatus << 6) | 
+                     (msg.driverDoorStatus << 7);
+  frame.data.u8[4] = (msg.driverUnbuckled << 0) | 
+                     (msg.passengerUnbuckled << 2) | 
+                     (msg.rowLeftUnbuckled << 4) | 
                      (msg.rowCenterUnbuckled << 6);
-  frame.data.u8[5] = (msg.rowRightUnbuckled << 0) | ((msg.pcsEFuseVoltage & 0x03FF) >> 2);
-  frame.data.u8[6] = (((msg.pcsEFuseVoltage & 0x03FF) << 6) & 0xC0) | ((msg.pcs12vVoltageTarget & 0x07FF) >> 2);
-  frame.data.u8[7] = (((msg.pcs12vVoltageTarget & 0x07FF) << 6) & 0xC0) | (msg.standbySupplySupported << 3) |
-                     (msg.thermalSystemType << 4) | (msg.vehicleStatusCounter << 4) | (msg.vehicleStatusChecksum << 0);
+  frame.data.u8[5] = (msg.rowRightUnbuckled << 0) | 
+                     ((msg.pcsEFuseVoltage & 0x03FF) >> 2);
+  frame.data.u8[6] = (((msg.pcsEFuseVoltage & 0x03FF) << 6) & 0xC0) | 
+                     ((msg.pcs12vVoltageTarget & 0x07FF) >> 2);
+  frame.data.u8[7] = (((msg.pcs12vVoltageTarget & 0x07FF) << 6) & 0xC0) | 
+                     (msg.vehicleStatusCounter << 4) | 
+                     (msg.vehicleStatusChecksum << 0);
 }
 
 // Function to calculate the checksum for the CAN frame 0x3A1
@@ -483,6 +501,7 @@ uint8_t calculateChecksum(const TESLA_3A1_Struct& msg) {
   checksum += msg.bmsHvChargeEnable;
   checksum += msg.preconditionRequest;
   checksum += msg.APGlassHeaterState;
+  checksum += msg.is12VBatterySupported;
   checksum += msg.standbySupplySupported;
   checksum += msg.thermalSystemType;
   checksum += msg.LVLoadRequest;
