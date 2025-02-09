@@ -2884,36 +2884,36 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
           ((rx_frame.data.u8[4] & 0xFE) >> 1) | ((rx_frame.data.u8[5] & 0x0F) << 7);       //35|11@1- (0.1,40) [0|0] "C"
       PCS_ambientTemp = ((rx_frame.data.u8[5] & 0xF0) >> 4) | (rx_frame.data.u8[6] << 4);  //48|11@1- (0.1,40) [0|0] "C"
       break;
-    case 0x2C4:  // 708 PCS_logging: 
+    case 0x2C4:  // 708 PCS_logging:
       mux = (rx_frame.data.u8[0] & (0x1FU));
       const char* mux_description = getPCSLogMessageSelect(mux);
       //PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
       if (mux == 0) {
         PCS_chgPhAInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
-                         ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m0 : 5|9@1+ (0.1,0) [0|0] "A"  X
+                              ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m0 : 5|9@1+ (0.1,0) [0|0] "A"  X
         PCS_chgPhAIntBusV = ((rx_frame.data.u8[2] & (0xFFU)) << 1) |
                             ((rx_frame.data.u8[1] >> 7) & (0x01U));  // m0 : 14|9@1+ (1,0) [0|0] "V"  X
         PCS_chgPhAIntBusVTarget = ((rx_frame.data.u8[3] & (0xFFU)) << 1) |
                                   ((rx_frame.data.u8[2] >> 7) & (0x01U));  // m0 : 23|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhAOutputI = (rx_frame.data.u8[4] & (0xFFU));  // m0 : 32|8@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgPhAOutputI = (rx_frame.data.u8[4] & (0xFFU));               // m0 : 32|8@1+ (0.1,0) [0|0] "A"  X
       }
       if (mux == 1) {
         PCS_chgPhBInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
-                         ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m1 : 5|9@1+ (0.1,0) [0|0] "A"  X
+                              ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m1 : 5|9@1+ (0.1,0) [0|0] "A"  X
         PCS_chgPhBIntBusV = ((rx_frame.data.u8[2] & (0xFFU)) << 1) |
                             ((rx_frame.data.u8[1] >> 7) & (0x01U));  // m1 : 14|9@1+ (1,0) [0|0] "V"  X
         PCS_chgPhBIntBusVTarget = ((rx_frame.data.u8[3] & (0xFFU)) << 1) |
                                   ((rx_frame.data.u8[2] >> 7) & (0x01U));  // m1 : 23|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhBOutputI = (rx_frame.data.u8[4] & (0xFFU));  // m1 : 32|8@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgPhBOutputI = (rx_frame.data.u8[4] & (0xFFU));               // m1 : 32|8@1+ (0.1,0) [0|0] "A"  X
       }
       if (mux == 2) {
         PCS_chgPhCInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
-                         ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m2 : 5|9@1+ (0.1,0) [0|0] "A"  X
+                              ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m2 : 5|9@1+ (0.1,0) [0|0] "A"  X
         PCS_chgPhCIntBusV = ((rx_frame.data.u8[2] & (0xFFU)) << 1) |
                             ((rx_frame.data.u8[1] >> 7) & (0x01U));  // m2 : 14|9@1+ (1,0) [0|0] "V"  X
         PCS_chgPhCIntBusVTarget = ((rx_frame.data.u8[3] & (0xFFU)) << 1) |
                                   ((rx_frame.data.u8[2] >> 7) & (0x01U));  // m2 : 23|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhCOutputI = (rx_frame.data.u8[4] & (0xFFU));  // m2 : 32|8@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgPhCOutputI = (rx_frame.data.u8[4] & (0xFFU));               // m2 : 32|8@1+ (0.1,0) [0|0] "A"  X
       }
       if (mux == 3) {
         PCS_chgInputL1NVrms = ((rx_frame.data.u8[1] & (0xFFU)) << 4) |
@@ -2934,30 +2934,30 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                    ((rx_frame.data.u8[1] >> 4) & (0x0FU));  // m4 : 20|12@1+ (0.01,40) [0|0] "Hz"  X
         PCS_chgInputFrequencyL3N = ((rx_frame.data.u8[3] & (0xFFU)) << 4) |
                                    ((rx_frame.data.u8[2] >> 4) & (0x0FU));  // m4 : 32|12@1+ (0.01,40) [0|0] "Hz"  X
-        PCS_chgInternalPhaseConfig = ((rx_frame.data.u8[4] & (0x07U)));  // m4 : 44|3@1+ (1,0) [0|0] ""  X
+        PCS_chgInternalPhaseConfig = ((rx_frame.data.u8[4] & (0x07U)));     // m4 : 44|3@1+ (1,0) [0|0] ""  X
         PCS_chgOutputV = ((rx_frame.data.u8[5] & (0xFFU)) << 4) |
                          ((rx_frame.data.u8[4] >> 4) & (0x0FU));  // m4 : 48|12@1+ (0.146484,0) [0|0] "V"  X
       }
       if (mux == 5) {
-        PCS_chgPhAState = ((rx_frame.data.u8[0] & (0x1FU)) >> 1);  // m5 : 5|4@1+ (1,0) [0|0] ""  X
-        PCS_chgPhBState = ((rx_frame.data.u8[1] & (0x1FU)) >> 1);  // m5 : 9|4@1+ (1,0) [0|0] ""  X
-        PCS_chgPhCState = ((rx_frame.data.u8[2] & (0x1FU)) >> 1);  // m5 : 13|4@1+ (1,0) [0|0] ""  X
+        PCS_chgPhAState = ((rx_frame.data.u8[0] & (0x1FU)) >> 1);               // m5 : 5|4@1+ (1,0) [0|0] ""  X
+        PCS_chgPhBState = ((rx_frame.data.u8[1] & (0x1FU)) >> 1);               // m5 : 9|4@1+ (1,0) [0|0] ""  X
+        PCS_chgPhCState = ((rx_frame.data.u8[2] & (0x1FU)) >> 1);               // m5 : 13|4@1+ (1,0) [0|0] ""  X
         PCS_chgPhALastShutdownReason = ((rx_frame.data.u8[3] & (0x1FU)) >> 1);  // m5 : 17|5@1+ (1,0) [0|0] ""  X
         PCS_chgPhBLastShutdownReason = ((rx_frame.data.u8[4] & (0x1FU)) >> 1);  // m5 : 22|5@1+ (1,0) [0|0] ""  X
         PCS_chgPhCLastShutdownReason = ((rx_frame.data.u8[5] & (0x1FU)) >> 1);  // m5 : 27|5@1+ (1,0) [0|0] ""  X
-        PCS_chgPhARetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 32|3@1+ (1,0) [0|0] ""  X
-        PCS_chgPhBRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 35|3@1+ (1,0) [0|0] ""  X
-        PCS_chgPhCRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 38|3@1+ (1,0) [0|0] ""  X
-        PCS_chgRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 41|3@1+ (1,0) [0|0] ""  X
+        PCS_chgPhARetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);          // m5 : 32|3@1+ (1,0) [0|0] ""  X
+        PCS_chgPhBRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);          // m5 : 35|3@1+ (1,0) [0|0] ""  X
+        PCS_chgPhCRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);          // m5 : 38|3@1+ (1,0) [0|0] ""  X
+        PCS_chgRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);             // m5 : 41|3@1+ (1,0) [0|0] ""  X
         PCS_chgPhManCurrentToDist = ((rx_frame.data.u8[7] & (0xFFU)) << 2) |
-                                    ((rx_frame.data.u8[6] >> 6) & (0x03U));  // m5 : 44|10@1+ (0.1,0) [0|0] "A"  X
-        PCS_chgL1NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 54|1@1+ (1,0) [0|0] ""  X
-        PCS_chgL2NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 55|1@1+ (1,0) [0|0] ""  X
-        PCS_chgL3NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 56|1@1+ (1,0) [0|0] ""  X
-        PCS_chgL1L2PllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 57|1@1+ (1,0) [0|0] ""  X
-        PCS_chgNgPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 58|1@1+ (1,0) [0|0] ""  X
+                                    ((rx_frame.data.u8[6] >> 6) & (0x03U));    // m5 : 44|10@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgL1NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);          // m5 : 54|1@1+ (1,0) [0|0] ""  X
+        PCS_chgL2NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);          // m5 : 55|1@1+ (1,0) [0|0] ""  X
+        PCS_chgL3NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);          // m5 : 56|1@1+ (1,0) [0|0] ""  X
+        PCS_chgL1L2PllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);         // m5 : 57|1@1+ (1,0) [0|0] ""  X
+        PCS_chgNgPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);           // m5 : 58|1@1+ (1,0) [0|0] ""  X
         PCS_chgPhManOptimalPhsToUse = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 59|2@1+ (1,0) [0|0] ""  X
-        PCS_chg5VL1Enable = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 61|1@1+ (1,0) [0|0] ""  X
+        PCS_chg5VL1Enable = ((rx_frame.data.u8[7] & (0x01U)) >> 6);            // m5 : 61|1@1+ (1,0) [0|0] ""  X
       }
       if (mux == 6) {
         PCS_dcdcMaxLvOutputCurrent = ((rx_frame.data.u8[4] & (0xFFU)) << 4) |
@@ -2988,74 +2988,105 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                (rx_frame.data.u8[5] & (0xFFU));  // m8 : 40|16@1+ (0.000488281,0) [0|0] "us"  X
       }
       if (mux == 9) {
-        PCS_cpu2BootState = (rx_frame.data.u8[0] >> 5) & 0x03;  // m9 : 5|2@1+ (1,0) [0|0] ""  X
+        PCS_cpu2BootState = (rx_frame.data.u8[0] >> 5) & 0x03;          // m9 : 5|2@1+ (1,0) [0|0] ""  X
         PCS_acChargeSelfTestState = (rx_frame.data.u8[0] >> 7) & 0x01;  // m9 : 7|1@1+ (1,0) [0|0] ""  X
-        PCS_1V5Min10s = ((rx_frame.data.u8[2] & 0xFF) << 3) | ((rx_frame.data.u8[1] >> 5) & 0x07);  // m9 : 8|11@1+ (0.001,0) [0|0] "V"  X
-        PCS_1V5Max10s = ((rx_frame.data.u8[3] & 0xFF) << 3) | ((rx_frame.data.u8[2] >> 5) & 0x07);  // m9 : 19|11@1+ (0.001,0) [0|0] "V"  X
-        PCS_1V2Min10s = ((rx_frame.data.u8[5] & 0xFF) << 3) | ((rx_frame.data.u8[4] >> 5) & 0x07);  // m9 : 32|11@1+ (0.001,0) [0|0] "V"  X
-        PCS_1V2Max10s = ((rx_frame.data.u8[6] & 0xFF) << 3) | ((rx_frame.data.u8[5] >> 5) & 0x07);  // m9 : 43|11@1+ (0.001,0) [0|0] "V"  X
-        PCS_numAlertsSet = rx_frame.data.u8[7] & 0x7F;  // m9 : 56|7@1+ (1,0) [0|0] ""  X
+        PCS_1V5Min10s = ((rx_frame.data.u8[2] & 0xFF) << 3) |
+                        ((rx_frame.data.u8[1] >> 5) & 0x07);  // m9 : 8|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_1V5Max10s = ((rx_frame.data.u8[3] & 0xFF) << 3) |
+                        ((rx_frame.data.u8[2] >> 5) & 0x07);  // m9 : 19|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_1V2Min10s = ((rx_frame.data.u8[5] & 0xFF) << 3) |
+                        ((rx_frame.data.u8[4] >> 5) & 0x07);  // m9 : 32|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_1V2Max10s = ((rx_frame.data.u8[6] & 0xFF) << 3) |
+                        ((rx_frame.data.u8[5] >> 5) & 0x07);  // m9 : 43|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_numAlertsSet = rx_frame.data.u8[7] & 0x7F;        // m9 : 56|7@1+ (1,0) [0|0] ""  X
       }
       if (mux == 10) {
-        PCS_chgPhAIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m10 : 5|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhAIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m10 : 14|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhAPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;  // m10 : 23|8@1+ (0.5,0) [0|0] "V"  X
-        PCS_chgPhALifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m10 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
-        PCS_chgPhATransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) | ((rx_frame.data.u8[6] >> 7) & 0x01);  // m10 : 55|9@1+ (0.1,0) [0|0] "-"  X
+        PCS_chgPhAIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[0] >> 7) & 0x01);  // m10 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhAIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[1] >> 7) & 0x01);  // m10 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhAPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;     // m10 : 23|8@1+ (0.5,0) [0|0] "V"  X
+        PCS_chgPhALifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) |
+                                (rx_frame.data.u8[4] & 0xFF);  // m10 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
+        PCS_chgPhATransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) |
+                                        ((rx_frame.data.u8[6] >> 7) & 0x01);  // m10 : 55|9@1+ (0.1,0) [0|0] "-"  X
       }
       if (mux == 11) {
-        PCS_chgPhBIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m11 : 5|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhBIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m11 : 14|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhBPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;  // m11 : 23|8@1+ (0.5,0) [0|0] "V"  X
-        PCS_chgPhBLifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m11 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
-        PCS_chgPhBTransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) | ((rx_frame.data.u8[6] >> 7) & 0x01);  // m11 : 55|9@1+ (0.1,0) [0|0] "-"  X
+        PCS_chgPhBIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[0] >> 7) & 0x01);  // m11 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhBIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[1] >> 7) & 0x01);  // m11 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhBPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;     // m11 : 23|8@1+ (0.5,0) [0|0] "V"  X
+        PCS_chgPhBLifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) |
+                                (rx_frame.data.u8[4] & 0xFF);  // m11 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
+        PCS_chgPhBTransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) |
+                                        ((rx_frame.data.u8[6] >> 7) & 0x01);  // m11 : 55|9@1+ (0.1,0) [0|0] "-"  X
       }
       if (mux == 12) {
-        PCS_chgPhCIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m12 : 5|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhCIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m12 : 14|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgPhCPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;  // m12 : 23|8@1+ (0.5,0) [0|0] "V"  X
-        PCS_chgPhCLifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m12 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
-        PCS_chgPhCTransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) | ((rx_frame.data.u8[6] >> 7) & 0x01);  // m12 : 55|9@1+ (0.1,0) [0|0] "-"  X
+        PCS_chgPhCIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[0] >> 7) & 0x01);  // m12 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhCIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[1] >> 7) & 0x01);  // m12 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhCPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;     // m12 : 23|8@1+ (0.5,0) [0|0] "V"  X
+        PCS_chgPhCLifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) |
+                                (rx_frame.data.u8[4] & 0xFF);  // m12 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
+        PCS_chgPhCTransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) |
+                                        ((rx_frame.data.u8[6] >> 7) & 0x01);  // m12 : 55|9@1+ (0.1,0) [0|0] "-"  X
       }
       if (mux == 13) {
-        PCS_chgInputL1NVPeak10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m13 : 5|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgInputL2NVPeak10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m13 : 14|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgInputL3NVPeak10s = ((rx_frame.data.u8[3] & 0xFF) << 1) | ((rx_frame.data.u8[2] >> 7) & 0x01);  // m13 : 23|9@1+ (1,0) [0|0] "V"  X
-        PCS_chgInputFreqWobblePHAPeak = rx_frame.data.u8[4] & 0xFF;  // m13 : 32|8@1+ (0.01,0) [0|0] "Hz"  X
-        PCS_chgInputFreqWobblePHBPeak = rx_frame.data.u8[5] & 0xFF;  // m13 : 40|8@1+ (0.01,0) [0|0] "Hz"  X
-        PCS_chgInputFreqWobblePHCPeak = rx_frame.data.u8[6] & 0xFF;  // m13 : 48|8@1+ (0.01,0) [0|0] "Hz"  X
+        PCS_chgInputL1NVPeak10s = ((rx_frame.data.u8[1] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[0] >> 7) & 0x01);  // m13 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgInputL2NVPeak10s = ((rx_frame.data.u8[2] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[1] >> 7) & 0x01);  // m13 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgInputL3NVPeak10s = ((rx_frame.data.u8[3] & 0xFF) << 1) |
+                                  ((rx_frame.data.u8[2] >> 7) & 0x01);  // m13 : 23|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgInputFreqWobblePHAPeak = rx_frame.data.u8[4] & 0xFF;     // m13 : 32|8@1+ (0.01,0) [0|0] "Hz"  X
+        PCS_chgInputFreqWobblePHBPeak = rx_frame.data.u8[5] & 0xFF;     // m13 : 40|8@1+ (0.01,0) [0|0] "Hz"  X
+        PCS_chgInputFreqWobblePHCPeak = rx_frame.data.u8[6] & 0xFF;     // m13 : 48|8@1+ (0.01,0) [0|0] "Hz"  X
       }
       if (mux == 14) {
         PCS_dLogPhAChannel1Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m14 : 5|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhBChannel1Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m14 : 8|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhCChannel1Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m14 : 10|2@1+ (1,0) [0|0] ""  X
-        PCS_dLogPhAChannel1Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m14 : 16|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhBChannel1Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m14 : 32|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhCChannel1Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m14 : 48|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhAChannel1Data =
+            ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m14 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel1Data =
+            ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m14 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel1Data =
+            ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m14 : 48|16@1- (0.02,0) [0|0] "-"  X
       }
       if (mux == 15) {
         PCS_dLogPhAChannel2Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m15 : 5|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhBChannel2Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m15 : 8|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhCChannel2Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m15 : 10|2@1+ (1,0) [0|0] ""  X
-        PCS_dLogPhAChannel2Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m15 : 16|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhBChannel2Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m15 : 32|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhCChannel2Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m15 : 48|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhAChannel2Data =
+            ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m15 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel2Data =
+            ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m15 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel2Data =
+            ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m15 : 48|16@1- (0.02,0) [0|0] "-"  X
       }
       if (mux == 16) {
         PCS_dLogPhAChannel3Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m16 : 5|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhBChannel3Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m16 : 8|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhCChannel3Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m16 : 10|2@1+ (1,0) [0|0] ""  X
-        PCS_dLogPhAChannel3Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m16 : 16|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhBChannel3Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m16 : 32|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhCChannel3Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m16 : 48|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhAChannel3Data =
+            ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m16 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel3Data =
+            ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m16 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel3Data =
+            ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m16 : 48|16@1- (0.02,0) [0|0] "-"  X
       }
       if (mux == 17) {
         PCS_dLogPhAChannel4Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m17 : 5|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhBChannel4Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m17 : 8|2@1+ (1,0) [0|0] ""  X
         PCS_dLogPhCChannel4Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m17 : 10|2@1+ (1,0) [0|0] ""  X
-        PCS_dLogPhAChannel4Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m17 : 16|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhBChannel4Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m17 : 32|16@1- (0.02,0) [0|0] "-"  X
-        PCS_dLogPhCChannel4Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m17 : 48|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhAChannel4Data =
+            ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m17 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel4Data =
+            ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m17 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel4Data =
+            ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m17 : 48|16@1- (0.02,0) [0|0] "-"  X
       }
       if (mux == 18) {
         PCS_dcdcIntervalMaxFrequency = ((rx_frame.data.u8[2] & (0x0FU)) << 8) |
@@ -3078,16 +3109,24 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                           (rx_frame.data.u8[6] & (0xFFU));  // m19 : 48|12@1+ (1,0) [0|0] "A"  X
       }
       if (mux == 20) {
-        PCS_chgPhANoFlowBucket = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m20 : 5|9@1+ (0.01,0) [0|0] "-"  X
-        PCS_chgPhBNoFlowBucket = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m20 : 14|9@1+ (0.01,0) [0|0] "-"  X
-        PCS_chgPhCNoFlowBucket = ((rx_frame.data.u8[3] & 0xFF) << 1) | ((rx_frame.data.u8[2] >> 7) & 0x01);  // m20 : 23|9@1+ (0.01,0) [0|0] "-"  X
+        PCS_chgPhANoFlowBucket = ((rx_frame.data.u8[1] & 0xFF) << 1) |
+                                 ((rx_frame.data.u8[0] >> 7) & 0x01);  // m20 : 5|9@1+ (0.01,0) [0|0] "-"  X
+        PCS_chgPhBNoFlowBucket = ((rx_frame.data.u8[2] & 0xFF) << 1) |
+                                 ((rx_frame.data.u8[1] >> 7) & 0x01);  // m20 : 14|9@1+ (0.01,0) [0|0] "-"  X
+        PCS_chgPhCNoFlowBucket = ((rx_frame.data.u8[3] & 0xFF) << 1) |
+                                 ((rx_frame.data.u8[2] >> 7) & 0x01);  // m20 : 23|9@1+ (0.01,0) [0|0] "-"  X
       }
       if (mux == 21) {
-        PCS_chgInputL1NVdc = ((rx_frame.data.u8[1] & 0xFF) << 2) | ((rx_frame.data.u8[0] >> 6) & 0x03);  // m21 : 5|10@1- (1,0) [0|0] "V"  X
-        PCS_chgInputL2NVdc = ((rx_frame.data.u8[2] & 0xFF) << 2) | ((rx_frame.data.u8[1] >> 6) & 0x03);  // m21 : 16|10@1- (1,0) [0|0] "V"  X
-        PCS_chgInputL3NVdc = ((rx_frame.data.u8[3] & 0xFF) << 2) | ((rx_frame.data.u8[2] >> 6) & 0x03);  // m21 : 26|10@1- (1,0) [0|0] "V"  X
-        PCS_chgInputL1L2Vdc = ((rx_frame.data.u8[4] & 0xFF) << 2) | ((rx_frame.data.u8[3] >> 6) & 0x03);  // m21 : 36|10@1- (1,0) [0|0] "V"  X
-        PCS_chgInputNGVdc = ((rx_frame.data.u8[5] & 0xFF) << 2) | ((rx_frame.data.u8[4] >> 6) & 0x03);  // m21 : 46|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL1NVdc = ((rx_frame.data.u8[1] & 0xFF) << 2) |
+                             ((rx_frame.data.u8[0] >> 6) & 0x03);  // m21 : 5|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL2NVdc = ((rx_frame.data.u8[2] & 0xFF) << 2) |
+                             ((rx_frame.data.u8[1] >> 6) & 0x03);  // m21 : 16|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL3NVdc = ((rx_frame.data.u8[3] & 0xFF) << 2) |
+                             ((rx_frame.data.u8[2] >> 6) & 0x03);  // m21 : 26|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL1L2Vdc = ((rx_frame.data.u8[4] & 0xFF) << 2) |
+                              ((rx_frame.data.u8[3] >> 6) & 0x03);  // m21 : 36|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputNGVdc = ((rx_frame.data.u8[5] & 0xFF) << 2) |
+                            ((rx_frame.data.u8[4] >> 6) & 0x03);  // m21 : 46|10@1- (1,0) [0|0] "V"  X
       }
       if (mux == 22) {
         PCS_dcdc12vSupportLifetimekWh = ((rx_frame.data.u8[3] & (0xFFU)) << 16) |
@@ -3095,7 +3134,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                         (rx_frame.data.u8[1] & (0xFFU));  // m22 : 8|24@1+ (0.01,0) [0|0] "kWh"  X
       }
       break;
-        case 0x401:                     // Cell stats  //BrickVoltages
+    case 0x401:                     // Cell stats  //BrickVoltages
       mux = (rx_frame.data.u8[0]);  //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
                                     //StatusFlags : 8|8@1+ (1,0) [0|0] ""
                                     //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
