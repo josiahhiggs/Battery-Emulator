@@ -1086,6 +1086,106 @@ static uint16_t PCS_dcdcIntervalMinHvBusVolt = 0;
 static uint16_t PCS_dcdcIntervalMinLvBusVolt = 0;
 static uint16_t PCS_dcdcIntervalMinLvOutputCurr = 0;
 static uint32_t PCS_dcdc12vSupportLifetimekWh = 0;
+static uint16_t PCS_chgPhAInputIrms = 0;
+static uint16_t PCS_chgPhAIntBusV = 0;
+static uint16_t PCS_chgPhAIntBusVTarget = 0;
+static uint8_t PCS_chgPhAOutputI = 0;
+static uint16_t PCS_chgPhBInputIrms = 0;
+static uint16_t PCS_chgPhBIntBusV = 0;
+static uint16_t PCS_chgPhBIntBusVTarget = 0;
+static uint8_t PCS_chgPhBOutputI = 0;
+static uint16_t PCS_chgPhCInputIrms = 0;
+static uint16_t PCS_chgPhCIntBusV = 0;
+static uint16_t PCS_chgPhCIntBusVTarget = 0;
+static uint8_t PCS_chgPhCOutputI = 0;
+static uint16_t PCS_chgInputL1NVrms = 0;
+static uint16_t PCS_chgInputL2NVrms = 0;
+static uint16_t PCS_chgInputL3NVrms = 0;
+static uint16_t PCS_chgInputL1L2Vrms = 0;
+static uint16_t PCS_chgInputNGVrms = 0;
+static uint16_t PCS_chgInputFrequencyL1N = 0;
+static uint16_t PCS_chgInputFrequencyL2N = 0;
+static uint16_t PCS_chgInputFrequencyL3N = 0;
+static uint16_t PCS_dLogPhAChannel1Content = 0;
+static uint16_t PCS_dLogPhBChannel1Content = 0;
+static uint16_t PCS_dLogPhCChannel1Content = 0;
+static uint16_t PCS_dLogPhAChannel1Data = 0;
+static uint16_t PCS_dLogPhBChannel1Data = 0;
+static uint16_t PCS_dLogPhCChannel1Data = 0;
+static uint16_t PCS_dLogPhAChannel2Content = 0;
+static uint16_t PCS_dLogPhBChannel2Content = 0;
+static uint16_t PCS_dLogPhCChannel2Content = 0;
+static uint16_t PCS_dLogPhAChannel2Data = 0;
+static uint16_t PCS_dLogPhBChannel2Data = 0;
+static uint16_t PCS_dLogPhCChannel2Data = 0;
+static uint16_t PCS_dLogPhAChannel3Content = 0;
+static uint16_t PCS_dLogPhBChannel3Content = 0;
+static uint16_t PCS_dLogPhCChannel3Content = 0;
+static uint16_t PCS_dLogPhAChannel3Data = 0;
+static uint16_t PCS_dLogPhBChannel3Data = 0;
+static uint16_t PCS_dLogPhCChannel3Data = 0;
+static uint16_t PCS_dLogPhAChannel4Content = 0;
+static uint16_t PCS_dLogPhBChannel4Content = 0;
+static uint16_t PCS_dLogPhCChannel4Content = 0;
+static uint16_t PCS_dLogPhAChannel4Data = 0;
+static uint16_t PCS_dLogPhBChannel4Data = 0;
+static uint16_t PCS_dLogPhCChannel4Data = 0;
+static uint16_t PCS_chgPhANoFlowBucket = 0;
+static uint16_t PCS_chgPhBNoFlowBucket = 0;
+static uint16_t PCS_chgPhCNoFlowBucket = 0;
+static uint16_t PCS_chgInputL1NVdc = 0;
+static uint16_t PCS_chgInputL2NVdc = 0;
+static uint16_t PCS_chgInputL3NVdc = 0;
+static uint16_t PCS_chgInputL1L2Vdc = 0;
+static uint16_t PCS_chgInternalPhaseConfig = 0;
+static uint16_t PCS_chgOutputV = 0;
+static uint16_t PCS_chgPhAState = 0;
+static uint16_t PCS_chgPhBState = 0;
+static uint16_t PCS_chgPhCState = 0;
+static uint16_t PCS_chgPhALastShutdownReason = 0;
+static uint16_t PCS_chgPhBLastShutdownReason = 0;
+static uint16_t PCS_chgPhCLastShutdownReason = 0;
+static uint16_t PCS_chgPhARetryCount = 0;
+static uint16_t PCS_chgPhBRetryCount = 0;
+static uint16_t PCS_chgPhCRetryCount = 0;
+static uint16_t PCS_chgRetryCount = 0;
+static uint16_t PCS_chgPhManCurrentToDist = 0;
+static uint16_t PCS_chgL1NPllLocked = 0;
+static uint16_t PCS_chgL2NPllLocked = 0;
+static uint16_t PCS_chgL3NPllLocked = 0;
+static uint16_t PCS_chgL1L2PllLocked = 0;
+static uint16_t PCS_chgNgPllLocked = 0;
+static uint16_t PCS_chgPhManOptimalPhsToUse = 0;
+static uint16_t PCS_chg5VL1Enable = 0;
+static uint16_t PCS_chgInputNGVdc = 0;
+static uint8_t PCS_cpu2BootState = 0;
+static uint8_t PCS_acChargeSelfTestState = 0;
+static uint16_t PCS_1V5Min10s = 0;
+static uint16_t PCS_1V5Max10s = 0;
+static uint16_t PCS_1V2Min10s = 0;
+static uint16_t PCS_1V2Max10s = 0;
+static uint8_t PCS_numAlertsSet = 0;
+static uint16_t PCS_chgPhAIntBusVMin10s = 0;
+static uint16_t PCS_chgPhAIntBusVMax10s = 0;
+static uint8_t PCS_chgPhAPchgVoltDeltaMax10s = 0;
+static uint32_t PCS_chgPhALifetimekWh = 0;
+static uint16_t PCS_chgPhATransientRetryCount = 0;
+static uint16_t PCS_chgPhBIntBusVMin10s = 0;
+static uint16_t PCS_chgPhBIntBusVMax10s = 0;
+static uint8_t PCS_chgPhBPchgVoltDeltaMax10s = 0;
+static uint32_t PCS_chgPhBLifetimekWh = 0;
+static uint16_t PCS_chgPhBTransientRetryCount = 0;
+static uint16_t PCS_chgPhCIntBusVMin10s = 0;
+static uint16_t PCS_chgPhCIntBusVMax10s = 0;
+static uint8_t PCS_chgPhCPchgVoltDeltaMax10s = 0;
+static uint32_t PCS_chgPhCLifetimekWh = 0;
+static uint16_t PCS_chgPhCTransientRetryCount = 0;
+static uint16_t PCS_chgInputL1NVPeak10s = 0;
+static uint16_t PCS_chgInputL2NVPeak10s = 0;
+static uint16_t PCS_chgInputL3NVPeak10s = 0;
+static uint8_t PCS_chgInputFreqWobblePHAPeak = 0;
+static uint8_t PCS_chgInputFreqWobblePHBPeak = 0;
+static uint8_t PCS_chgInputFreqWobblePHCPeak = 0;
 //0x7AA: //1962 HVP_debugMessage:
 static uint8_t HVP_debugMessageMultiplexer = 0;
 static bool HVP_gpioPassivePyroDepl = false;       //Change to bool
@@ -1618,6 +1718,549 @@ inline const char* getFault(bool value) {
   return value ? "ACTIVE" : "NOT_ACTIVE";
 }
 
+inline const char* getPCSLogMessageSelect(int index) {
+  switch (index) {
+    case 0:
+      return "PHA_1";
+    case 1:
+      return "PHB_1";
+    case 2:
+      return "PHC_1";
+    case 3:
+      return "CHG_1";
+    case 4:
+      return "CHG_2";
+    case 5:
+      return "CHG_3";
+    case 6:
+      return "DCDC_1";
+    case 7:
+      return "DCDC_2";
+    case 8:
+      return "DCDC_3";
+    case 9:
+      return "SYSTEM_1";
+    case 10:
+      return "PHA_2";
+    case 11:
+      return "PHB_2";
+    case 12:
+      return "PHC_2";
+    case 13:
+      return "CHG_4";
+    case 14:
+      return "DLOG_1";
+    case 15:
+      return "DLOG_2";
+    case 16:
+      return "DLOG_3";
+    case 17:
+      return "DLOG_4";
+    case 18:
+      return "DCDC_4";
+    case 19:
+      return "DCDC_5";
+    case 20:
+      return "CHG_NO_FLOW";
+    case 21:
+      return "CHG_LINE_OFFSET";
+    case 22:
+      return "DCDC_STATISTICS";
+    case 23:
+      return "CHG_STATISTICS";
+    case 24:
+      return "NUM_MSGS";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhAState(int index) {
+  switch (index) {
+    case 0:
+      return "INIT";
+    case 1:
+      return "IDLE";
+    case 2:
+      return "PRECHARGE";
+    case 3:
+      return "ENABLE";
+    case 4:
+      return "FAULT";
+    case 5:
+      return "CLEAR_FAULTS";
+    case 6:
+      return "SHUTTING_DOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhALastShutdownReason(int index) {
+  switch (index) {
+    case 0:
+      return "REASON_NONE";
+    case 1:
+      return "SW_ENABLE";
+    case 2:
+      return "HW_ENABLE";
+    case 3:
+      return "SW_FAULT";
+    case 4:
+      return "HW_FAULT";
+    case 5:
+      return "PLL_NOT_LOCKED";
+    case 6:
+      return "INPUT_UV";
+    case 7:
+      return "INPUT_OV";
+    case 8:
+      return "OUTPUT_UV";
+    case 9:
+      return "OUTPUT_OV";
+    case 10:
+      return "PRECHARGE_TIMEOUT";
+    case 11:
+      return "INT_BUS_UV";
+    case 12:
+      return "CONTROL_REGULATION_FAULT";
+    case 13:
+      return "OVER_TEMPERATURE";
+    case 14:
+      return "TEMP_IRRATIONAL";
+    case 15:
+      return "SENSOR_IRRATIONAL";
+    case 16:
+      return "FREQ_OUT_OF_RANGE";
+    case 17:
+      return "LINE_TRANSIENT_FAULT";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgInputFrequencyL1N(int index) {
+  switch (index) {
+    case 0:
+      return "FREQUENCY_UNKNOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgInputFrequencyL2N(int index) {
+  switch (index) {
+    case 0:
+      return "FREQUENCY_UNKNOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgInputFrequencyL3N(int index) {
+  switch (index) {
+    case 0:
+      return "FREQUENCY_UNKNOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgInternalPhaseConfig(int index) {
+  switch (index) {
+    case 0:
+      return "SNA";
+    case 1:
+      return "SINGLE_PHASE";
+    case 2:
+      return "THREE_PHASE";
+    case 3:
+      return "THREE_PHASE_DELTA";
+    case 4:
+      return "SINGLE_PHASE_IEC_GB";
+    case 5:
+      return "MFG_TEST_CONFIG_1";
+    case 6:
+      return "MFG_TEST_CONFIG_2";
+    case 7:
+      return "TOTAL_NUM";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhAState(int index) {
+  switch (index) {
+    case 0:
+      return "INIT";
+    case 1:
+      return "IDLE";
+    case 2:
+      return "PRECHARGE";
+    case 3:
+      return "ENABLE";
+    case 4:
+      return "FAULT";
+    case 5:
+      return "CLEAR_FAULTS";
+    case 6:
+      return "SHUTTING_DOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhBState(int index) {
+  switch (index) {
+    case 0:
+      return "INIT";
+    case 1:
+      return "IDLE";
+    case 2:
+      return "PRECHARGE";
+    case 3:
+      return "ENABLE";
+    case 4:
+      return "FAULT";
+    case 5:
+      return "CLEAR_FAULTS";
+    case 6:
+      return "SHUTTING_DOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhCState(int index) {
+  switch (index) {
+    case 0:
+      return "INIT";
+    case 1:
+      return "IDLE";
+    case 2:
+      return "PRECHARGE";
+    case 3:
+      return "ENABLE";
+    case 4:
+      return "FAULT";
+    case 5:
+      return "CLEAR_FAULTS";
+    case 6:
+      return "SHUTTING_DOWN";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhALastShutdownReason(int index) {
+  switch (index) {
+    case 0:
+      return "REASON_NONE";
+    case 1:
+      return "SW_ENABLE";
+    case 2:
+      return "HW_ENABLE";
+    case 3:
+      return "SW_FAULT";
+    case 4:
+      return "HW_FAULT";
+    case 5:
+      return "PLL_NOT_LOCKED";
+    case 6:
+      return "INPUT_UV";
+    case 7:
+      return "INPUT_OV";
+    case 8:
+      return "OUTPUT_UV";
+    case 9:
+      return "OUTPUT_OV";
+    case 10:
+      return "PRECHARGE_TIMEOUT";
+    case 11:
+      return "INT_BUS_UV";
+    case 12:
+      return "CONTROL_REGULATION_FAULT";
+    case 13:
+      return "OVER_TEMPERATURE";
+    case 14:
+      return "TEMP_IRRATIONAL";
+    case 15:
+      return "SENSOR_IRRATIONAL";
+    case 16:
+      return "FREQ_OUT_OF_RANGE";
+    case 17:
+      return "LINE_TRANSIENT_FAULT";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhBLastShutdownReason(int index) {
+  switch (index) {
+    case 0:
+      return "REASON_NONE";
+    case 1:
+      return "SW_ENABLE";
+    case 2:
+      return "HW_ENABLE";
+    case 3:
+      return "SW_FAULT";
+    case 4:
+      return "HW_FAULT";
+    case 5:
+      return "PLL_NOT_LOCKED";
+    case 6:
+      return "INPUT_UV";
+    case 7:
+      return "INPUT_OV";
+    case 8:
+      return "OUTPUT_UV";
+    case 9:
+      return "OUTPUT_OV";
+    case 10:
+      return "PRECHARGE_TIMEOUT";
+    case 11:
+      return "INT_BUS_UV";
+    case 12:
+      return "CONTROL_REGULATION_FAULT";
+    case 13:
+      return "OVER_TEMPERATURE";
+    case 14:
+      return "TEMP_IRRATIONAL";
+    case 15:
+      return "SENSOR_IRRATIONAL";
+    case 16:
+      return "FREQ_OUT_OF_RANGE";
+    case 17:
+      return "LINE_TRANSIENT_FAULT";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSChgPhCLastShutdownReason(int index) {
+  switch (index) {
+    case 0:
+      return "REASON_NONE";
+    case 1:
+      return "SW_ENABLE";
+    case 2:
+      return "HW_ENABLE";
+    case 3:
+      return "SW_FAULT";
+    case 4:
+      return "HW_FAULT";
+    case 5:
+      return "PLL_NOT_LOCKED";
+    case 6:
+      return "INPUT_UV";
+    case 7:
+      return "INPUT_OV";
+    case 8:
+      return "OUTPUT_UV";
+    case 9:
+      return "OUTPUT_OV";
+    case 10:
+      return "PRECHARGE_TIMEOUT";
+    case 11:
+      return "INT_BUS_UV";
+    case 12:
+      return "CONTROL_REGULATION_FAULT";
+    case 13:
+      return "OVER_TEMPERATURE";
+    case 14:
+      return "TEMP_IRRATIONAL";
+    case 15:
+      return "SENSOR_IRRATIONAL";
+    case 16:
+      return "FREQ_OUT_OF_RANGE";
+    case 17:
+      return "LINE_TRANSIENT_FAULT";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCS_dLogPhAChannel1Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCS_dLogPhBChannel1Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCS_dLogPhCChannel1Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCS_dLogPhAChannel2Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCS_dLogPhBChannel2Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCS_dLogPhCChannel2Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSDLogPhAChannel3Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSDLogPhBChannel3Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSDLogPhCChannel3Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSDLogPhAChannel4Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSDLogPhBChannel4Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+inline const char* getPCSDLogPhCChannel4Content(int index) {
+  switch (index) {
+    case 0:
+      return "INPUT_VOLTAGE";
+    case 1:
+      return "INPUT_CURRENT";
+    case 2:
+      return "OUTPUT_CURRENT";
+    case 3:
+      return "INT_BUS_VOLTAGE";
+    default:
+      return "UNKNOWN";
+  }
+}
+
 void update_values_battery() {  //This function maps all the values fetched via CAN to the correct parameters used for modbus
   //After values are mapped, we perform some safety checks, and do some serial printouts
 
@@ -2145,7 +2788,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       BMS_powerLimitState =
           (rx_frame.data.u8[6] &
            (0x01U));  //BMS_powerLimitsState : 48|1@1+ (1,0) [0|1] 0 "NOT_CALCULATED_FOR_DRIVE" 1 "CALCULATED_FOR_DRIVE"
-      BMS_inverterTQF = ((rx_frame.data.u8[7] >> 4) & (0x03U));
+      BMS_inverterTQF = ((rx_frame.data.u8[7] >> 4) & (0x03U));  //BMS_inverterTQF : 56|2@1+ (1,0) [0|3] ""  Receiver
       break;
     case 0x132:  //battery amps/volts //HVBattAmpVolt
       battery_volts = ((rx_frame.data.u8[1] << 8) | rx_frame.data.u8[0]) *
@@ -2236,14 +2879,86 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       PCS_chgPhBTemp =
           ((rx_frame.data.u8[1] & 0xF8) >> 3) | ((rx_frame.data.u8[2] & 0x3F) << 5);  //11|11@1- (0.1,40) [0|0] "C"
       PCS_chgPhCTemp = ((rx_frame.data.u8[2] & 0xC0) >> 6) | (rx_frame.data.u8[3] << 2) |
-                       ((rx_frame.data.u8[4] & 0x01) << 10);  //22|11@1- (0.1,40) [0|0] "C"
+                       ((rx_frame.data.u8[4] & 0x01) << 10);  //24|11@1- (0.1,40) [0|0] "C"
       PCS_dcdcTemp =
-          ((rx_frame.data.u8[4] & 0xFE) >> 1) | ((rx_frame.data.u8[5] & 0x0F) << 7);       //33|11@1- (0.1,40) [0|0] "C"
-      PCS_ambientTemp = ((rx_frame.data.u8[5] & 0xF0) >> 4) | (rx_frame.data.u8[6] << 4);  //44|11@1- (0.1,40) [0|0] "C"
+          ((rx_frame.data.u8[4] & 0xFE) >> 1) | ((rx_frame.data.u8[5] & 0x0F) << 7);       //35|11@1- (0.1,40) [0|0] "C"
+      PCS_ambientTemp = ((rx_frame.data.u8[5] & 0xF0) >> 4) | (rx_frame.data.u8[6] << 4);  //48|11@1- (0.1,40) [0|0] "C"
       break;
-    case 0x2C4:  // 708 PCS_logging: not all frames are listed, just ones relating to dcdc
+    case 0x2C4:  // 708 PCS_logging: 
       mux = (rx_frame.data.u8[0] & (0x1FU));
+      const char* mux_description = getPCSLogMessageSelect(mux);
       //PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
+      if (mux == 0) {
+        PCS_chgPhAInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
+                         ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m0 : 5|9@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgPhAIntBusV = ((rx_frame.data.u8[2] & (0xFFU)) << 1) |
+                            ((rx_frame.data.u8[1] >> 7) & (0x01U));  // m0 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhAIntBusVTarget = ((rx_frame.data.u8[3] & (0xFFU)) << 1) |
+                                  ((rx_frame.data.u8[2] >> 7) & (0x01U));  // m0 : 23|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhAOutputI = (rx_frame.data.u8[4] & (0xFFU));  // m0 : 32|8@1+ (0.1,0) [0|0] "A"  X
+      }
+      if (mux == 1) {
+        PCS_chgPhBInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
+                         ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m1 : 5|9@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgPhBIntBusV = ((rx_frame.data.u8[2] & (0xFFU)) << 1) |
+                            ((rx_frame.data.u8[1] >> 7) & (0x01U));  // m1 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhBIntBusVTarget = ((rx_frame.data.u8[3] & (0xFFU)) << 1) |
+                                  ((rx_frame.data.u8[2] >> 7) & (0x01U));  // m1 : 23|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhBOutputI = (rx_frame.data.u8[4] & (0xFFU));  // m1 : 32|8@1+ (0.1,0) [0|0] "A"  X
+      }
+      if (mux == 2) {
+        PCS_chgPhCInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
+                         ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m2 : 5|9@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgPhCIntBusV = ((rx_frame.data.u8[2] & (0xFFU)) << 1) |
+                            ((rx_frame.data.u8[1] >> 7) & (0x01U));  // m2 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhCIntBusVTarget = ((rx_frame.data.u8[3] & (0xFFU)) << 1) |
+                                  ((rx_frame.data.u8[2] >> 7) & (0x01U));  // m2 : 23|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhCOutputI = (rx_frame.data.u8[4] & (0xFFU));  // m2 : 32|8@1+ (0.1,0) [0|0] "A"  X
+      }
+      if (mux == 3) {
+        PCS_chgInputL1NVrms = ((rx_frame.data.u8[1] & (0xFFU)) << 4) |
+                              ((rx_frame.data.u8[0] >> 4) & (0x0FU));  // m3 : 5|12@1+ (0.2,0) [0|0] "V"  X
+        PCS_chgInputL2NVrms = ((rx_frame.data.u8[2] & (0xFFU)) << 4) |
+                              ((rx_frame.data.u8[1] >> 4) & (0x0FU));  // m3 : 17|12@1+ (0.2,0) [0|0] "V"  X
+        PCS_chgInputL3NVrms = ((rx_frame.data.u8[3] & (0xFFU)) << 4) |
+                              ((rx_frame.data.u8[2] >> 4) & (0x0FU));  // m3 : 29|12@1+ (0.2,0) [0|0] "V"  X
+        PCS_chgInputL1L2Vrms = ((rx_frame.data.u8[4] & (0xFFU)) << 4) |
+                               ((rx_frame.data.u8[3] >> 4) & (0x0FU));  // m3 : 41|12@1+ (0.2,0) [0|0] "V"  X
+        PCS_chgInputNGVrms = ((rx_frame.data.u8[5] & (0xFFU)) << 1) |
+                             ((rx_frame.data.u8[4] >> 7) & (0x01U));  // m3 : 53|9@1+ (1,0) [0|0] "V"  X
+      }
+      if (mux == 4) {
+        PCS_chgInputFrequencyL1N = ((rx_frame.data.u8[1] & (0xFFU)) << 4) |
+                                   ((rx_frame.data.u8[0] >> 4) & (0x0FU));  // m4 : 8|12@1+ (0.01,40) [0|0] "Hz"  X
+        PCS_chgInputFrequencyL2N = ((rx_frame.data.u8[2] & (0xFFU)) << 4) |
+                                   ((rx_frame.data.u8[1] >> 4) & (0x0FU));  // m4 : 20|12@1+ (0.01,40) [0|0] "Hz"  X
+        PCS_chgInputFrequencyL3N = ((rx_frame.data.u8[3] & (0xFFU)) << 4) |
+                                   ((rx_frame.data.u8[2] >> 4) & (0x0FU));  // m4 : 32|12@1+ (0.01,40) [0|0] "Hz"  X
+        PCS_chgInternalPhaseConfig = ((rx_frame.data.u8[4] & (0x07U)));  // m4 : 44|3@1+ (1,0) [0|0] ""  X
+        PCS_chgOutputV = ((rx_frame.data.u8[5] & (0xFFU)) << 4) |
+                         ((rx_frame.data.u8[4] >> 4) & (0x0FU));  // m4 : 48|12@1+ (0.146484,0) [0|0] "V"  X
+      }
+      if (mux == 5) {
+        PCS_chgPhAState = ((rx_frame.data.u8[0] & (0x1FU)) >> 1);  // m5 : 5|4@1+ (1,0) [0|0] ""  X
+        PCS_chgPhBState = ((rx_frame.data.u8[1] & (0x1FU)) >> 1);  // m5 : 9|4@1+ (1,0) [0|0] ""  X
+        PCS_chgPhCState = ((rx_frame.data.u8[2] & (0x1FU)) >> 1);  // m5 : 13|4@1+ (1,0) [0|0] ""  X
+        PCS_chgPhALastShutdownReason = ((rx_frame.data.u8[3] & (0x1FU)) >> 1);  // m5 : 17|5@1+ (1,0) [0|0] ""  X
+        PCS_chgPhBLastShutdownReason = ((rx_frame.data.u8[4] & (0x1FU)) >> 1);  // m5 : 22|5@1+ (1,0) [0|0] ""  X
+        PCS_chgPhCLastShutdownReason = ((rx_frame.data.u8[5] & (0x1FU)) >> 1);  // m5 : 27|5@1+ (1,0) [0|0] ""  X
+        PCS_chgPhARetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 32|3@1+ (1,0) [0|0] ""  X
+        PCS_chgPhBRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 35|3@1+ (1,0) [0|0] ""  X
+        PCS_chgPhCRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 38|3@1+ (1,0) [0|0] ""  X
+        PCS_chgRetryCount = ((rx_frame.data.u8[6] & (0x1FU)) >> 1);  // m5 : 41|3@1+ (1,0) [0|0] ""  X
+        PCS_chgPhManCurrentToDist = ((rx_frame.data.u8[7] & (0xFFU)) << 2) |
+                                    ((rx_frame.data.u8[6] >> 6) & (0x03U));  // m5 : 44|10@1+ (0.1,0) [0|0] "A"  X
+        PCS_chgL1NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 54|1@1+ (1,0) [0|0] ""  X
+        PCS_chgL2NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 55|1@1+ (1,0) [0|0] ""  X
+        PCS_chgL3NPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 56|1@1+ (1,0) [0|0] ""  X
+        PCS_chgL1L2PllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 57|1@1+ (1,0) [0|0] ""  X
+        PCS_chgNgPllLocked = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 58|1@1+ (1,0) [0|0] ""  X
+        PCS_chgPhManOptimalPhsToUse = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 59|2@1+ (1,0) [0|0] ""  X
+        PCS_chg5VL1Enable = ((rx_frame.data.u8[7] & (0x01U)) >> 6);  // m5 : 61|1@1+ (1,0) [0|0] ""  X
+      }
       if (mux == 6) {
         PCS_dcdcMaxLvOutputCurrent = ((rx_frame.data.u8[4] & (0xFFU)) << 4) |
                                      ((rx_frame.data.u8[3] >> 4) & (0x0FU));  //m6 : 28|12@1+ (0.1,0) [0|0] "A"  X
@@ -2272,6 +2987,76 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
         PCS_dcdcHalfPeriodUs = ((rx_frame.data.u8[6] & (0xFFU)) << 8) |
                                (rx_frame.data.u8[5] & (0xFFU));  // m8 : 40|16@1+ (0.000488281,0) [0|0] "us"  X
       }
+      if (mux == 9) {
+        PCS_cpu2BootState = (rx_frame.data.u8[0] >> 5) & 0x03;  // m9 : 5|2@1+ (1,0) [0|0] ""  X
+        PCS_acChargeSelfTestState = (rx_frame.data.u8[0] >> 7) & 0x01;  // m9 : 7|1@1+ (1,0) [0|0] ""  X
+        PCS_1V5Min10s = ((rx_frame.data.u8[2] & 0xFF) << 3) | ((rx_frame.data.u8[1] >> 5) & 0x07);  // m9 : 8|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_1V5Max10s = ((rx_frame.data.u8[3] & 0xFF) << 3) | ((rx_frame.data.u8[2] >> 5) & 0x07);  // m9 : 19|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_1V2Min10s = ((rx_frame.data.u8[5] & 0xFF) << 3) | ((rx_frame.data.u8[4] >> 5) & 0x07);  // m9 : 32|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_1V2Max10s = ((rx_frame.data.u8[6] & 0xFF) << 3) | ((rx_frame.data.u8[5] >> 5) & 0x07);  // m9 : 43|11@1+ (0.001,0) [0|0] "V"  X
+        PCS_numAlertsSet = rx_frame.data.u8[7] & 0x7F;  // m9 : 56|7@1+ (1,0) [0|0] ""  X
+      }
+      if (mux == 10) {
+        PCS_chgPhAIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m10 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhAIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m10 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhAPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;  // m10 : 23|8@1+ (0.5,0) [0|0] "V"  X
+        PCS_chgPhALifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m10 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
+        PCS_chgPhATransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) | ((rx_frame.data.u8[6] >> 7) & 0x01);  // m10 : 55|9@1+ (0.1,0) [0|0] "-"  X
+      }
+      if (mux == 11) {
+        PCS_chgPhBIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m11 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhBIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m11 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhBPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;  // m11 : 23|8@1+ (0.5,0) [0|0] "V"  X
+        PCS_chgPhBLifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m11 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
+        PCS_chgPhBTransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) | ((rx_frame.data.u8[6] >> 7) & 0x01);  // m11 : 55|9@1+ (0.1,0) [0|0] "-"  X
+      }
+      if (mux == 12) {
+        PCS_chgPhCIntBusVMin10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m12 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhCIntBusVMax10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m12 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgPhCPchgVoltDeltaMax10s = rx_frame.data.u8[3] & 0xFF;  // m12 : 23|8@1+ (0.5,0) [0|0] "V"  X
+        PCS_chgPhCLifetimekWh = ((rx_frame.data.u8[6] & 0xFF) << 16) | ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m12 : 31|24@1+ (0.01,0) [0|0] "kWh"  X
+        PCS_chgPhCTransientRetryCount = ((rx_frame.data.u8[7] & 0xFF) << 1) | ((rx_frame.data.u8[6] >> 7) & 0x01);  // m12 : 55|9@1+ (0.1,0) [0|0] "-"  X
+      }
+      if (mux == 13) {
+        PCS_chgInputL1NVPeak10s = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m13 : 5|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgInputL2NVPeak10s = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m13 : 14|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgInputL3NVPeak10s = ((rx_frame.data.u8[3] & 0xFF) << 1) | ((rx_frame.data.u8[2] >> 7) & 0x01);  // m13 : 23|9@1+ (1,0) [0|0] "V"  X
+        PCS_chgInputFreqWobblePHAPeak = rx_frame.data.u8[4] & 0xFF;  // m13 : 32|8@1+ (0.01,0) [0|0] "Hz"  X
+        PCS_chgInputFreqWobblePHBPeak = rx_frame.data.u8[5] & 0xFF;  // m13 : 40|8@1+ (0.01,0) [0|0] "Hz"  X
+        PCS_chgInputFreqWobblePHCPeak = rx_frame.data.u8[6] & 0xFF;  // m13 : 48|8@1+ (0.01,0) [0|0] "Hz"  X
+      }
+      if (mux == 14) {
+        PCS_dLogPhAChannel1Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m14 : 5|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhBChannel1Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m14 : 8|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhCChannel1Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m14 : 10|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhAChannel1Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m14 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel1Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m14 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel1Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m14 : 48|16@1- (0.02,0) [0|0] "-"  X
+      }
+      if (mux == 15) {
+        PCS_dLogPhAChannel2Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m15 : 5|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhBChannel2Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m15 : 8|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhCChannel2Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m15 : 10|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhAChannel2Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m15 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel2Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m15 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel2Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m15 : 48|16@1- (0.02,0) [0|0] "-"  X
+      }
+      if (mux == 16) {
+        PCS_dLogPhAChannel3Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m16 : 5|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhBChannel3Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m16 : 8|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhCChannel3Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m16 : 10|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhAChannel3Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m16 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel3Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m16 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel3Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m16 : 48|16@1- (0.02,0) [0|0] "-"  X
+      }
+      if (mux == 17) {
+        PCS_dLogPhAChannel4Content = (rx_frame.data.u8[0] >> 5) & 0x03;  // m17 : 5|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhBChannel4Content = (rx_frame.data.u8[1] >> 0) & 0x03;  // m17 : 8|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhCChannel4Content = (rx_frame.data.u8[1] >> 2) & 0x03;  // m17 : 10|2@1+ (1,0) [0|0] ""  X
+        PCS_dLogPhAChannel4Data = ((rx_frame.data.u8[3] & 0xFF) << 8) | (rx_frame.data.u8[2] & 0xFF);  // m17 : 16|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhBChannel4Data = ((rx_frame.data.u8[5] & 0xFF) << 8) | (rx_frame.data.u8[4] & 0xFF);  // m17 : 32|16@1- (0.02,0) [0|0] "-"  X
+        PCS_dLogPhCChannel4Data = ((rx_frame.data.u8[7] & 0xFF) << 8) | (rx_frame.data.u8[6] & 0xFF);  // m17 : 48|16@1- (0.02,0) [0|0] "-"  X
+      }
       if (mux == 18) {
         PCS_dcdcIntervalMaxFrequency = ((rx_frame.data.u8[2] & (0x0FU)) << 8) |
                                        (rx_frame.data.u8[1] & (0xFFU));  // m18 : 8|12@1+ (1,0) [0|0] "kHz"  X
@@ -2292,13 +3077,25 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
         PCS_dcdcIntervalMinLvOutputCurr = ((rx_frame.data.u8[7] & (0x0FU)) << 8) |
                                           (rx_frame.data.u8[6] & (0xFFU));  // m19 : 48|12@1+ (1,0) [0|0] "A"  X
       }
+      if (mux == 20) {
+        PCS_chgPhANoFlowBucket = ((rx_frame.data.u8[1] & 0xFF) << 1) | ((rx_frame.data.u8[0] >> 7) & 0x01);  // m20 : 5|9@1+ (0.01,0) [0|0] "-"  X
+        PCS_chgPhBNoFlowBucket = ((rx_frame.data.u8[2] & 0xFF) << 1) | ((rx_frame.data.u8[1] >> 7) & 0x01);  // m20 : 14|9@1+ (0.01,0) [0|0] "-"  X
+        PCS_chgPhCNoFlowBucket = ((rx_frame.data.u8[3] & 0xFF) << 1) | ((rx_frame.data.u8[2] >> 7) & 0x01);  // m20 : 23|9@1+ (0.01,0) [0|0] "-"  X
+      }
+      if (mux == 21) {
+        PCS_chgInputL1NVdc = ((rx_frame.data.u8[1] & 0xFF) << 2) | ((rx_frame.data.u8[0] >> 6) & 0x03);  // m21 : 5|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL2NVdc = ((rx_frame.data.u8[2] & 0xFF) << 2) | ((rx_frame.data.u8[1] >> 6) & 0x03);  // m21 : 16|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL3NVdc = ((rx_frame.data.u8[3] & 0xFF) << 2) | ((rx_frame.data.u8[2] >> 6) & 0x03);  // m21 : 26|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputL1L2Vdc = ((rx_frame.data.u8[4] & 0xFF) << 2) | ((rx_frame.data.u8[3] >> 6) & 0x03);  // m21 : 36|10@1- (1,0) [0|0] "V"  X
+        PCS_chgInputNGVdc = ((rx_frame.data.u8[5] & 0xFF) << 2) | ((rx_frame.data.u8[4] >> 6) & 0x03);  // m21 : 46|10@1- (1,0) [0|0] "V"  X
+      }
       if (mux == 22) {
         PCS_dcdc12vSupportLifetimekWh = ((rx_frame.data.u8[3] & (0xFFU)) << 16) |
                                         ((rx_frame.data.u8[2] & (0xFFU)) << 8) |
                                         (rx_frame.data.u8[1] & (0xFFU));  // m22 : 8|24@1+ (0.01,0) [0|0] "kWh"  X
       }
       break;
-    case 0x401:                     // Cell stats  //BrickVoltages
+        case 0x401:                     // Cell stats  //BrickVoltages
       mux = (rx_frame.data.u8[0]);  //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
                                     //StatusFlags : 8|8@1+ (1,0) [0|0] ""
                                     //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
