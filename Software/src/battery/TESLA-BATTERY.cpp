@@ -2829,7 +2829,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
     case 0x2C4:  // 708 PCS_logging:
       mux = (rx_frame.data.u8[0] & (0x1FU));
       const char* mux_description = getPCSLogMessageSelect(mux);
-        PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
+      PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
       if (mux == 0) {
         PCS_chgPhAInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
                               ((rx_frame.data.u8[0] >> 7) & (0x01U));  // m0 : 5|9@1+ (0.1,0) [0|0] "A"  X
