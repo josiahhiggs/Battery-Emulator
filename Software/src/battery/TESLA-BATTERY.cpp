@@ -2573,7 +2573,6 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
   static uint16_t volts;
   static uint8_t mux_zero_counter = 0u;
   static uint8_t mux_max = 0u;
-  const char* mux_description = nullptr;
 
   switch (rx_frame.ID) {
     case 0x352:                              // 850 BMS_energyStatus newer BMS
@@ -2832,7 +2831,6 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       break;
     case 0x2C4:  // 708 PCS_logging:
       mux = (rx_frame.data.u8[0] & (0x1FU));
-      const char* mux_description = getPCSLogMessageSelect(mux);
       PCS_logMessageSelect = (rx_frame.data.u8[0] & (0x1FU));  //0|5@1+ (1,0) [0|0] ""
       if (mux == 0) {
         PCS_chgPhAInputIrms = ((rx_frame.data.u8[1] & (0xFFU)) << 1) |
