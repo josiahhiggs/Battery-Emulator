@@ -2570,6 +2570,9 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
   static uint16_t temp = 0;
   static bool mux0_read = false;
   static bool mux1_read = false;
+  static uint16_t volts;
+  static uint8_t mux_zero_counter = 0u;
+  static uint8_t mux_max = 0u;
 
   switch (rx_frame.ID) {
     case 0x352:                              // 850 BMS_energyStatus newer BMS
@@ -3082,9 +3085,6 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                     //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
                                     //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
                                     //Brick2 m0 : 48|16@1+ (0.0001,0) [0|0] "V"
-      static uint16_t volts;
-      static uint8_t mux_zero_counter = 0u;
-      static uint8_t mux_max = 0u;
 
       if (rx_frame.data.u8[1] == 0x2A)  // status byte must be 0x2A to read cellvoltages
       {
