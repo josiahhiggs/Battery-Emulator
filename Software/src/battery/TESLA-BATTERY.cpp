@@ -3082,7 +3082,6 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       break;
     case 0x401: {                                                 // Cell stats  //BrickVoltages
       mux = (rx_frame.data.u8[0]);                                //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
-      const char* mux_description = getPCSLogMessageSelect(mux);  // Initialize mux_description here
                                                                   //StatusFlags : 8|8@1+ (1,0) [0|0] ""
                                                                   //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
                                                                   //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
