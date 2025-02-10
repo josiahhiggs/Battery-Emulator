@@ -33,16 +33,16 @@ std::condition_variable cv;
 bool ready = false;
 
 // Function prototypes
-void transmit_can_frame(CAN_frame* frame, const CAN_config& config) {
+//void transmit_can_frame(CAN_frame* frame, const CAN_config& config) {
   // Example implementation for transmitting a CAN frame
   // This is a placeholder and should be replaced with actual CAN transmission code
-  std::cout << "Transmitting CAN frame with ID: " << frame->ID << std::endl;
-  std::cout << "Bitrate: " << config.bitrate << ", Mode: " << config.mode << std::endl;
+  //std::cout << "Transmitting CAN frame with ID: " << frame->ID << std::endl;
+  //std::cout << "Bitrate: " << config.bitrate << ", Mode: " << config.mode << std::endl;
   // Add actual CAN transmission logic here
-}
+//}
 
 // Declare and initialize the frame variable globally
-CAN_frame frame = {.FD = false, .ext_ID = false, .DLC = 0, .ID = 0, .data = {.u8 = {0}}};
+CAN_frame frame = {.FD = false, .ext_ID = false, .DLC = 0, .ID = 0, .data = {.u8 = {0x00}}};
 
 // CAN frame definition for ID 0x221 545 VCFRONT_LVPowerState GenMsgCycleTime 100ms
 CAN_frame TESLA_221 = {.FD = false,
@@ -262,7 +262,7 @@ void initialize_msg(TESLA_241_Struct& msg) {
   msg.VCFRONT_coolantFlowPTReason =
       0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
   msg.VCFRONT_wasteHeatRequestType = 0;     // 0 "NONE" 1 "PARTIAL" 2 "FULL" ;
-  msg.VCFRONT_coolantHasBeenFilled = 0;     // 0 = false, 1 = true
+  msg.VCFRONT_coolantHasBeenFilled = 1;     // 0 = false, 1 = true
   msg.VCFRONT_radiatorIneffective = 0;      // 0 = false, 1 = true
   msg.VCFRONT_coolantAirPurgeBatState = 0;  // 0 "INACTIVE" 1 "ACTIVE" 2 "COMPLETE" 3 "INTERRUPTED" 4 "PENDING" ;
 }
