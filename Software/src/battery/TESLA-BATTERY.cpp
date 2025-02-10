@@ -226,6 +226,69 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[8] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
+// CAN frame definition for ID 0x241 577 VCFRONT_coolant GenMsgCycleTime 100ms
+CAN_frame TESLA_241 = {.FD = false, .ext_ID = false, .DLC = 8, .ID = 0x241, .data = {.u8 = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}};
+
+// Structure to hold the signal values for the CAN frame
+struct TESLA_241_Struct {
+  uint16_t VCFRONT_coolantFlowBatActual : 9;       // 9 bits
+  uint16_t VCFRONT_coolantFlowBatTarget : 9;       // 9 bits
+  uint8_t VCFRONT_coolantFlowBatReason : 4;        // 4 bits
+  uint16_t VCFRONT_coolantFlowPTTarget : 9;        // 9 bits
+  uint16_t VCFRONT_coolantFlowPTActual : 9;        // 9 bits
+  uint8_t VCFRONT_coolantFlowPTReason : 4;         // 4 bits
+  uint8_t VCFRONT_wasteHeatRequestType : 2;        // 2 bits
+  uint8_t VCFRONT_coolantHasBeenFilled : 1;        // 1 bit
+  uint8_t VCFRONT_radiatorIneffective : 1;         // 1 bit
+  uint8_t VCFRONT_coolantAirPurgeBatState : 3;     // 3 bits
+};
+
+// Function prototypes
+void initialize_msg(TESLA_241_Struct& msg);
+void update_CAN_frame_241(CAN_frame& frame, const TESLA_241_Struct& msg);
+
+// Function to initialize the TESLA_241_Struct
+void initialize_msg(TESLA_241_Struct& msg) {
+  msg.VCFRONT_coolantFlowBatActual = 5.0;  // (0.1,0) 5.0 LPM
+  msg.VCFRONT_coolantFlowBatTarget = 5.0;  // (0.1,0) 5.0 LPM
+  msg.VCFRONT_coolantFlowBatReason = 0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
+  msg.VCFRONT_coolantFlowPTTarget = 5.0;  // (0.1,0) 5.0 LPM
+  msg.VCFRONT_coolantFlowPTActual = 5.0;  // (0.1,0) 5.0 LPM
+  msg.VCFRONT_coolantFlowPTReason = 0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
+  msg.VCFRONT_wasteHeatRequestType = 0;  // 0 "NONE" 1 "PARTIAL" 2 "FULL" ;
+  msg.VCFRONT_coolantHasBeenFilled = 0;  // 0 = false, 1 = true
+  msg.VCFRONT_radiatorIneffective = 0;  // 0 = false, 1 = true
+  msg.VCFRONT_coolantAirPurgeBatState = 0;  // 0 "INACTIVE" 1 "ACTIVE" 2 "COMPLETE" 3 "INTERRUPTED" 4 "PENDING" ;
+}
+
+// Function to update the CAN frame 0x241 with the signal values
+void update_CAN_frame_241(CAN_frame& frame, const TESLA_241_Struct& msg) {
+  uint16_t coolantFlowBatActual = msg.VCFRONT_coolantFlowBatActual * 10; // (0.1,0)
+  uint16_t coolantFlowBatTarget = msg.VCFRONT_coolantFlowBatTarget * 10; // (0.1,0)
+  uint16_t coolantFlowPTTarget = msg.VCFRONT_coolantFlowPTTarget * 10; // (0.1,0)
+  uint16_t coolantFlowPTActual = msg.VCFRONT_coolantFlowPTActual * 10; // (0.1,0)
+  frame.data.u8[0] = (coolantFlowBatActual & 0x01FF);
+  frame.data.u8[1] = ((coolantFlowBatActual & 0x01FF) >> 8) | ((coolantFlowBatTarget & 0x01FF) << 1);
+  frame.data.u8[2] = ((coolantFlowBatTarget & 0x01FF) >> 7) | ((msg.VCFRONT_coolantFlowBatReason & 0x0F) << 2);
+  frame.data.u8[3] = (coolantFlowPTTarget & 0x01FF);
+  frame.data.u8[4] = ((coolantFlowPTTarget & 0x01FF) >> 8) | ((coolantFlowPTActual & 0x01FF) << 1);
+  frame.data.u8[5] = ((coolantFlowPTActual & 0x01FF) >> 7) | ((msg.VCFRONT_coolantFlowPTReason & 0x0F) << 2);
+  frame.data.u8[6] = (msg.VCFRONT_wasteHeatRequestType & 0x03) | (msg.VCFRONT_coolantHasBeenFilled << 2) |
+                     (msg.VCFRONT_radiatorIneffective << 3) | ((msg.VCFRONT_coolantAirPurgeBatState & 0x07) << 4);
+}
+
+// Function to initialize and update the CAN frame 0x241
+void initialize_and_update_CAN_frame_241() {
+  // Declare the msg variable
+  TESLA_241_Struct msg;
+
+  // Initialize the message structure
+  initialize_msg(msg);
+
+  // Update the CAN frame data based on the signal values
+  update_CAN_frame_241(TESLA_241, msg);
+}
+
 // CAN frame definition for ID 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
 CAN_frame TESLA_2D1 = {.FD = false, .ext_ID = false, .DLC = 2, .ID = 0x2D1, .data = {.u8 = {0x00, 0x00}}};
 
@@ -427,18 +490,19 @@ void initialize_msg(TESLA_333_Struct& msg) {
   msg.UI_openChargePortDoorRequest = 0;   // 0 = No, 1 = Yes
   msg.UI_closeChargePortDoorRequest = 0;  // 0 = No, 1 = Yes
   msg.UI_chargeEnableRequest = 1;         // 0 = No, 1 = Yes
-  msg.UI_acChargeCurrentLimit = 16;       // Example value in Amps
-  msg.UI_chargeTerminationPct = 102.3;    // Example value in percentage
+  msg.UI_acChargeCurrentLimit = 16;       // Amps
+  msg.UI_chargeTerminationPct = 10 * 102.3;    // (0.1,0) * 102.3 %
 }
 
 // Function to update the CAN frame 0x333 with the signal values
 void update_CAN_frame_333(CAN_frame& frame, const TESLA_333_Struct& msg) {
+  uint8_t acChargeCurrentLimit = msg.UI_acChargeCurrentLimit;  //
+  uint16_t chargeTerminationPct = msg.UI_chargeTerminationPct * 10;  // Apply factor
   frame.data.u8[0] = (msg.UI_openChargePortDoorRequest << 0) |   // Bit 0, Length 1
                      (msg.UI_closeChargePortDoorRequest << 1) |  // Bit 1, Length 1
                      (msg.UI_chargeEnableRequest << 2) |         // Bit 2, Length 1
                      0x80;                                       // Set bit 7 to 1
-  frame.data.u8[1] = (msg.UI_acChargeCurrentLimit << 1) | 0x10;  // Bit 8, Length 7 (shift left by 1) and set bit 4 to 1
-  uint16_t chargeTerminationPct = msg.UI_chargeTerminationPct * 10;  // Apply factor
+  frame.data.u8[1] = (acChargeCurrentLimit << 1) | 0x10;  // Bit 8, Length 7 (shift left by 1) and set bit 4 to 1
   frame.data.u8[2] = (chargeTerminationPct & 0xFF);       // Bit 16, Length 10 (split across data[2] and data[3])
   frame.data.u8[3] = (chargeTerminationPct >> 8) & 0x07;  // Bit 16, Length 10 (split across data[2] and data[3])
   frame.data.u8[3] |= 0xE0;                               // Set bits 5, 6, and 7 to 1
@@ -693,6 +757,7 @@ int main() {
   initialize_and_update_CAN_frame_1F9();
   initialize_and_update_CAN_frame_339();
   initialize_and_update_CAN_frame_321();
+  initialize_and_update_CAN_frame_241();
   return 0;
 }
 
@@ -2679,6 +2744,7 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
   TESLA_339_Struct msg_339;
   TESLA_333_Struct msg_333;
   TESLA_321_Struct msg_321;
+  TESLA_241_Struct msg_241;
 
 #if defined(TESLA_MODEL_SX_BATTERY) || defined(EXP_TESLA_BMS_DIGITAL_HVIL)
   if ((datalayer.system.status.inverter_allows_contactor_closing) && (datalayer.battery.status.bms_status != FAULT)) {
@@ -2746,6 +2812,10 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     initialize_msg(msg_339);                   // Initialize the message structure
     update_CAN_frame_339(TESLA_339, msg_339);  // Update the CAN frame data
     transmit_can_frame(&TESLA_339, can_config.battery);
+
+    initialize_msg(msg_241);                   // Initialize the message structure
+    update_CAN_frame_241(TESLA_241, msg_241);  // Update the CAN frame data
+    transmit_can_frame(&TESLA_241, can_config.battery);
   }
 
   // Send 500ms message
