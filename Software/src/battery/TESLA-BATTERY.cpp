@@ -1406,310 +1406,103 @@ static bool battery_BMS_a180_SW_ECU_reset_blocked = false;
 
 // Function definitions
 inline const char* getContactorText(int index) {
-  switch (index) {
-    case 0:
-      return "UNKNOWN(0)";
-    case 1:
-      return "OPEN";
-    case 2:
-      return "CLOSING";
-    case 3:
-      return "BLOCKED";
-    case 4:
-      return "OPENING";
-    case 5:
-      return "CLOSED";
-    case 6:
-      return "UNKNOWN(6)";
-    case 7:
-      return "WELDED";
-    case 8:
-      return "POS_CL";
-    case 9:
-      return "NEG_CL";
-    case 10:
-      return "UNKNOWN(10)";
-    case 11:
-      return "UNKNOWN(11)";
-    case 12:
-      return "UNKNOWN(12)";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* contactorTexts[] = {
+    "UNKNOWN(0)", "OPEN", "CLOSING", "BLOCKED", "OPENING", "CLOSED", "UNKNOWN(6)", 
+    "WELDED", "POS_CL", "NEG_CL", "UNKNOWN(10)", "UNKNOWN(11)", "UNKNOWN(12)"
+  };
+  return (index >= 0 && index < sizeof(contactorTexts) / sizeof(contactorTexts[0])) ? contactorTexts[index] : "UNKNOWN";
 }
 
 inline const char* getContactorState(int index) {
-  switch (index) {
-    case 0:
-      return "SNA";
-    case 1:
-      return "OPEN";
-    case 2:
-      return "PRECHARGE";
-    case 3:
-      return "BLOCKED";
-    case 4:
-      return "PULLED_IN";
-    case 5:
-      return "OPENING";
-    case 6:
-      return "ECONOMIZED";
-    case 7:
-      return "WELDED";
-    case 8:
-      return "UNKNOWN(8)";
-    case 9:
-      return "UNKNOWN(9)";
-    case 10:
-      return "UNKNOWN(10)";
-    case 11:
-      return "UNKNOWN(11)";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* contactorStates[] = {
+    "SNA", "OPEN", "PRECHARGE", "BLOCKED", "PULLED_IN", "OPENING", "ECONOMIZED", 
+    "WELDED", "UNKNOWN(8)", "UNKNOWN(9)", "UNKNOWN(10)", "UNKNOWN(11)"
+  };
+  return (index >= 0 && index < sizeof(contactorStates) / sizeof(contactorStates[0])) ? contactorStates[index] : "UNKNOWN";
 }
 
 inline const char* getHvilStatusState(int index) {
-  switch (index) {
-    case 0:
-      return "NOT OK";
-    case 1:
-      return "STATUS_OK";
-    case 2:
-      return "CURRENT_SOURCE_FAULT";
-    case 3:
-      return "INTERNAL_OPEN_FAULT";
-    case 4:
-      return "VEHICLE_OPEN_FAULT";
-    case 5:
-      return "PENTHOUSE_LID_OPEN_FAULT";
-    case 6:
-      return "UNKNOWN_LOCATION_OPEN_FAULT";
-    case 7:
-      return "VEHICLE_NODE_FAULT";
-    case 8:
-      return "NO_12V_SUPPLY";
-    case 9:
-      return "VEHICLE_OR_PENTHOUSE_LID_OPENFAULT";
-    case 10:
-      return "UNKNOWN(10)";
-    case 11:
-      return "UNKNOWN(11)";
-    case 12:
-      return "UNKNOWN(12)";
-    case 13:
-      return "UNKNOWN(13)";
-    case 14:
-      return "UNKNOWN(14)";
-    case 15:
-      return "UNKNOWN(15)";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* hvilStatusStates[] = {
+    "NOT OK", "STATUS_OK", "CURRENT_SOURCE_FAULT", "INTERNAL_OPEN_FAULT", "VEHICLE_OPEN_FAULT", 
+    "PENTHOUSE_LID_OPEN_FAULT", "UNKNOWN_LOCATION_OPEN_FAULT", "VEHICLE_NODE_FAULT", "NO_12V_SUPPLY", 
+    "VEHICLE_OR_PENTHOUSE_LID_OPENFAULT", "UNKNOWN(10)", "UNKNOWN(11)", "UNKNOWN(12)", "UNKNOWN(13)", 
+    "UNKNOWN(14)", "UNKNOWN(15)"
+  };
+  return (index >= 0 && index < sizeof(hvilStatusStates) / sizeof(hvilStatusStates[0])) ? hvilStatusStates[index] : "UNKNOWN";
 }
 
 inline const char* getBMSState(int index) {
-  switch (index) {
-    case 0:
-      return "STANDBY";
-    case 1:
-      return "DRIVE";
-    case 2:
-      return "SUPPORT";
-    case 3:
-      return "CHARGE";
-    case 4:
-      return "FEIM";
-    case 5:
-      return "CLEAR_FAULT";
-    case 6:
-      return "FAULT";
-    case 7:
-      return "WELD";
-    case 8:
-      return "TEST";
-    case 9:
-      return "SNA";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* bmsStates[] = {
+    "STANDBY", "DRIVE", "SUPPORT", "CHARGE", "FEIM", 
+    "CLEAR_FAULT", "FAULT", "WELD", "TEST", "SNA"
+  };
+  return (index >= 0 && index < sizeof(bmsStates) / sizeof(bmsStates[0])) ? bmsStates[index] : "UNKNOWN";
 }
 
 inline const char* getBMSContactorState(int index) {
-  switch (index) {
-    case 0:
-      return "SNA";
-    case 1:
-      return "OPEN";
-    case 2:
-      return "OPENING";
-    case 3:
-      return "CLOSING";
-    case 4:
-      return "CLOSED";
-    case 5:
-      return "WELDED";
-    case 6:
-      return "BLOCKED";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* bmsContactorStates[] = {
+    "SNA", "OPEN", "OPENING", "CLOSING", "CLOSED", "WELDED", "BLOCKED"
+  };
+  return (index >= 0 && index < sizeof(bmsContactorStates) / sizeof(bmsContactorStates[0])) ? bmsContactorStates[index] : "UNKNOWN";
 }
 
 inline const char* getBMSHvState(int index) {
-  switch (index) {
-    case 0:
-      return "DOWN";
-    case 1:
-      return "COMING_UP";
-    case 2:
-      return "GOING_DOWN";
-    case 3:
-      return "UP_FOR_DRIVE";
-    case 4:
-      return "UP_FOR_CHARGE";
-    case 5:
-      return "UP_FOR_DC_CHARGE";
-    case 6:
-      return "UP";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* bmsHvStates[] = {
+    "DOWN", "COMING_UP", "GOING_DOWN", "UP_FOR_DRIVE", "UP_FOR_CHARGE", "UP_FOR_DC_CHARGE", "UP"
+  };
+  return (index >= 0 && index < sizeof(bmsHvStates) / sizeof(bmsHvStates[0])) ? bmsHvStates[index] : "UNKNOWN";
 }
 
 inline const char* getBMSUiChargeStatus(int index) {
-  switch (index) {
-    case 0:
-      return "DISCONNECTED";
-    case 1:
-      return "NO_POWER";
-    case 2:
-      return "ABOUT_TO_CHARGE";
-    case 3:
-      return "CHARGING";
-    case 4:
-      return "CHARGE_COMPLETE";
-    case 5:
-      return "CHARGE_STOPPED";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* bmsUiChargeStatuses[] = {
+    "DISCONNECTED", "NO_POWER", "ABOUT_TO_CHARGE", "CHARGING", "CHARGE_COMPLETE", "CHARGE_STOPPED"
+  };
+  return (index >= 0 && index < sizeof(bmsUiChargeStatuses) / sizeof(bmsUiChargeStatuses[0])) ? bmsUiChargeStatuses[index] : "UNKNOWN";
 }
 
 inline const char* getPCS_DcdcStatus(int index) {
-  switch (index) {
-    case 0:
-      return "IDLE";
-    case 1:
-      return "ACTIVE";
-    case 2:
-      return "FAULTED";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsDcdcStatuses[] = {
+    "IDLE", "ACTIVE", "FAULTED"
+  };
+  return (index >= 0 && index < sizeof(pcsDcdcStatuses) / sizeof(pcsDcdcStatuses[0])) ? pcsDcdcStatuses[index] : "UNKNOWN";
 }
 
 inline const char* getPCS_DcdcMainState(int index) {
-  switch (index) {
-    case 0:
-      return "STANDBY";
-    case 1:
-      return "12V_SUPPORT_ACTIVE";
-    case 2:
-      return "PRECHARGE_STARTUP";
-    case 3:
-      return "PRECHARGE_ACTIVE";
-    case 4:
-      return "DIS_HVBUS_ACTIVE";
-    case 5:
-      return "SHUTDOWN";
-    case 6:
-      return "FAULTED";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsDcdcMainStates[] = {
+    "STANDBY", "12V_SUPPORT_ACTIVE", "PRECHARGE_STARTUP", "PRECHARGE_ACTIVE", "DIS_HVBUS_ACTIVE", "SHUTDOWN", "FAULTED"
+  };
+  return (index >= 0 && index < sizeof(pcsDcdcMainStates) / sizeof(pcsDcdcMainStates[0])) ? pcsDcdcMainStates[index] : "UNKNOWN";
 }
 
 inline const char* getPCS_DcdcSubState(int index) {
-  switch (index) {
-    case 0:
-      return "PWR_UP_INIT";
-    case 1:
-      return "STANDBY";
-    case 2:
-      return "12V_SUPPORT_ACTIVE";
-    case 3:
-      return "DIS_HVBUS";
-    case 4:
-      return "PCHG_FAST_DIS_HVBUS";
-    case 5:
-      return "PCHG_SLOW_DIS_HVBUS";
-    case 6:
-      return "PCHG_DWELL_CHARGE";
-    case 7:
-      return "PCHG_DWELL_WAIT";
-    case 8:
-      return "PCHG_DI_RECOVERY_WAIT";
-    case 9:
-      return "PCHG_ACTIVE";
-    case 10:
-      return "PCHG_FLT_FAST_DIS_HVBUS";
-    case 11:
-      return "SHUTDOWN";
-    case 12:
-      return "12V_SUPPORT_FAULTED";
-    case 13:
-      return "DIS_HVBUS_FAULTED";
-    case 14:
-      return "PCHG_FAULTED";
-    case 15:
-      return "CLEAR_FAULTS";
-    case 16:
-      return "FAULTED";
-    case 17:
-      return "NUM";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsDcdcSubStates[] = {
+    "PWR_UP_INIT", "STANDBY", "12V_SUPPORT_ACTIVE", "DIS_HVBUS", "PCHG_FAST_DIS_HVBUS", 
+    "PCHG_SLOW_DIS_HVBUS", "PCHG_DWELL_CHARGE", "PCHG_DWELL_WAIT", "PCHG_DI_RECOVERY_WAIT", 
+    "PCHG_ACTIVE", "PCHG_FLT_FAST_DIS_HVBUS", "SHUTDOWN", "12V_SUPPORT_FAULTED", 
+    "DIS_HVBUS_FAULTED", "PCHG_FAULTED", "CLEAR_FAULTS", "FAULTED", "NUM"
+  };
+  return (index >= 0 && index < sizeof(pcsDcdcSubStates) / sizeof(pcsDcdcSubStates[0])) ? pcsDcdcSubStates[index] : "UNKNOWN";
 }
 
 inline const char* getBMSPowerLimitState(int index) {
-  switch (index) {
-    case 0:
-      return "NOT_CALCULATED_FOR_DRIVE";
-    case 1:
-      return "CALCULATED_FOR_DRIVE";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* bmsPowerLimitStates[] = {
+    "NOT_CALCULATED_FOR_DRIVE", "CALCULATED_FOR_DRIVE"
+  };
+  return (index >= 0 && index < sizeof(bmsPowerLimitStates) / sizeof(bmsPowerLimitStates[0])) ? bmsPowerLimitStates[index] : "UNKNOWN";
 }
 
 inline const char* getHVPStatus(int index) {
-  switch (index) {
-    case 0:
-      return "INVALID";
-    case 1:
-      return "NOT_AVAILABLE";
-    case 2:
-      return "STALE";
-    case 3:
-      return "VALID";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* hvpStatuses[] = {
+    "INVALID", "NOT_AVAILABLE", "STALE", "VALID"
+  };
+  return (index >= 0 && index < sizeof(hvpStatuses) / sizeof(hvpStatuses[0])) ? hvpStatuses[index] : "UNKNOWN";
 }
 
 inline const char* getHVPContactor(int index) {
-  switch (index) {
-    case 0:
-      return "NOT_ACTIVE";
-    case 1:
-      return "ACTIVE";
-    case 2:
-      return "COMPLETED";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* hvpContactors[] = {
+    "NOT_ACTIVE", "ACTIVE", "COMPLETED"
+  };
+  return (index >= 0 && index < sizeof(hvpContactors) / sizeof(hvpContactors[0])) ? hvpContactors[index] : "UNKNOWN";
 }
 
 inline const char* getFalseTrue(bool value) {
@@ -1725,171 +1518,49 @@ inline const char* getFault(bool value) {
 }
 
 inline const char* getPCSLogMessageSelect(int index) {
-  switch (index) {
-    case 0:
-      return "PHA_1";
-    case 1:
-      return "PHB_1";
-    case 2:
-      return "PHC_1";
-    case 3:
-      return "CHG_1";
-    case 4:
-      return "CHG_2";
-    case 5:
-      return "CHG_3";
-    case 6:
-      return "DCDC_1";
-    case 7:
-      return "DCDC_2";
-    case 8:
-      return "DCDC_3";
-    case 9:
-      return "SYSTEM_1";
-    case 10:
-      return "PHA_2";
-    case 11:
-      return "PHB_2";
-    case 12:
-      return "PHC_2";
-    case 13:
-      return "CHG_4";
-    case 14:
-      return "DLOG_1";
-    case 15:
-      return "DLOG_2";
-    case 16:
-      return "DLOG_3";
-    case 17:
-      return "DLOG_4";
-    case 18:
-      return "DCDC_4";
-    case 19:
-      return "DCDC_5";
-    case 20:
-      return "CHG_NO_FLOW";
-    case 21:
-      return "CHG_LINE_OFFSET";
-    case 22:
-      return "DCDC_STATISTICS";
-    case 23:
-      return "CHG_STATISTICS";
-    case 24:
-      return "NUM_MSGS";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsLogMessageSelect[] = {
+    "PHA_1", "PHB_1", "PHC_1", "CHG_1", "CHG_2", "CHG_3", "DCDC_1", "DCDC_2", "DCDC_3", "SYSTEM_1",
+    "PHA_2", "PHB_2", "PHC_2", "CHG_4", "DLOG_1", "DLOG_2", "DLOG_3", "DLOG_4", "DCDC_4", "DCDC_5",
+    "CHG_NO_FLOW", "CHG_LINE_OFFSET", "DCDC_STATISTICS", "CHG_STATISTICS", "NUM_MSGS"
+  };
+  return (index >= 0 && index < sizeof(pcsLogMessageSelect) / sizeof(pcsLogMessageSelect[0])) ? pcsLogMessageSelect[index] : "UNKNOWN";
 }
 
 inline const char* getPCSChgPhState(int index) {
-  switch (index) {
-    case 0:
-      return "INIT";
-    case 1:
-      return "IDLE";
-    case 2:
-      return "PRECHARGE";
-    case 3:
-      return "ENABLE";
-    case 4:
-      return "FAULT";
-    case 5:
-      return "CLEAR_FAULTS";
-    case 6:
-      return "SHUTTING_DOWN";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsChgPhStates[] = {
+    "INIT", "IDLE", "PRECHARGE", "ENABLE", "FAULT", "CLEAR_FAULTS", "SHUTTING_DOWN"
+  };
+  return (index >= 0 && index < sizeof(pcsChgPhStates) / sizeof(pcsChgPhStates[0])) ? pcsChgPhStates[index] : "UNKNOWN";
 }
 
 inline const char* getPCSChgPhLastShutdownReason(int index) {
-  switch (index) {
-    case 0:
-      return "REASON_NONE";
-    case 1:
-      return "SW_ENABLE";
-    case 2:
-      return "HW_ENABLE";
-    case 3:
-      return "SW_FAULT";
-    case 4:
-      return "HW_FAULT";
-    case 5:
-      return "PLL_NOT_LOCKED";
-    case 6:
-      return "INPUT_UV";
-    case 7:
-      return "INPUT_OV";
-    case 8:
-      return "OUTPUT_UV";
-    case 9:
-      return "OUTPUT_OV";
-    case 10:
-      return "PRECHARGE_TIMEOUT";
-    case 11:
-      return "INT_BUS_UV";
-    case 12:
-      return "CONTROL_REGULATION_FAULT";
-    case 13:
-      return "OVER_TEMPERATURE";
-    case 14:
-      return "TEMP_IRRATIONAL";
-    case 15:
-      return "SENSOR_IRRATIONAL";
-    case 16:
-      return "FREQ_OUT_OF_RANGE";
-    case 17:
-      return "LINE_TRANSIENT_FAULT";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsChgPhLastShutdownReasons[] = {
+    "REASON_NONE", "SW_ENABLE", "HW_ENABLE", "SW_FAULT", "HW_FAULT", "PLL_NOT_LOCKED", "INPUT_UV", "INPUT_OV",
+    "OUTPUT_UV", "OUTPUT_OV", "PRECHARGE_TIMEOUT", "INT_BUS_UV", "CONTROL_REGULATION_FAULT", "OVER_TEMPERATURE",
+    "TEMP_IRRATIONAL", "SENSOR_IRRATIONAL", "FREQ_OUT_OF_RANGE", "LINE_TRANSIENT_FAULT"
+  };
+  return (index >= 0 && index < sizeof(pcsChgPhLastShutdownReasons) / sizeof(pcsChgPhLastShutdownReasons[0])) ? pcsChgPhLastShutdownReasons[index] : "UNKNOWN";
 }
 
 inline const char* getPCSChgInputFrequencyLN(int index) {
-  switch (index) {
-    case 0:
-      return "FREQUENCY_UNKNOWN";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsChgInputFrequencyLN[] = {
+    "FREQUENCY_UNKNOWN"
+  };
+  return (index >= 0 && index < sizeof(pcsChgInputFrequencyLN) / sizeof(pcsChgInputFrequencyLN[0])) ? pcsChgInputFrequencyLN[index] : "UNKNOWN";
 }
 
 inline const char* getPCSChgInternalPhaseConfig(int index) {
-  switch (index) {
-    case 0:
-      return "SNA";
-    case 1:
-      return "SINGLE_PHASE";
-    case 2:
-      return "THREE_PHASE";
-    case 3:
-      return "THREE_PHASE_DELTA";
-    case 4:
-      return "SINGLE_PHASE_IEC_GB";
-    case 5:
-      return "MFG_TEST_CONFIG_1";
-    case 6:
-      return "MFG_TEST_CONFIG_2";
-    case 7:
-      return "TOTAL_NUM";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsChgInternalPhaseConfigs[] = {
+    "SNA", "SINGLE_PHASE", "THREE_PHASE", "THREE_PHASE_DELTA", "SINGLE_PHASE_IEC_GB", "MFG_TEST_CONFIG_1", "MFG_TEST_CONFIG_2", "TOTAL_NUM"
+  };
+  return (index >= 0 && index < sizeof(pcsChgInternalPhaseConfigs) / sizeof(pcsChgInternalPhaseConfigs[0])) ? pcsChgInternalPhaseConfigs[index] : "UNKNOWN";
 }
 
 inline const char* getPCS_dLogContent(int index) {
-  switch (index) {
-    case 0:
-      return "INPUT_VOLTAGE";
-    case 1:
-      return "INPUT_CURRENT";
-    case 2:
-      return "OUTPUT_CURRENT";
-    case 3:
-      return "INT_BUS_VOLTAGE";
-    default:
-      return "UNKNOWN";
-  }
+  static const char* pcsDLogContents[] = {
+    "INPUT_VOLTAGE", "INPUT_CURRENT", "OUTPUT_CURRENT", "INT_BUS_VOLTAGE"
+  };
+  return (index >= 0 && index < sizeof(pcsDLogContents) / sizeof(pcsDLogContents[0])) ? pcsDLogContents[index] : "UNKNOWN";
 }
 
 void update_values_battery() {  //This function maps all the values fetched via CAN to the correct parameters used for modbus
