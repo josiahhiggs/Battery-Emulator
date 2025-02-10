@@ -41,74 +41,10 @@ void transmit_can_frame(CAN_frame* frame, const CAN_config& config) {
   // Add actual CAN transmission logic here
 }
 
-//0x221 545 VCFRONT_LVPowerState: "GenMsgCycleTime" 50ms
-//BO_ 545 VCFRONT_LVPowerState: 8 VEH
-// SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_LVPowerStateCounter : 52|4@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_LVPowerStateIndex M : 0|5@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_vehiclePowerState : 5|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_parkLVState m0 : 8|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_espLVState m0 : 10|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_radcLVState m0 : 12|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_hvacCompLVState m0 : 14|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_ptcLVRequest m0 : 16|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_sccmLVRequest m0 : 18|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_tpmsLVRequest m0 : 20|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_rcmLVRequest m0 : 22|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_iBoosterLVState m0 : 24|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_tunerLVRequest m0 : 26|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_amplifierLVRequest m0 : 28|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_das1HighCurrentLVState m0 : 30|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_das2HighCurrentLVState m0 : 32|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_diLVRequest m0 : 34|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_disLVState m0 : 36|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_oilPumpFrontLVState m0 : 38|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_oilPumpRearLVRequest m0 : 40|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_ocsLVRequest m0 : 42|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_vcleftHiCurrentLVState m0 : 44|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_vcrightHiCurrentLVState m0 : 46|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_uiHiCurrentLVState m0 : 48|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_uiAudioLVState m0 : 50|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_cpLVRequest m1 : 8|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_epasLVState m1 : 10|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_hvcLVRequest m1 : 12|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_tasLVState m1 : 14|2@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_pcsLVState m1 : 16|2@1+ (1,0) [0|0] ""  X
-
-//VAL_ 545 VCFRONT_LVPowerStateIndex 0 "Mux0" 1 "Mux1" ;
-//VAL_ 545 VCFRONT_vehiclePowerState 0 "OFF" 1 "CONDITIONING" 2 "ACCESSORY" 3 "DRIVE" ;
-//VAL_ 545 VCFRONT_parkLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_espLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_radcLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_hvacCompLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_ptcLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_sccmLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_tpmsLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_rcmLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_iBoosterLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_tunerLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_amplifierLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_das1HighCurrentLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_das2HighCurrentLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_diLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_disLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_oilPumpFrontLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_oilPumpRearLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_ocsLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_vcleftHiCurrentLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_vcrightHiCurrentLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_uiHiCurrentLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_uiAudioLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_cpLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_epasLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_hvcLVRequest 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_tasLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-//VAL_ 545 VCFRONT_pcsLVState 0 "OFF" 1 "ON" 2 "GOING_DOWN" 3 "FAULT" ;
-
 // Declare and initialize the frame variable globally
 CAN_frame frame = {.FD = false, .ext_ID = false, .DLC = 0, .ID = 0, .data = {.u8 = {0}}};
 
-// CAN frame definition for ID 0x221
+// CAN frame definition for ID 0x221 545 VCFRONT_LVPowerState GenMsgCycleTime 100ms
 CAN_frame TESLA_221 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
@@ -290,27 +226,7 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
   frame.data.u8[8] = msg.VCFRONT_LVPowerStateChecksum;
 }
 
-// 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
-//BO_ 721 VCFRONT_okToUseHighPower: 2 VEH
-//SG_ VCFRONT_cpOkToUseHighPower : 6|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_das1OkToUseHighPower : 2|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_das2OkToUseHighPower : 3|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_premAudioOkToUseHiPower : 7|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_uiAudioOkToUseHighPower : 5|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_uiOkToUseHighPower : 4|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_vcleftOkToUseHighPower : 0|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_vcrightOkToUseHighPower : 1|1@1+ (1,0) [0|0] ""  X
-
-//VAL_ VCFRONT_cpOkToUseHighPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_das1OkToUseHighPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_das2OkToUseHighPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_premAudioOkToUseHiPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_uiAudioOkToUseHighPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_uiOkToUseHighPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_vcleftOkToUseHighPower 0 "NO" 1 "YES" ;
-//VAL_ VCFRONT_vcrightOkToUseHighPower 0 "NO" 1 "YES" ;
-
-// CAN frame definition for ID 0x2D1
+// CAN frame definition for ID 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
 CAN_frame TESLA_2D1 = {.FD = false, .ext_ID = false, .DLC = 2, .ID = 0x2D1, .data = {.u8 = {0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
@@ -362,46 +278,7 @@ void initialize_and_update_CAN_frame_2D1() {
   update_CAN_frame_2D1(TESLA_2D1, msg);
 }
 
-// 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
-//BO_ 929 VCFRONT_vehicleStatus: 8 VEH
-//SG_ VCFRONT_12vStatusForDrive : 14|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_2RowCenterUnbuckled : 38|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_2RowLeftUnbuckled : 36|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_2RowRightUnbuckled : 40|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_APGlassHeaterState : 2|3@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_LVLoadRequest : 9|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_batterySupportRequest : 27|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_bmsHvChargeEnable : 0|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_diPowerOnState : 10|3@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_driverBuckleStatus : 30|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_driverDoorStatus : 31|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_driverIsLeaving : 28|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_driverIsLeavingAnySpeed : 13|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_driverUnbuckled : 32|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_is12VBatterySupported: 5|1@1+ (1,0) [0|0] "" X
-//SG_ VCFRONT_ota12VSupportRequest : 29|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_passengerUnbuckled : 34|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_pcs12vVoltageTarget : 16|11@1+ (0.01,0) [0|0] "V"  X
-//SG_ VCFRONT_pcsEFuseVoltage : 42|10@1+ (0.1,0) [0|0] "V"  X
-//SG_ VCFRONT_preconditionRequest : 1|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_standbySupplySupported : 6|1@1+ (1,0) [0|1] ""  X
-//SG_ VCFRONT_thermalSystemType : 5|1@1+ (1,0) [0|1] ""  X
-//SG_ VCFRONT_vehicleStatusChecksum : 56|8@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_vehicleStatusCounter : 52|4@1+ (1,0) [0|0] ""  X
-
-//VAL_ 929 VCFRONT_12vStatusForDrive 0 "NOT_READY_FOR_DRIVE_12V" 1 "READY_FOR_DRIVE_12V" 2 "EXIT_DRIVE_REQUESTED_12V" ;
-//VAL_ 929 VCFRONT_2RowCenterUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
-//VAL_ 929 VCFRONT_2RowLeftUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
-//VAL_ 929 VCFRONT_2RowRightUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
-//VAL_ 929 VCFRONT_APGlassHeaterState 0 "SNA" 1 "ON" 2 "OFF" 3 "OFF_UNAVAILABLE" 4 "FAULT" ;
-//VAL_ 929 VCFRONT_diPowerOnState 0 "POWERED_OFF" 1 "POWERED_ON_FOR_POST_RUN" 2 "POWERED_ON_FOR_STATIONARY_HEAT" 3 "POWERED_ON_FOR_DRIVE" 4 "POWER_GOING_DOWN" ;
-//VAL_ 929 VCFRONT_driverBuckleStatus 0 "UNBUCKLED" 1 "BUCKLED" ;
-//VAL_ 929 VCFRONT_driverDoorStatus 0 "OPEN" 1 "CLOSED" ;
-//VAL_ 929 VCFRONT_driverUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
-//VAL_ 929 VCFRONT_passengerUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
-//VAL_ 929 VCFRONT_pcsEFuseVoltage 1023 "SNA" ;
-
-// CAN frame definition for ID 0x3A1
+// CAN frame definition for ID 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
 CAN_frame TESLA_3A1 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
@@ -529,21 +406,7 @@ void initialize_and_update_CAN_frame_3A1() {
   update_CAN_frame_3A1(TESLA_3A1, msg);
 }
 
-// 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
-// BO_ 819 UI_chargeRequest: 4 VEH
-// SG_ UI_acChargeCurrentLimit : 8|7@1+ (1,0) [0|0] "A"  X
-// SG_ UI_chargeEnableRequest : 2|1@1+ (1,0) [0|0] ""  X
-// SG_ UI_chargeTerminationPct : 16|10@1+ (0.1,0) [0|0] "%"  X
-// SG_ UI_closeChargePortDoorRequest : 1|1@1+ (1,0) [0|0] ""  X
-// SG_ UI_openChargePortDoorRequest : 0|1@1+ (1,0) [0|0] ""  X
-
-// VAL_ 819 UI_openChargePortDoorRequest 0 "No" 1 "Yes" ;
-// VAL_ 819 UI_closeChargePortDoorRequest 0 "No" 1 "Yes" ;
-// VAL_ 819 UI_chargeEnableRequest 0 "No" 1 "Yes" ;
-// VAL_ 819 UI_acChargeCurrentLimit 127 "SNA" ;
-// VAL_ 819 UI_chargeTerminationPct 1023 "SNA" ;
-
-// CAN frame definition for ID 0x333
+// CAN frame definition for ID 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
 CAN_frame TESLA_333 = {.FD = false, .ext_ID = false, .DLC = 4, .ID = 0x333, .data = {.u8 = {0x00, 0x00, 0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
@@ -593,15 +456,7 @@ void initialize_and_update_CAN_frame_333() {
   update_CAN_frame_333(TESLA_333, msg);
 }
 
-// 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
-//BO_ 505 VCSEC_requests: 1 VEH
-//SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_driveAttemptedWithoutAuth : 2|1@1+ (1,0) [0|0] ""  X
-
-//VAL_ 505 VCSEC_chargePortRequest 0 "NONE" 1 "OPEN" 2 "CLOSE" 3 "SNA" ;
-//VAL_ 505 VCSEC_driveAttemptedWithoutAuth 0 "No" 1 "Yes" ;
-
-// CAN frame definition for ID 0x1F9
+// CAN frame definition for ID 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
 CAN_frame TESLA_1F9 = {.FD = false, .ext_ID = false, .DLC = 1, .ID = 0x1F9, .data = {.u8 = {0x00}}};
 
 // Structure to hold the signal values for the CAN frame
@@ -638,57 +493,7 @@ void initialize_and_update_CAN_frame_1F9() {
   update_CAN_frame_1F9(TESLA_1F9, msg);
 }
 
-// 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
-//BO_ 825 VCSEC_authentication: 8 VEH
-//SG_ VCSEC_MCUCommandType : 36|3@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_alarmStatus : 43|4@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_authRequested : 60|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_authenticationStatus : 16|2@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_chargePortLockStatus : 18|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_frunkRequest : 34|2@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_immobilizerState : 48|3@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_keyChannelIndexed : 56|4@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_leftFrontLockStatus : 19|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_leftRearLockStatus : 20|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_lockIndicationRequest : 51|3@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_lockRequestType : 24|5@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_numberOfPubKeysOnWhitelist : 6|5@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnDeltaD : 3|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnDeltaP : 39|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnDeltaR : 4|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnHighThresholdC : 0|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnHighThresholdD : 1|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnHighThresholdP : 2|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_prsntRsnHighThresholdR : 5|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_rightFrontLockStatus : 21|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_rightRearLockStatus : 22|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_simpleLockStatus : 54|2@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_summonRequest : 29|3@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_trunkLockStatus : 23|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_trunkRequest : 32|2@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_usingModifiedMACAddress : 40|1@1+ (1,0) [0|0] ""  X
-//SG_ VCSEC_vehicleLockStatus : 12|4@1+ (1,0) [0|0] ""  X
-
-//VAL_ 825 VCSEC_MCUCommandType 0 "NONE" 1 "REMOTE_UNLOCK" 2 "REMOTE_START" 3 "COMMAND3" 4 "COMMAND4" 5 "COMMAND5" ;
-//VAL_ 825 VCSEC_alarmStatus 0 "DISARMED" 1 "ARMED" 2 "PARTIAL_ARMED" 3 "TRIGGERED_FLASH_ACTIVE" 4 "ERROR" 5 "TRIGGERED_FLASH_INACTIVE" 6 "IMMINENT" 7 "DEFAULT" 15 "SNA" ;
-//VAL_ 825 VCSEC_authenticationStatus 0 "NONE" 1 "AUTHENTICATED_FOR_UNLOCK" 2 "AUTHENTICATED_FOR_DRIVE" ;
-//VAL_ 825 VCSEC_chargePortLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
-//VAL_ 825 VCSEC_frunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
-//VAL_ 825 VCSEC_immobilizerState 0 "IDLE" 1 "PREPARE" 2 "ENCRYPT_BEGIN" 3 "ENCRYPT" 4 "SEND_AUTH_RESPONSE" 5 "SEND_NO_GO_AUTH_RESPONSE" ;
-//VAL_ 825 VCSEC_keyChannelIndexed 15 "SNA" ;
-//VAL_ 825 VCSEC_leftFrontLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
-//VAL_ 825 VCSEC_leftRearLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
-//VAL_ 825 VCSEC_lockIndicationRequest 0 "NONE_SNA" 1 "SINGLE" 2 "DOUBLE" 3 "TRIPLE" 4 "HOLD" ;
-//VAL_ 825 VCSEC_lockRequestType 0 "NONE" 1 "PASSIVE_SHIFT_TO_P_UNLOCK" 2 "PASSIVE_PARKBUTTON_UNLOCK" 3 "PASSIVE_INTERNAL_HANDLE_UNLOCK" 4 "PASSIVE_DRIVE_AWAY_LOCK" 5 "PASSIVE_BLE_WALKUP_UNLOCK" 6 "PASSIVE_BLE_EXTERIOR_CHARGEHANDLEBUTTON_UNLOCK" 7 "PASSIVE_BLE_EXTERIOR_HANDLE_UNLOCK" 8 "PASSIVE_BLE_INTERIOR_HANDLE_UNLOCK" 9 "PASSIVE_BLE_LOCK" 10 "CRASH_UNLOCK" 11 "ACTIVE_UI_BUTTON_UNLOCK" 12 "ACTIVE_UI_BUTTON_LOCK" 13 "ACTIVE_REMOTE_UNLOCK" 14 "ACTIVE_REMOTE_LOCK" 15 "ACTIVE_NFC_UNLOCK" 16 "ACTIVE_NFC_LOCK" 17 "ACTIVE_BLE_UNLOCK" 18 "ACTIVE_BLE_LOCK" 19 "PASSIVE_INTERNAL_LOCK_PROMOTION" ;
-//VAL_ 825 VCSEC_rightFrontLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
-//VAL_ 825 VCSEC_rightRearLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
-//VAL_ 825 VCSEC_simpleLockStatus 0 "SNA" 1 "UNLOCKED" 2 "LOCKED" ;
-//VAL_ 825 VCSEC_summonRequest 0 "IDLE" 1 "PRIME" 2 "FORWARD" 3 "BACKWARD" 4 "STOP" 5 "SNA" ;
-//VAL_ 825 VCSEC_trunkLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
-//VAL_ 825 VCSEC_trunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
-//VAL_ 825 VCSEC_vehicleLockStatus 0 "SNA" 1 "ACTIVE_NFC_UNLOCKED" 2 "ACTIVE_NFC_LOCKED" 3 "PASSIVE_SELECTIVE_UNLOCKED" 4 "PASSIVE_BLE_UNLOCKED" 5 "PASSIVE_BLE_LOCKED" 6 "ACTIVE_SELECTIVE_UNLOCKED" 7 "ACTIVE_BLE_UNLOCKED" 8 "ACTIVE_BLE_LOCKED" 9 "ACTIVE_UI_UNLOCKED" 10 "ACTIVE_UI_LOCKED" 11 "ACTIVE_REMOTE_UNLOCKED" 12 "ACTIVE_REMOTE_LOCKED" 13 "CRASH_UNLOCKED" 14 "PASSIVE_INTERNAL_UNLOCKED" 15 "PASSIVE_INTERNAL_LOCKED" ;
-
-// CAN frame definition for ID 0x339
+// CAN frame definition for ID 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
 CAN_frame TESLA_339 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
@@ -810,26 +615,7 @@ void initialize_and_update_CAN_frame_339() {
   update_CAN_frame_339(TESLA_339, msg);
 }
 
-// 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
-//BO_ 801 VCFRONT_sensors: 8 VEH
-// SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
-// SG_ VCFRONT_brakeFluidLevel : 22|2@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_coolantLevel : 21|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_ptSensorIrrational : 49|1@1+ (1,0) [0|0] ""  X
-//SG_ VCFRONT_tempAmbient : 24|8@1+ (0.5,-40) [0|0] "degC"  X
-//SG_ VCFRONT_tempAmbientFiltered : 40|8@1+ (0.5,-40) [0|0] "degC"  X
-//SG_ VCFRONT_tempCoolantBatInlet : 0|10@1+ (0.125,-40) [0|0] "degC"  X
-//SG_ VCFRONT_tempCoolantPTInlet : 10|11@1+ (0.125,-40) [0|0] "degC"  X
-//SG_ VCFRONT_washerFluidLevel : 32|2@1+ (1,0) [0|0] ""  X
-
-//VAL_ 801 VCFRONT_brakeFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
-//VAL_ 801 VCFRONT_coolantLevel 0 "NOT_OK" 1 "FILLED" ;
-//VAL_ 801 VCFRONT_tempAmbient 0 "SNA" ;
-//VAL_ 801 VCFRONT_tempAmbientFiltered 0 "SNA" ;
-//VAL_ 801 VCFRONT_tempCoolantBatInlet 1023 "SNA" ;
-//VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
-
-// CAN frame definition for ID 0x321
+// CAN frame definition for ID 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
 CAN_frame TESLA_321 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 8,
