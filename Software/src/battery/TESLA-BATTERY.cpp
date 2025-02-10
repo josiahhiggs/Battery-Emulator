@@ -3080,12 +3080,12 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                         (rx_frame.data.u8[1] & (0xFFU));  // m22 : 8|24@1+ (0.01,0) [0|0] "kWh"  X
       }
       break;
-    case 0x401: {                                                 // Cell stats  //BrickVoltages
-      mux = (rx_frame.data.u8[0]);                                //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
-                                                                  //StatusFlags : 8|8@1+ (1,0) [0|0] ""
-                                                                  //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
-                                                                  //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
-                                                                  //Brick2 m0 : 48|16@1+ (0.0001,0) [0|0] "V"
+    case 0x401: {                   // Cell stats  //BrickVoltages
+      mux = (rx_frame.data.u8[0]);  //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
+                                    //StatusFlags : 8|8@1+ (1,0) [0|0] ""
+                                    //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
+                                    //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
+                                    //Brick2 m0 : 48|16@1+ (0.0001,0) [0|0] "V"
 
       if (rx_frame.data.u8[1] == 0x2A)  // status byte must be 0x2A to read cellvoltages
       {
