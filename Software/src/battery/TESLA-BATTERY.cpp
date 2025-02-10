@@ -3080,40 +3080,39 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
                                         (rx_frame.data.u8[1] & (0xFFU));  // m22 : 8|24@1+ (0.01,0) [0|0] "kWh"  X
       }
       break;
-      case 0x401: {                                                 // Cell stats  //BrickVoltages
-        mux = (rx_frame.data.u8[0]);                                //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
-        const char* mux_description = getPCSLogMessageSelect(mux);  // Initialize mux_description here
-                                                                    //StatusFlags : 8|8@1+ (1,0) [0|0] ""
-                                                                    //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
-                                                                    //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
-                                                                    //Brick2 m0 : 48|16@1+ (0.0001,0) [0|0] "V"
-  
-        if (rx_frame.data.u8[1] == 0x2A)  // status byte must be 0x2A to read cellvoltages
-        {
-          // Example, frame3=0x89,frame2=0x1D = 35101 / 10 = 3510mV
-          volts = ((rx_frame.data.u8[3] << 8) | rx_frame.data.u8[2]) / 10;
-          datalayer.battery.status.cell_voltages_mV[mux * 3] = volts;
-          volts = ((rx_frame.data.u8[5] << 8) | rx_frame.data.u8[4]) / 10;
-          datalayer.battery.status.cell_voltages_mV[1 + mux * 3] = volts;
-          volts = ((rx_frame.data.u8[7] << 8) | rx_frame.data.u8[6]) / 10;
-          datalayer.battery.status.cell_voltages_mV[2 + mux * 3] = volts;
-  
-          // Track the max value of mux. If we've seen two 0 values for mux, we've probably gathered all
-          // cell voltages. Then, 2 + mux_max * 3 + 1 is the number of cell voltages.
-          mux_max = (mux > mux_max) ? mux : mux_max;
-          if (mux_zero_counter < 2 && mux == 0u) {
+    case 0x401: {                                                 // Cell stats  //BrickVoltages
+      mux = (rx_frame.data.u8[0]);                                //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
+      const char* mux_description = getPCSLogMessageSelect(mux);  // Initialize mux_description here
+                                                                  //StatusFlags : 8|8@1+ (1,0) [0|0] ""
+                                                                  //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
+                                                                  //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
+                                                                  //Brick2 m0 : 48|16@1+ (0.0001,0) [0|0] "V"
+
+      if (rx_frame.data.u8[1] == 0x2A)  // status byte must be 0x2A to read cellvoltages
+      {
+        // Example, frame3=0x89,frame2=0x1D = 35101 / 10 = 3510mV
+        volts = ((rx_frame.data.u8[3] << 8) | rx_frame.data.u8[2]) / 10;
+        datalayer.battery.status.cell_voltages_mV[mux * 3] = volts;
+        volts = ((rx_frame.data.u8[5] << 8) | rx_frame.data.u8[4]) / 10;
+        datalayer.battery.status.cell_voltages_mV[1 + mux * 3] = volts;
+        volts = ((rx_frame.data.u8[7] << 8) | rx_frame.data.u8[6]) / 10;
+        datalayer.battery.status.cell_voltages_mV[2 + mux * 3] = volts;
+
+        // Track the max value of mux. If we've seen two 0 values for mux, we've probably gathered all
+        // cell voltages. Then, 2 + mux_max * 3 + 1 is the number of cell voltages.
+        mux_max = (mux > mux_max) ? mux : mux_max;
+        if (mux_zero_counter < 2 && mux == 0u) {
+          mux_zero_counter++;
+          if (mux_zero_counter == 2u) {
+            // The max index will be 2 + mux_max * 3 (see above), so "+ 1" for the number of cells
+            datalayer.battery.info.number_of_cells = 2 + 3 * mux_max + 1;
+            // Increase the counter arbitrarily another time to make the initial if-statement evaluate to false
             mux_zero_counter++;
-            if (mux_zero_counter == 2u) {
-              // The max index will be 2 + mux_max * 3 (see above), so "+ 1" for the number of cells
-              datalayer.battery.info.number_of_cells = 2 + 3 * mux_max + 1;
-              // Increase the counter arbitrarily another time to make the initial if-statement evaluate to false
-              mux_zero_counter++;
-            }
           }
         }
-        break;
       }
       break;
+    } break;
     case 0x2d2:  //BMSVAlimits:
       battery_bms_min_voltage =
           ((rx_frame.data.u8[1] << 8) |
