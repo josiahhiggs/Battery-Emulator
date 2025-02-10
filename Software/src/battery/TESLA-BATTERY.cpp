@@ -2573,6 +2573,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
   static uint16_t volts;
   static uint8_t mux_zero_counter = 0u;
   static uint8_t mux_max = 0u;
+  const char* mux_description = nullptr;
 
   switch (rx_frame.ID) {
     case 0x352:                              // 850 BMS_energyStatus newer BMS
@@ -3081,6 +3082,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       break;
     case 0x401:                     // Cell stats  //BrickVoltages
       mux = (rx_frame.data.u8[0]);  //MultiplexSelector M : 0|8@1+ (1,0) [0|0] ""
+      const char* mux_description = getPCSLogMessageSelect(mux); // Initialize mux_description here
                                     //StatusFlags : 8|8@1+ (1,0) [0|0] ""
                                     //Brick0 m0 : 16|16@1+ (0.0001,0) [0|0] "V"
                                     //Brick1 m0 : 32|16@1+ (0.0001,0) [0|0] "V"
