@@ -32,15 +32,6 @@ std::mutex mtx;
 std::condition_variable cv;
 bool ready = false;
 
-// Function prototypes
-//void transmit_can_frame(CAN_frame* frame, const CAN_config& config) {
-// Example implementation for transmitting a CAN frame
-// This is a placeholder and should be replaced with actual CAN transmission code
-//std::cout << "Transmitting CAN frame with ID: " << frame->ID << std::endl;
-//std::cout << "Bitrate: " << config.bitrate << ", Mode: " << config.mode << std::endl;
-// Add actual CAN transmission logic here
-//}
-
 // Declare and initialize the frame variable globally
 CAN_frame frame = {.FD = false, .ext_ID = false, .DLC = 0, .ID = 0, .data = {.u8 = {0x00}}};
 
