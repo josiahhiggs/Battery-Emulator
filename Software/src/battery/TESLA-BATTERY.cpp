@@ -203,8 +203,8 @@ void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mu
     frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | ((msg.vehiclePowerState & 0x03) << 5);
     frame.data.u8[1] = (msg.parkLVState & 0x03) | ((msg.espLVState & 0x03) << 2) | ((msg.radcLVState & 0x03) << 4) |
                        ((msg.hvacCompLVState & 0x03) << 6);
-    frame.data.u8[2] = (msg.ptcLVRequest & 0x03) | ((msg.sccmLVRequest & 0x03) << 2) | ((msg.tpmsLVRequest & 0x03) << 4) |
-                       ((msg.rcmLVRequest & 0x03) << 6);
+    frame.data.u8[2] = (msg.ptcLVRequest & 0x03) | ((msg.sccmLVRequest & 0x03) << 2) |
+                       ((msg.tpmsLVRequest & 0x03) << 4) | ((msg.rcmLVRequest & 0x03) << 6);
     frame.data.u8[3] = (msg.iBoosterLVState & 0x03) | ((msg.tunerLVRequest & 0x03) << 2) |
                        ((msg.amplifierLVRequest & 0x03) << 4) | ((msg.das1HighCurrentLVState & 0x03) << 6);
     frame.data.u8[4] = (msg.das2HighCurrentLVState & 0x03) | ((msg.diLVRequest & 0x03) << 2) |
