@@ -80,7 +80,7 @@ struct TESLA_221_Struct {
 // Function prototypes
 uint8_t calculate_checksum(const TESLA_221_Struct& msg);
 uint8_t calculateCounter();
-void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg);
+void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mux0);
 void initialize_msg(TESLA_221_Struct& msg, bool mux0);
 
 // Function to initialize and update the CAN frame 0x221
@@ -2753,6 +2753,9 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
   TESLA_321_Struct msg_321;
   TESLA_241_Struct msg_241;
 
+  // Declare and initialize mux0
+  bool mux0 = true;
+
 #if defined(TESLA_MODEL_SX_BATTERY) || defined(EXP_TESLA_BMS_DIGITAL_HVIL)
   if ((datalayer.system.status.inverter_allows_contactor_closing) && (datalayer.battery.status.bms_status != FAULT)) {
     if (currentMillis - lastSend1CF >= 10) {
@@ -2788,12 +2791,12 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
         (datalayer.battery.status.bms_status != FAULT)) {
       sendContactorClosingMessagesStill = 300;
       initialize_msg(msg_221, true);             // Initialize the message structure
-      update_CAN_frame_221(TESLA_221, msg_221);  // Update the CAN frame data
+      update_CAN_frame_221(TESLA_221, msg_221, mux0);  // Update the CAN frame data
       transmit_can_frame(&TESLA_221, can_config.battery);
     } else {  // Faulted state, or inverter blocks contactor closing
       if (sendContactorClosingMessagesStill > 0) {
         initialize_msg(msg_221, true);             // Initialize the message structure
-        update_CAN_frame_221(TESLA_221, msg_221);  // Update the CAN frame data
+        update_CAN_frame_221(TESLA_221, msg_221, mux0);  // Update the CAN frame data
         transmit_can_frame(&TESLA_221, can_config.battery);
         sendContactorClosingMessagesStill--;
       }
