@@ -2790,12 +2790,12 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     if ((datalayer.system.status.inverter_allows_contactor_closing == true) &&
         (datalayer.battery.status.bms_status != FAULT)) {
       sendContactorClosingMessagesStill = 300;
-      initialize_msg(msg_221, true);             // Initialize the message structure
+      initialize_msg(msg_221, true);                   // Initialize the message structure
       update_CAN_frame_221(TESLA_221, msg_221, mux0);  // Update the CAN frame data
       transmit_can_frame(&TESLA_221, can_config.battery);
     } else {  // Faulted state, or inverter blocks contactor closing
       if (sendContactorClosingMessagesStill > 0) {
-        initialize_msg(msg_221, true);             // Initialize the message structure
+        initialize_msg(msg_221, true);                   // Initialize the message structure
         update_CAN_frame_221(TESLA_221, msg_221, mux0);  // Update the CAN frame data
         transmit_can_frame(&TESLA_221, can_config.battery);
         sendContactorClosingMessagesStill--;
