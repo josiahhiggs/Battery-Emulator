@@ -110,13 +110,14 @@ void initialize_and_update_CAN_frame_221() {
     }
 
     initialize_msg(msg, mux0);
-    update_CAN_frame_221(TESLA_221, msg);
+    update_CAN_frame_221(TESLA_221, msg, mux0);
 
     // Toggle mux0 for the next cycle
     mux0 = !mux0;
   }
 
-  t.join();  // Join the timer thread before exiting
+  // Move t.join() outside the loop
+  t.join();
 }
 
 // Implement the checksum calculation function
@@ -196,25 +197,34 @@ void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
   msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
 }
 
-// Function to update CAN frame 221
-void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg) {
-  // Populate the CAN frame data based on the msg structure
-  frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | ((msg.vehiclePowerState & 0x03) << 5);
-  frame.data.u8[1] = (msg.parkLVState & 0x03) | ((msg.espLVState & 0x03) << 2) | ((msg.radcLVState & 0x03) << 4) |
-                     ((msg.hvacCompLVState & 0x03) << 6);
-  frame.data.u8[2] = (msg.ptcLVRequest & 0x03) | ((msg.sccmLVRequest & 0x03) << 2) | ((msg.tpmsLVRequest & 0x03) << 4) |
-                     ((msg.rcmLVRequest & 0x03) << 6);
-  frame.data.u8[3] = (msg.iBoosterLVState & 0x03) | ((msg.tunerLVRequest & 0x03) << 2) |
-                     ((msg.amplifierLVRequest & 0x03) << 4) | ((msg.das1HighCurrentLVState & 0x03) << 6);
-  frame.data.u8[4] = (msg.das2HighCurrentLVState & 0x03) | ((msg.diLVRequest & 0x03) << 2) |
-                     ((msg.disLVState & 0x03) << 4) | ((msg.oilPumpFrontLVState & 0x03) << 6);
-  frame.data.u8[5] = (msg.oilPumpRearLVRequest & 0x03) | ((msg.ocsLVRequest & 0x03) << 2) |
-                     ((msg.vcleftHiCurrentLVState & 0x03) << 4) | ((msg.vcrightHiCurrentLVState & 0x03) << 6);
-  frame.data.u8[6] = (msg.uiHiCurrentLVState & 0x03) | ((msg.uiAudioLVState & 0x03) << 2) |
-                     ((msg.cpLVRequest & 0x03) << 4) | ((msg.epasLVState & 0x03) << 6);
-  frame.data.u8[7] = (msg.hvcLVRequest & 0x03) | ((msg.tasLVState & 0x03) << 2) | ((msg.pcsLVState & 0x03) << 4) |
-                     ((msg.VCFRONT_LVPowerStateCounter & 0x0F) << 6);
-  frame.data.u8[8] = msg.VCFRONT_LVPowerStateChecksum;
+void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mux0) {
+  if (mux0) {
+    // Populate the CAN frame data based on the msg structure for Mux0
+    frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | ((msg.vehiclePowerState & 0x03) << 5);
+    frame.data.u8[1] = (msg.parkLVState & 0x03) | ((msg.espLVState & 0x03) << 2) | ((msg.radcLVState & 0x03) << 4) |
+                       ((msg.hvacCompLVState & 0x03) << 6);
+    frame.data.u8[2] = (msg.ptcLVRequest & 0x03) | ((msg.sccmLVRequest & 0x03) << 2) | ((msg.tpmsLVRequest & 0x03) << 4) |
+                       ((msg.rcmLVRequest & 0x03) << 6);
+    frame.data.u8[3] = (msg.iBoosterLVState & 0x03) | ((msg.tunerLVRequest & 0x03) << 2) |
+                       ((msg.amplifierLVRequest & 0x03) << 4) | ((msg.das1HighCurrentLVState & 0x03) << 6);
+    frame.data.u8[4] = (msg.das2HighCurrentLVState & 0x03) | ((msg.diLVRequest & 0x03) << 2) |
+                       ((msg.disLVState & 0x03) << 4) | ((msg.oilPumpFrontLVState & 0x03) << 6);
+    frame.data.u8[5] = (msg.oilPumpRearLVRequest & 0x03) | ((msg.ocsLVRequest & 0x03) << 2) |
+                       ((msg.vcleftHiCurrentLVState & 0x03) << 4) | ((msg.vcrightHiCurrentLVState & 0x03) << 6);
+    frame.data.u8[6] = (msg.uiHiCurrentLVState & 0x03) | ((msg.uiAudioLVState & 0x03) << 2);
+    frame.data.u8[7] = (msg.VCFRONT_LVPowerStateCounter & 0x0F) | (msg.VCFRONT_LVPowerStateChecksum << 4);
+  } else {
+    // Populate the CAN frame data based on the msg structure for Mux1
+    frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | ((msg.vehiclePowerState & 0x03) << 5);
+    frame.data.u8[1] = (msg.cpLVRequest & 0x03) | ((msg.epasLVState & 0x03) << 2) | ((msg.hvcLVRequest & 0x03) << 4) |
+                       ((msg.tasLVState & 0x03) << 6);
+    frame.data.u8[2] = (msg.pcsLVState & 0x03);
+    frame.data.u8[3] = 0;  // No signals for this byte in Mux1
+    frame.data.u8[4] = 0;  // No signals for this byte in Mux1
+    frame.data.u8[5] = 0;  // No signals for this byte in Mux1
+    frame.data.u8[6] = 0;  // No signals for this byte in Mux1
+    frame.data.u8[7] = (msg.VCFRONT_LVPowerStateCounter & 0x0F) | (msg.VCFRONT_LVPowerStateChecksum << 4);
+  }
 }
 
 // CAN frame definition for ID 0x241 577 VCFRONT_coolant GenMsgCycleTime 100ms
