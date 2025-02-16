@@ -1046,26 +1046,22 @@ void initialize_and_update_CAN_frame_321() {
 // VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
 // VAL_ 801 VCFRONT_washerFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
 
- //BO_ 0x438 1080 GTW_VEHNm: 2 VEH
- //SG_ GTW_VEHGotoSleep : 0|1@1+ (1,0) [0|0] ""  X
- //SG_ GTW_VEHHeartBeatCounter : 4|4@1+ (1,0) [0|0] ""  X
- //SG_ GTW_VEHWakeUpBus : 1|1@1+ (1,0) [0|0] ""  X
- //SG_ GTW_VEHWakeUpReason : 8|4@1+ (1,0) [0|0] ""  X
- //SG_ GTW_vehBusAsleep : 2|1@1+ (1,0) [0|0] ""  X
- //VAL_ 1080 GTW_VEHWakeUpReason 0 "NONE" 1 "RESET" 2 "GSM_RI" 3 "CH_CAN" 4 "VEH_CAN" 5 "VEH_CAN" 6 "VCFRONT" 7 "RTC_ALARM" 8 "UI_SCHEDULED" ;
+//BO_ 0x438 1080 GTW_VEHNm: 2 VEH
+//SG_ GTW_VEHGotoSleep : 0|1@1+ (1,0) [0|0] ""  X
+//SG_ GTW_VEHHeartBeatCounter : 4|4@1+ (1,0) [0|0] ""  X
+//SG_ GTW_VEHWakeUpBus : 1|1@1+ (1,0) [0|0] ""  X
+//SG_ GTW_VEHWakeUpReason : 8|4@1+ (1,0) [0|0] ""  X
+//SG_ GTW_vehBusAsleep : 2|1@1+ (1,0) [0|0] ""  X
+//VAL_ 1080 GTW_VEHWakeUpReason 0 "NONE" 1 "RESET" 2 "GSM_RI" 3 "CH_CAN" 4 "VEH_CAN" 5 "VEH_CAN" 6 "VCFRONT" 7 "RTC_ALARM" 8 "UI_SCHEDULED" ;
 
- CAN_frame TESLA_438 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 2,
-                       .ID = 0x438,
-                       .data = {u8 = {0x00, 0x00}}};
+CAN_frame TESLA_438 = {.FD = false, .ext_ID = false, .DLC = 2, .ID = 0x438, .data = {u8 = {0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_438_Struct {
-  uint8_t GTW_VEHGotoSleep : 1;       // 1 bit
-  uint8_t GTW_VEHWakeUpBus : 1;       // 1 bit
-  uint8_t GTW_vehBusAsleep : 1;       // 1 bit
-  uint8_t GTW_VEHWakeUpReason : 4;    // 4 bits
+  uint8_t GTW_VEHGotoSleep : 1;         // 1 bit
+  uint8_t GTW_VEHWakeUpBus : 1;         // 1 bit
+  uint8_t GTW_vehBusAsleep : 1;         // 1 bit
+  uint8_t GTW_VEHWakeUpReason : 4;      // 4 bits
   uint8_t GTW_VEHHeartBeatCounter : 4;  // 4 bits
 };
 
@@ -1078,7 +1074,8 @@ void initialize_msg(TESLA_438_Struct& msg) {
   msg.GTW_VEHGotoSleep = 0;  // 0 = No, 1 = Yes
   msg.GTW_VEHWakeUpBus = 0;  // 0 = No, 1 = Yes
   msg.GTW_vehBusAsleep = 0;  // 0 = No, 1 = Yes
-  msg.GTW_VEHWakeUpReason = 0;  // 0=NONE, 1=RESET, 2=GSM_RI, 3=CH_CAN, 4=VEH_CAN, 5=VEH_CAN, 6=VCFRONT, 7=RTC_ALARM, 8=UI_SCHEDULED
+  msg.GTW_VEHWakeUpReason =
+      0;  // 0=NONE, 1=RESET, 2=GSM_RI, 3=CH_CAN, 4=VEH_CAN, 5=VEH_CAN, 6=VCFRONT, 7=RTC_ALARM, 8=UI_SCHEDULED
   msg.GTW_VEHHeartBeatCounter = calculatecounter();  // 0-15
 }
 
@@ -1100,20 +1097,19 @@ void initialize_and_update_CAN_frame_438() {
   update_CAN_frame_438(TESLA_438, msg);
 }
 
+//BO_ 0x458 1112 GTW_vehNm: 7 VEH
+//SG_ GTW_OTAKeepAwake: 48|1@1+ (1,0) [0|0] "" X
+//SG_ GTW_chBusAsleep: 2|1@1+ (1,0) [0|0] "" X
+//SG_ GTW_VEHBusAsleep: 3|1@1+ (1,0) [0|0] "" X
+//SG_ GTW_nmDebugWakeUp: 16|32@1+ (1,0) [0|0] "" X
+//SG_ GTW_nmGoingToSleep: 0|1@1+ (1,0) [0|0] "" X
+//SG_ GTW_nmKeepAwakeReason: 4|4@1+ (1,0) [0|0] "" X
+//SG_ GTW_nmWakeUpBus: 1|1@1+ (1,0) [0|0] "" X
+//SG_ GTW_nmWakeUpReason: 8|4@1+ (1,0) [0|0] "" X
+//VAL_ 1112 GTW_nmKeepAwakeReason 0 "NONE_SNA" 15 "TBD";
+//VAL_ 1112 GTW_nmWakeUpReason 0 "NONE" 1 "RESET" 2 "GSM_RI" 3 "CH_CAN" 4 "VEH_CAN" 5 "VEH_CAN" 6 "VCFRONT" 7 "RTC_ALARM" 8 "UI_SCHEDULED";
 
- //BO_ 0x458 1112 GTW_vehNm: 7 VEH
- //SG_ GTW_OTAKeepAwake: 48|1@1+ (1,0) [0|0] "" X
- //SG_ GTW_chBusAsleep: 2|1@1+ (1,0) [0|0] "" X
- //SG_ GTW_VEHBusAsleep: 3|1@1+ (1,0) [0|0] "" X
- //SG_ GTW_nmDebugWakeUp: 16|32@1+ (1,0) [0|0] "" X
- //SG_ GTW_nmGoingToSleep: 0|1@1+ (1,0) [0|0] "" X
- //SG_ GTW_nmKeepAwakeReason: 4|4@1+ (1,0) [0|0] "" X
- //SG_ GTW_nmWakeUpBus: 1|1@1+ (1,0) [0|0] "" X
- //SG_ GTW_nmWakeUpReason: 8|4@1+ (1,0) [0|0] "" X
- //VAL_ 1112 GTW_nmKeepAwakeReason 0 "NONE_SNA" 15 "TBD";
- //VAL_ 1112 GTW_nmWakeUpReason 0 "NONE" 1 "RESET" 2 "GSM_RI" 3 "CH_CAN" 4 "VEH_CAN" 5 "VEH_CAN" 6 "VCFRONT" 7 "RTC_ALARM" 8 "UI_SCHEDULED";
-
- CAN_frame TESLA_458 = {.FD = false,
+CAN_frame TESLA_458 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 7,
                        .ID = 0x458,
@@ -1121,14 +1117,14 @@ void initialize_and_update_CAN_frame_438() {
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_458_Struct {
-  uint8_t GTW_nmGoingToSleep : 1;       // 1 bit
-  uint8_t GTW_nmWakeUpBus : 1;          // 1 bit
-  uint8_t GTW_chBusAsleep : 1;          // 1 bit
-  uint8_t GTW_VEHBusAsleep : 1;         // 1 bit
-  uint8_t GTW_OTAKeepAwake : 1;         // 1 bit
-  uint8_t GTW_nmKeepAwakeReason : 4;    // 4 bits
-  uint8_t GTW_nmWakeUpReason : 4;       // 4 bits
-  uint32_t GTW_nmDebugWakeUp : 32;      // 32 bits
+  uint8_t GTW_nmGoingToSleep : 1;     // 1 bit
+  uint8_t GTW_nmWakeUpBus : 1;        // 1 bit
+  uint8_t GTW_chBusAsleep : 1;        // 1 bit
+  uint8_t GTW_VEHBusAsleep : 1;       // 1 bit
+  uint8_t GTW_OTAKeepAwake : 1;       // 1 bit
+  uint8_t GTW_nmKeepAwakeReason : 4;  // 4 bits
+  uint8_t GTW_nmWakeUpReason : 4;     // 4 bits
+  uint32_t GTW_nmDebugWakeUp : 32;    // 32 bits
 };
 
 // Function prototypes
@@ -1137,14 +1133,15 @@ void initialize_msg(TESLA_458_Struct& msg);
 
 // Function to initialize message struct with default values
 void initialize_msg(TESLA_458_Struct& msg) {
-  msg.GTW_nmGoingToSleep = 0;  // 0 = No, 1 = Yes
-  msg.GTW_nmWakeUpBus = 0;  // 0 = No, 1 = Yes
-  msg.GTW_chBusAsleep = 0;  // 0 = No, 1 = Yes
-  msg.GTW_VEHBusAsleep = 0;  // 0 = No, 1 = Yes
-  msg.GTW_OTAKeepAwake = 0;  // 0 = No, 1 = Yes
+  msg.GTW_nmGoingToSleep = 0;     // 0 = No, 1 = Yes
+  msg.GTW_nmWakeUpBus = 0;        // 0 = No, 1 = Yes
+  msg.GTW_chBusAsleep = 0;        // 0 = No, 1 = Yes
+  msg.GTW_VEHBusAsleep = 0;       // 0 = No, 1 = Yes
+  msg.GTW_OTAKeepAwake = 0;       // 0 = No, 1 = Yes
   msg.GTW_nmKeepAwakeReason = 0;  // 0=NONE_SNA, 15=TBD
-  msg.GTW_nmWakeUpReason = 0;  // 0=NONE, 1=RESET, 2=GSM_RI, 3=CH_CAN, 4=VEH_CAN, 5=VEH_CAN, 6=VCFRONT, 7=RTC_ALARM, 8=UI_SCHEDULED
-  msg.GTW_nmDebugWakeUp = 2097152;  // 
+  msg.GTW_nmWakeUpReason =
+      0;  // 0=NONE, 1=RESET, 2=GSM_RI, 3=CH_CAN, 4=VEH_CAN, 5=VEH_CAN, 6=VCFRONT, 7=RTC_ALARM, 8=UI_SCHEDULED
+  msg.GTW_nmDebugWakeUp = 2097152;  //
 }
 
 // Function to update the CAN frame 0x458 with signal values
@@ -3279,7 +3276,7 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
     update_CAN_frame_438(TESLA_438, msg_438);  // Update the CAN frame data
     transmit_can_frame(&TESLA_438, can_config.battery);
 
-    initialize_msg(msg_458 );                   // Initialize the message structure
+    initialize_msg(msg_458);                   // Initialize the message structure
     update_CAN_frame_458(TESLA_458, msg_458);  // Update the CAN frame data
     transmit_can_frame(&TESLA_458, can_config.battery);
   }
