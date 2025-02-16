@@ -1152,7 +1152,7 @@ void update_CAN_frame_458(CAN_frame& frame, const TESLA_458_Struct& msg) {
   // Pack signals into CAN frame data bytes
   frame.data.u8[0] = (msg.GTW_nmGoingToSleep & 0x01) | ((msg.GTW_nmWakeUpBus & 0x01) << 1) |
                      ((msg.GTW_chBusAsleep & 0x01) << 2) | ((msg.GTW_VEHBusAsleep & 0x01) << 3) |
-                     ((msg.GTW_OTAKeepAwake & 0x01) << 4) | ((msg.GTW_nmKeepAwakeReason & 0x0F) << 5);
+                     ((msg.GTW_nmKeepAwakeReason & 0x0F) << 4);
 
   frame.data.u8[1] = ((msg.GTW_nmWakeUpReason & 0x0F) << 0);
 
@@ -1160,7 +1160,7 @@ void update_CAN_frame_458(CAN_frame& frame, const TESLA_458_Struct& msg) {
   frame.data.u8[3] = (msg.GTW_nmDebugWakeUp >> 8) & 0xFF;
   frame.data.u8[4] = (msg.GTW_nmDebugWakeUp >> 16) & 0xFF;
   frame.data.u8[5] = (msg.GTW_nmDebugWakeUp >> 24) & 0xFF;
-  frame.data.u8[6] = (msg.GTW_nmDebugWakeUp >> 32) & 0xFF;
+  frame.data.u8[6] = (msg.GTW_OTAKeepAwake & 0x01);
 }
 
 // Function to initialize and update the CAN frame 0x458
