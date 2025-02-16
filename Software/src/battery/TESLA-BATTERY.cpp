@@ -14,6 +14,8 @@
 /* Do not change code below unless you are sure what you are doing */
 /* Credits: Most of the code comes from Per Carlen's bms_comms_tesla_model3.py (https://gitlab.com/pelle8/batt2gen24/) */
 
+// Define constants
+#define MUX0_MESSAGE_INTERVAL 50  // 50ms for each mux message (100ms total)
 static unsigned long previousMillis50 = 0;   // will store last time a 50ms CAN Message was sent
 static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN Message was sent
 static unsigned long previousMillis500 = 0;  // will store last time a 500ms CAN Message was sent
@@ -35,269 +37,348 @@ bool ready = false;
 // Declare and initialize the frame variable globally
 CAN_frame frame = {.FD = false, .ext_ID = false, .DLC = 0, .ID = 0, .data = {.u8 = {0x00}}};
 
-// CAN frame definition for ID 0x221 545 VCFRONT_LVPowerState GenMsgCycleTime 100ms
+// Add this function declaration at the top of the file with other function declarations
+uint8_t calculateCounter();
+
+// Add the function implementation before initialize_msg
+uint8_t calculateCounter() {
+    static uint8_t counter = 0;
+    counter = (counter + 1) & 0x0F;  // Keep 4-bit range (0-15)
+    return counter;
+}
+
+// CAN frame definition for ID 0x221 545 VCFRONT_LVPowerState GenMsgCycleTime 50ms
 CAN_frame TESLA_221 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x221,
-                       .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
+  .ext_ID = false,
+  .DLC = 8,
+  .ID = 0x221,
+  .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_221_Struct {
-  uint8_t VCFRONT_LVPowerStateIndex : 5;     // 5 bits
-  uint8_t vehiclePowerState : 2;             // 2 bits
-  uint8_t parkLVState : 2;                   // 2 bits
-  uint8_t espLVState : 2;                    // 2 bits
-  uint8_t radcLVState : 2;                   // 2 bits
-  uint8_t hvacCompLVState : 2;               // 2 bits
-  uint8_t ptcLVRequest : 2;                  // 2 bits
-  uint8_t sccmLVRequest : 2;                 // 2 bits
-  uint8_t tpmsLVRequest : 2;                 // 2 bits
-  uint8_t rcmLVRequest : 2;                  // 2 bits
-  uint8_t iBoosterLVState : 2;               // 2 bits
-  uint8_t tunerLVRequest : 2;                // 2 bits
-  uint8_t amplifierLVRequest : 2;            // 2 bits
-  uint8_t das1HighCurrentLVState : 2;        // 2 bits
-  uint8_t das2HighCurrentLVState : 2;        // 2 bits
-  uint8_t diLVRequest : 2;                   // 2 bits
-  uint8_t disLVState : 2;                    // 2 bits
-  uint8_t oilPumpFrontLVState : 2;           // 2 bits
-  uint8_t oilPumpRearLVRequest : 2;          // 2 bits
-  uint8_t ocsLVRequest : 2;                  // 2 bits
-  uint8_t vcleftHiCurrentLVState : 2;        // 2 bits
-  uint8_t vcrightHiCurrentLVState : 2;       // 2 bits
-  uint8_t uiHiCurrentLVState : 2;            // 2 bits
-  uint8_t uiAudioLVState : 2;                // 2 bits
-  uint8_t cpLVRequest : 2;                   // 2 bits
-  uint8_t epasLVState : 2;                   // 2 bits
-  uint8_t hvcLVRequest : 2;                  // 2 bits
-  uint8_t tasLVState : 2;                    // 2 bits
-  uint8_t pcsLVState : 2;                    // 2 bits
-  uint8_t VCFRONT_LVPowerStateCounter : 4;   // 4 bits
-  uint8_t VCFRONT_LVPowerStateChecksum : 8;  // 8 bits
+uint8_t VCFRONT_LVPowerStateIndex : 5;     // 5 bits
+uint8_t vehiclePowerState : 2;             // 2 bits
+uint8_t parkLVState : 2;                   // 2 bits
+uint8_t espLVState : 2;                    // 2 bits
+uint8_t radcLVState : 2;                   // 2 bits
+uint8_t hvacCompLVState : 2;               // 2 bits
+uint8_t ptcLVRequest : 2;                  // 2 bits
+uint8_t sccmLVRequest : 2;                 // 2 bits
+uint8_t tpmsLVRequest : 2;                 // 2 bits
+uint8_t rcmLVRequest : 2;                  // 2 bits
+uint8_t iBoosterLVState : 2;               // 2 bits
+uint8_t tunerLVRequest : 2;                // 2 bits
+uint8_t amplifierLVRequest : 2;            // 2 bits
+uint8_t das1HighCurrentLVState : 2;        // 2 bits
+uint8_t das2HighCurrentLVState : 2;        // 2 bits
+uint8_t diLVRequest : 2;                   // 2 bits
+uint8_t disLVState : 2;                    // 2 bits
+uint8_t oilPumpFrontLVState : 2;           // 2 bits
+uint8_t oilPumpRearLVRequest : 2;          // 2 bits
+uint8_t ocsLVRequest : 2;                  // 2 bits
+uint8_t vcleftHiCurrentLVState : 2;        // 2 bits
+uint8_t vcrightHiCurrentLVState : 2;       // 2 bits
+uint8_t uiHiCurrentLVState : 2;            // 2 bits
+uint8_t uiAudioLVState : 2;                // 2 bits
+uint8_t cpLVRequest : 2;                   // 2 bits
+uint8_t epasLVState : 2;                   // 2 bits
+uint8_t hvcLVRequest : 2;                  // 2 bits
+uint8_t tasLVState : 2;                    // 2 bits
+uint8_t pcsLVState : 2;                    // 2 bits
+uint8_t VCFRONT_LVPowerStateCounter : 4;   // 4 bits
+uint8_t VCFRONT_LVPowerStateChecksum : 8;  // 8 bits
 };
-
-// Function prototypes
-uint8_t calculate_checksum(const TESLA_221_Struct& msg);
-uint8_t calculateCounter();
-void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mux0);
-void initialize_msg(TESLA_221_Struct& msg, bool mux0);
-
-// Function to initialize and update the CAN frame 0x221
-void initialize_and_update_CAN_frame_221() {
-  // Declare the msg variable
-  TESLA_221_Struct msg;
-  bool mux0 = true;
-
-  auto timer_thread = [&]() {
-    while (true) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-      {
-        std::lock_guard<std::mutex> lock(mtx);
-        ready = true;
-      }
-      cv.notify_one();
-    }
-  };
-
-  std::thread t(timer_thread);
-
-  while (true) {
-    {
-      std::unique_lock<std::mutex> lock(mtx);
-      cv.wait(lock, [&] { return ready; });
-      ready = false;
-    }
-
-    initialize_msg(msg, mux0);
-    update_CAN_frame_221(TESLA_221, msg, mux0);
-
-    // Toggle mux0 for the next cycle
-    mux0 = !mux0;
-  }
-
-  // Move t.join() outside the loop
-  t.join();
-}
 
 // Implement the checksum calculation function
 uint8_t calculate_checksum(const TESLA_221_Struct& msg) {
-  // Example checksum calculation (simple sum of all fields)
-  uint8_t checksum = 0;
-  checksum += msg.VCFRONT_LVPowerStateIndex;
-  checksum += msg.vehiclePowerState;
-  checksum += msg.parkLVState;
-  checksum += msg.espLVState;
-  checksum += msg.radcLVState;
-  checksum += msg.hvacCompLVState;
-  checksum += msg.ptcLVRequest;
-  checksum += msg.sccmLVRequest;
-  checksum += msg.tpmsLVRequest;
-  checksum += msg.rcmLVRequest;
-  checksum += msg.iBoosterLVState;
-  checksum += msg.tunerLVRequest;
-  checksum += msg.amplifierLVRequest;
-  checksum += msg.das1HighCurrentLVState;
-  checksum += msg.das2HighCurrentLVState;
-  checksum += msg.diLVRequest;
-  checksum += msg.disLVState;
-  checksum += msg.oilPumpFrontLVState;
-  checksum += msg.oilPumpRearLVRequest;
-  checksum += msg.ocsLVRequest;
-  checksum += msg.vcleftHiCurrentLVState;
-  checksum += msg.vcrightHiCurrentLVState;
-  checksum += msg.uiHiCurrentLVState;
-  checksum += msg.uiAudioLVState;
-  checksum += msg.cpLVRequest;
-  checksum += msg.epasLVState;
-  checksum += msg.hvcLVRequest;
-  checksum += msg.tasLVState;
-  checksum += msg.pcsLVState;
-  checksum += msg.VCFRONT_LVPowerStateCounter;
-  return checksum;
+// Example checksum calculation (simple sum of all fields)
+uint16_t checksum = 0;
+checksum += msg.VCFRONT_LVPowerStateIndex & 0x1F;
+checksum += (msg.vehiclePowerState & 0x03) << 5;
+checksum += msg.parkLVState & 0x03;
+checksum += (msg.espLVState & 0x03) << 2;
+checksum += (msg.radcLVState & 0x03) << 4;
+checksum += (msg.hvacCompLVState & 0x03) << 6;
+checksum += msg.ptcLVRequest & 0x03;
+checksum += (msg.sccmLVRequest & 0x03) << 2;
+checksum += (msg.tpmsLVRequest & 0x03) << 4;
+checksum += (msg.rcmLVRequest & 0x03) << 6;
+checksum += msg.iBoosterLVState & 0x03;
+checksum += (msg.tunerLVRequest & 0x03) << 2;
+checksum += (msg.amplifierLVRequest & 0x03) << 4;
+checksum += (msg.das1HighCurrentLVState & 0x03) << 6;
+checksum += msg.das2HighCurrentLVState & 0x03;
+checksum += (msg.diLVRequest & 0x03) << 2;
+checksum += (msg.disLVState & 0x03) << 4;
+checksum += (msg.oilPumpFrontLVState & 0x03) << 6;
+checksum += msg.oilPumpRearLVRequest & 0x03;
+checksum += (msg.ocsLVRequest & 0x03) << 2;
+checksum += (msg.vcleftHiCurrentLVState & 0x03) << 4;
+checksum += (msg.vcrightHiCurrentLVState & 0x03) << 6;
+checksum += msg.uiHiCurrentLVState & 0x03;
+checksum += (msg.uiAudioLVState & 0x03) << 2;
+checksum += msg.cpLVRequest & 0x03;
+checksum += (msg.epasLVState & 0x03) << 2;
+checksum += (msg.hvcLVRequest & 0x03) << 4;
+checksum += (msg.tasLVState & 0x03) << 6;
+checksum += msg.pcsLVState & 0x03;
+checksum += (msg.VCFRONT_LVPowerStateCounter & 0x0F) << 4;
+return checksum;
 }
 
-uint8_t calculateCounter() {
-  static uint8_t counter = 0;
-  return counter++;
-}
+void initialize_msg(TESLA_221_Struct& msg, bool mux0);
+void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mux0);
+void initialize_and_update_CAN_frame_221();
 
-// Change the values of the message struct to see the changes in the CAN frame
+// Function to initialize message structure with appropriate mux states
 void initialize_msg(TESLA_221_Struct& msg, bool mux0) {
-  msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;                // Mux0 = 0, Mux1 = 1
-  msg.vehiclePowerState = 1;                                   // OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3
-  msg.parkLVState = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.espLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.radcLVState = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.hvacCompLVState = 0;                                     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.ptcLVRequest = 0;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.sccmLVRequest = 0;                                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tpmsLVRequest = 0;                                       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.rcmLVRequest = 0;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.iBoosterLVState = 0;                                     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tunerLVRequest = 0;                                      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.amplifierLVRequest = 0;                                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.das1HighCurrentLVState = 0;                              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.das2HighCurrentLVState = 0;                              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.diLVRequest = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.disLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.oilPumpFrontLVState = 0;                                 // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.oilPumpRearLVRequest = 0;                                // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.ocsLVRequest = 0;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.vcleftHiCurrentLVState = 0;                              // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.vcrightHiCurrentLVState = 0;                             // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.uiHiCurrentLVState = 0;                                  // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.uiAudioLVState = 0;                                      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.cpLVRequest = 1;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.epasLVState = 0;                                         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.hvcLVRequest = 1;                                        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.tasLVState = 0;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.pcsLVState = 1;                                          // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
-  msg.VCFRONT_LVPowerStateCounter = calculateCounter();        // Counter
-  msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Implement the checksum calculation
+// Common fields for both mux0 and mux1
+msg.VCFRONT_LVPowerStateIndex = mux0 ? 0 : 1;  // Set multiplexer value: Mux0 = 0, Mux1 = 1
+msg.vehiclePowerState = 2;  // CONDITIONING = 1 (OFF = 0, CONDITIONING = 1, ACCESSORY = 2, DRIVE = 3)
+
+if (mux0) {
+// Mux0 specific signals
+msg.parkLVState = 0;        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.espLVState = 0;         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.radcLVState = 0;        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.hvacCompLVState = 0;    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.ptcLVRequest = 0;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.sccmLVRequest = 0;      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.tpmsLVRequest = 0;      // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.rcmLVRequest = 0;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.iBoosterLVState = 0;    // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.tunerLVRequest = 0;     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.amplifierLVRequest = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.das1HighCurrentLVState = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.das2HighCurrentLVState = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.diLVRequest = 0;        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.disLVState = 0;         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.oilPumpFrontLVState = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.oilPumpRearLVRequest = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.ocsLVRequest = 0;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.vcleftHiCurrentLVState = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.vcrightHiCurrentLVState = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.uiHiCurrentLVState = 0; // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.uiAudioLVState = 0;     // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+} else {
+// Mux1 specific signals - Second message for hv_up_for_drive
+msg.cpLVRequest = 1;        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.epasLVState = 0;        // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.hvcLVRequest = 1;       // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.tasLVState = 0;         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
+msg.pcsLVState = 1;         // OFF = 0, ON = 1, GOING_DOWN = 2, FAULT = 3
 }
 
-void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mux0) {
-  if (mux0) {
-    // Populate the CAN frame data based on the msg structure for Mux0
-    frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | ((msg.vehiclePowerState & 0x03) << 5);
-    frame.data.u8[1] = (msg.parkLVState & 0x03) | ((msg.espLVState & 0x03) << 2) | ((msg.radcLVState & 0x03) << 4) |
-                       ((msg.hvacCompLVState & 0x03) << 6);
-    frame.data.u8[2] = (msg.ptcLVRequest & 0x03) | ((msg.sccmLVRequest & 0x03) << 2) |
-                       ((msg.tpmsLVRequest & 0x03) << 4) | ((msg.rcmLVRequest & 0x03) << 6);
-    frame.data.u8[3] = (msg.iBoosterLVState & 0x03) | ((msg.tunerLVRequest & 0x03) << 2) |
-                       ((msg.amplifierLVRequest & 0x03) << 4) | ((msg.das1HighCurrentLVState & 0x03) << 6);
-    frame.data.u8[4] = (msg.das2HighCurrentLVState & 0x03) | ((msg.diLVRequest & 0x03) << 2) |
-                       ((msg.disLVState & 0x03) << 4) | ((msg.oilPumpFrontLVState & 0x03) << 6);
-    frame.data.u8[5] = (msg.oilPumpRearLVRequest & 0x03) | ((msg.ocsLVRequest & 0x03) << 2) |
-                       ((msg.vcleftHiCurrentLVState & 0x03) << 4) | ((msg.vcrightHiCurrentLVState & 0x03) << 6);
-    frame.data.u8[6] = (msg.uiHiCurrentLVState & 0x03) | ((msg.uiAudioLVState & 0x03) << 2);
-    frame.data.u8[7] = (msg.VCFRONT_LVPowerStateCounter & 0x0F) | (msg.VCFRONT_LVPowerStateChecksum << 4);
-  } else {
-    // Populate the CAN frame data based on the msg structure for Mux1
-    frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | ((msg.vehiclePowerState & 0x03) << 5);
-    frame.data.u8[1] = (msg.cpLVRequest & 0x03) | ((msg.epasLVState & 0x03) << 2) | ((msg.hvcLVRequest & 0x03) << 4) |
-                       ((msg.tasLVState & 0x03) << 6);
-    frame.data.u8[2] = (msg.pcsLVState & 0x03);
-    frame.data.u8[3] = 0;  // No signals for this byte in Mux1
-    frame.data.u8[4] = 0;  // No signals for this byte in Mux1
-    frame.data.u8[5] = 0;  // No signals for this byte in Mux1
-    frame.data.u8[6] = 0;  // No signals for this byte in Mux1
-    frame.data.u8[7] = (msg.VCFRONT_LVPowerStateCounter & 0x0F) | (msg.VCFRONT_LVPowerStateChecksum << 4);
-  }
+// Common trailer for both muxes
+msg.VCFRONT_LVPowerStateCounter = calculateCounter();        // Counter
+msg.VCFRONT_LVPowerStateChecksum = calculate_checksum(msg);  // Checksum calculation
 }
+
+// Update CAN frame data based on multiplexer
+void update_CAN_frame_221(CAN_frame& frame, const TESLA_221_Struct& msg, bool mux0) {
+// Common byte 0 for both muxes:
+// - VCFRONT_LVPowerStateIndex (bits 0-4)
+// - vehiclePowerState (bits 5-6)
+frame.data.u8[0] = (msg.VCFRONT_LVPowerStateIndex & 0x1F) | 
+((msg.vehiclePowerState & 0x03) << 5);
+
+if (mux0) {
+// Mux0 specific signals
+frame.data.u8[1] = (msg.parkLVState & 0x03) | 
+  ((msg.espLVState & 0x03) << 2) |
+  ((msg.radcLVState & 0x03) << 4) | 
+  ((msg.hvacCompLVState & 0x03) << 6);
+
+frame.data.u8[2] = (msg.ptcLVRequest & 0x03) | 
+  ((msg.sccmLVRequest & 0x03) << 2) |
+  ((msg.tpmsLVRequest & 0x03) << 4) | 
+  ((msg.rcmLVRequest & 0x03) << 6);
+
+frame.data.u8[3] = (msg.iBoosterLVState & 0x03) | 
+  ((msg.tunerLVRequest & 0x03) << 2) |
+  ((msg.amplifierLVRequest & 0x03) << 4) | 
+  ((msg.das1HighCurrentLVState & 0x03) << 6);
+
+frame.data.u8[4] = (msg.das2HighCurrentLVState & 0x03) |
+  ((msg.diLVRequest & 0x03) << 2) |
+  ((msg.disLVState & 0x03) << 4) |
+  ((msg.oilPumpFrontLVState & 0x03) << 6);
+
+frame.data.u8[5] = (msg.oilPumpRearLVRequest & 0x03) |
+  ((msg.ocsLVRequest & 0x03) << 2) |
+  ((msg.vcleftHiCurrentLVState & 0x03) << 4) |
+  ((msg.vcrightHiCurrentLVState & 0x03) << 6);
+
+frame.data.u8[6] = (msg.uiHiCurrentLVState & 0x03) |
+  ((msg.uiAudioLVState & 0x03) << 2);
+}
+else {
+// Mux1 specific signals 
+frame.data.u8[1] = (msg.cpLVRequest & 0x03) | 
+  ((msg.epasLVState & 0x03) << 2) |
+  ((msg.hvcLVRequest & 0x03) << 4) | 
+  ((msg.tasLVState & 0x03) << 6);
+
+frame.data.u8[2] = (msg.pcsLVState & 0x03);
+
+// Clear unused bytes for mux1
+frame.data.u8[3] = 0x00;
+frame.data.u8[4] = 0x00;
+frame.data.u8[5] = 0x00;
+}
+
+// Common trailer byte for both muxes
+frame.data.u8[6] = ((msg.VCFRONT_LVPowerStateCounter & 0x0F) << 4);  // Counter in upper 4 bits of byte 6
+frame.data.u8[7] = msg.VCFRONT_LVPowerStateChecksum;  // Checksum in byte 7
+}
+
+// LV_PowerStateIndex = mux0
+// SG_ VCFRONT_LVPowerStateIndex M : 0|5@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_vehiclePowerState : 5|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_parkLVState m0 : 8|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_espLVState m0 : 10|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_radcLVState m0 : 12|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_hvacCompLVState m0 : 14|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_ptcLVRequest m0 : 16|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_sccmLVRequest m0 : 18|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_tpmsLVRequest m0 : 20|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_rcmLVRequest m0 : 22|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_iBoosterLVState m0 : 24|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_tunerLVRequest m0 : 26|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_amplifierLVRequest m0 : 28|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_das1HighCurrentLVState m0 : 30|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_das2HighCurrentLVState m0 : 32|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_diLVRequest m0 : 34|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_disLVState m0 : 36|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_oilPumpFrontLVState m0 : 38|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_oilPumpRearLVRequest m0 : 40|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_ocsLVRequest m0 : 42|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_vcleftHiCurrentLVState m0 : 44|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_vcrightHiCurrentLVState m0 : 46|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_uiHiCurrentLVState m0 : 48|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_uiAudioLVState m0 : 50|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_LVPowerStateCounter : 52|4@1+ (1,0) [0|0] ""  X
+
+// LV_PowerStateIndex = mux1
+// SG_ VCFRONT_LVPowerStateIndex M : 0|5@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_vehiclePowerState : 5|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_cpLVRequest m1 : 8|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_epasLVState m1 : 10|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_hvcLVRequest m1 : 12|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_tasLVState m1 : 14|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_pcsLVState m1 : 16|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_LVPowerStateChecksum : 56|8@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_LVPowerStateCounter : 52|4@1+ (1,0) [0|0] ""  X
 
 // CAN frame definition for ID 0x241 577 VCFRONT_coolant GenMsgCycleTime 100ms
 CAN_frame TESLA_241 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x241,
-                       .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
+  .ext_ID = false,
+  .DLC = 8,
+  .ID = 0x241,
+  .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
+// Define scaling factors as constants
+#define COOLANT_FLOW_SCALE 0.1
+#define COOLANT_FLOW_OFFSET 0.0
+
 struct TESLA_241_Struct {
-  uint16_t VCFRONT_coolantFlowBatActual : 9;    // 9 bits
-  uint16_t VCFRONT_coolantFlowBatTarget : 9;    // 9 bits
-  uint8_t VCFRONT_coolantFlowBatReason : 4;     // 4 bits
-  uint16_t VCFRONT_coolantFlowPTTarget : 9;     // 9 bits
-  uint16_t VCFRONT_coolantFlowPTActual : 9;     // 9 bits
-  uint8_t VCFRONT_coolantFlowPTReason : 4;      // 4 bits
-  uint8_t VCFRONT_wasteHeatRequestType : 2;     // 2 bits
-  uint8_t VCFRONT_coolantHasBeenFilled : 1;     // 1 bit
-  uint8_t VCFRONT_radiatorIneffective : 1;      // 1 bit
-  uint8_t VCFRONT_coolantAirPurgeBatState : 3;  // 3 bits
+// Battery coolant flow signals
+uint16_t VCFRONT_coolantFlowBatActual : 9;    // 0-8: Actual battery coolant flow (LPM * 0.1)
+uint16_t VCFRONT_coolantFlowBatTarget : 9;    // 9-17: Target battery coolant flow (LPM * 0.1)
+uint8_t VCFRONT_coolantFlowBatReason : 4;     // 18-21: Reason for battery flow control
+
+// Powertrain coolant flow signals  
+uint16_t VCFRONT_coolantFlowPTActual : 9;     // 22-30: Actual PT coolant flow (LPM * 0.1)
+uint16_t VCFRONT_coolantFlowPTTarget : 9;     // 31-39: Target PT coolant flow (LPM * 0.1)
+uint8_t VCFRONT_coolantFlowPTReason : 4;      // 40-43: Reason for PT flow control
+
+// Status signals
+uint8_t VCFRONT_wasteHeatRequestType : 2;     // 44-45: Waste heat request type
+uint8_t VCFRONT_coolantHasBeenFilled : 1;     // 46: Coolant filled status
+uint8_t VCFRONT_radiatorIneffective : 1;      // 47: Radiator effectiveness
+uint8_t VCFRONT_coolantAirPurgeBatState : 3;  // 48-50: Battery air purge state
 };
 
 // Function prototypes
 void initialize_msg(TESLA_241_Struct& msg);
 void update_CAN_frame_241(CAN_frame& frame, const TESLA_241_Struct& msg);
 
-// Function to initialize the TESLA_241_Struct
+// Function to initialize the struct with default values 
 void initialize_msg(TESLA_241_Struct& msg) {
-  msg.VCFRONT_coolantFlowBatActual = 5.0;  // (0.1,0) 5.0 LPM
-  msg.VCFRONT_coolantFlowBatTarget = 5.0;  // (0.1,0) 5.0 LPM
-  msg.VCFRONT_coolantFlowBatReason =
-      0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
-  msg.VCFRONT_coolantFlowPTTarget = 5.0;  // (0.1,0) 5.0 LPM
-  msg.VCFRONT_coolantFlowPTActual = 5.0;  // (0.1,0) 5.0 LPM
-  msg.VCFRONT_coolantFlowPTReason =
-      0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
-  msg.VCFRONT_wasteHeatRequestType = 0;     // 0 "NONE" 1 "PARTIAL" 2 "FULL" ;
-  msg.VCFRONT_coolantHasBeenFilled = 1;     // 0 = false, 1 = true
-  msg.VCFRONT_radiatorIneffective = 0;      // 0 = false, 1 = true
-  msg.VCFRONT_coolantAirPurgeBatState = 0;  // 0 "INACTIVE" 1 "ACTIVE" 2 "COMPLETE" 3 "INTERRUPTED" 4 "PENDING" ;
+msg.VCFRONT_coolantFlowBatActual = 50;  // example 5.0 LPM * 10 = 50 (value * 0.1)
+msg.VCFRONT_coolantFlowBatTarget = 50;  // 5.0 LPM (value * 0.1)
+msg.VCFRONT_coolantFlowBatReason =
+0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
+msg.VCFRONT_coolantFlowPTTarget = 0;  // 0.0 LPM (value * 0.1)
+msg.VCFRONT_coolantFlowPTActual = 0;  // 0.0 LPM (value * 0.1)
+msg.VCFRONT_coolantFlowPTReason =
+0;  // 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
+msg.VCFRONT_wasteHeatRequestType = 0;     // 0 "NONE" 1 "PARTIAL" 2 "FULL" ;
+msg.VCFRONT_coolantHasBeenFilled = 0;     // 0 = false, 1 = true
+msg.VCFRONT_radiatorIneffective = 0;      // 0 = false, 1 = true
+msg.VCFRONT_coolantAirPurgeBatState = 0;  // 0 "INACTIVE" 1 "ACTIVE" 2 "COMPLETE" 3 "INTERRUPTED" 4 "PENDING" ;
 }
 
 // Function to update the CAN frame 0x241 with the signal values
 void update_CAN_frame_241(CAN_frame& frame, const TESLA_241_Struct& msg) {
-  uint16_t coolantFlowBatActual = msg.VCFRONT_coolantFlowBatActual * 10;  // (0.1,0)
-  uint16_t coolantFlowBatTarget = msg.VCFRONT_coolantFlowBatTarget * 10;  // (0.1,0)
-  uint16_t coolantFlowPTTarget = msg.VCFRONT_coolantFlowPTTarget * 10;    // (0.1,0)
-  uint16_t coolantFlowPTActual = msg.VCFRONT_coolantFlowPTActual * 10;    // (0.1,0)
-  frame.data.u8[0] = (coolantFlowBatActual & 0x01FF);
-  frame.data.u8[1] = ((coolantFlowBatActual & 0x01FF) >> 8) | ((coolantFlowBatTarget & 0x01FF) << 1);
-  frame.data.u8[2] = ((coolantFlowBatTarget & 0x01FF) >> 7) | ((msg.VCFRONT_coolantFlowBatReason & 0x0F) << 2);
-  frame.data.u8[3] = (coolantFlowPTTarget & 0x01FF);
-  frame.data.u8[4] = ((coolantFlowPTTarget & 0x01FF) >> 8) | ((coolantFlowPTActual & 0x01FF) << 1);
-  frame.data.u8[5] = ((coolantFlowPTActual & 0x01FF) >> 7) | ((msg.VCFRONT_coolantFlowPTReason & 0x0F) << 2);
-  frame.data.u8[6] = (msg.VCFRONT_wasteHeatRequestType & 0x03) | (msg.VCFRONT_coolantHasBeenFilled << 2) |
-                     (msg.VCFRONT_radiatorIneffective << 3) | ((msg.VCFRONT_coolantAirPurgeBatState & 0x07) << 4);
+// Clear frame data
+memset(frame.data.u8, 0, sizeof(frame.data.u8));
+
+// Pack battery coolant flow signals
+const uint16_t bat_actual = msg.VCFRONT_coolantFlowBatActual;
+const uint16_t bat_target = msg.VCFRONT_coolantFlowBatTarget;
+frame.data.u8[0] = bat_actual & 0xFF;
+frame.data.u8[1] = ((bat_actual >> 8) & 0x01) | ((bat_target & 0x1FF) << 1);
+frame.data.u8[2] = ((bat_target >> 7) & 0x03) | ((msg.VCFRONT_coolantFlowBatReason & 0x0F) << 2);
+
+// Pack powertrain coolant flow signals
+const uint16_t pt_actual = msg.VCFRONT_coolantFlowPTActual;
+const uint16_t pt_target = msg.VCFRONT_coolantFlowPTTarget; 
+frame.data.u8[3] = (pt_actual >> 1) & 0xFF;
+frame.data.u8[4] = ((pt_actual >> 8) & 0x01) | ((pt_target & 0x1FF) << 1);
+frame.data.u8[5] = ((pt_target >> 7) & 0x03) | ((msg.VCFRONT_coolantFlowPTReason & 0x0F) << 2);
+
+// Pack status signals
+frame.data.u8[6] = (msg.VCFRONT_wasteHeatRequestType << 4) |
+  (msg.VCFRONT_coolantHasBeenFilled << 6) |
+  (msg.VCFRONT_radiatorIneffective << 7);
+frame.data.u8[7] = msg.VCFRONT_coolantAirPurgeBatState & 0x07;
 }
 
-// Function to initialize and update the CAN frame 0x241
+// Function to initialize and update the CAN frame
 void initialize_and_update_CAN_frame_241() {
-  // Declare the msg variable
-  TESLA_241_Struct msg;
-
-  // Initialize the message structure
-  initialize_msg(msg);
-
-  // Update the CAN frame data based on the signal values
-  update_CAN_frame_241(TESLA_241, msg);
+TESLA_241_Struct msg;
+initialize_msg(msg);
+update_CAN_frame_241(TESLA_241, msg);
 }
 
-// CAN frame definition for ID 0x2D1 721 VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
-CAN_frame TESLA_2D1 = {.FD = false, .ext_ID = false, .DLC = 2, .ID = 0x2D1, .data = {.u8 = {0x00, 0x00}}};
+// BO_ 577 VCFRONT_coolant: 7 VEH
+// SG_ VCFRONT_coolantAirPurgeBatState : 48|3@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_coolantFlowBatActual : 0|9@1+ (0.1,0) [0|0] "LPM"  X
+// SG_ VCFRONT_coolantFlowBatReason : 18|4@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_coolantFlowBatTarget : 9|9@1+ (0.1,0) [0|0] "LPM"  X
+// SG_ VCFRONT_coolantFlowPTActual : 22|9@1+ (0.1,0) [0|0] "LPM"  X
+// SG_ VCFRONT_coolantFlowPTReason : 40|4@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_coolantFlowPTTarget : 31|9@1+ (0.1,0) [0|0] "LPM"  X
+// SG_ VCFRONT_coolantHasBeenFilled : 46|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_radiatorIneffective : 47|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_wasteHeatRequestType : 44|2@1+ (1,0) [0|0] ""  X
+
+// VAL_ 577 VCFRONT_coolantAirPurgeBatState 0 "INACTIVE" 1 "ACTIVE" 2 "COMPLETE" 3 "INTERRUPTED" 4 "PENDING" ;
+// VAL_ 577 VCFRONT_coolantFlowBatReason 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
+// VAL_ 577 VCFRONT_coolantFlowPTReason 0 "NONE" 1 "COOLANT_AIR_PURGE" 2 "NO_FLOW_REQ" 3 "OVERRIDE_BATT" 4 "ACTIVE_MANAGER_BATT" 5 "PASSIVE_MANAGER_BATT" 6 "BMS_FLOW_REQ" 7 "DAS_FLOW_REQ" 8 "OVERRIDE_PT" 9 "ACTIVE_MANAGER_PT" 10 "PASSIVE_MANAGER_PT" 11 "PCS_FLOW_REQ" 12 "DI_FLOW_REQ" 13 "DIS_FLOW_REQ" ;
+// VAL_ 577 VCFRONT_wasteHeatRequestType 0 "NONE" 1 "PARTIAL" 2 "FULL" ;
+
+// CAN frame definition for ID 0x2D1 (721) VCFRONT_okToUseHighPower GenMsgCycleTime 100ms
+CAN_frame TESLA_2D1 = {
+  .FD = false,
+  .ext_ID = false,
+  .DLC = 2,
+  .ID = 0x2D1,
+  .data = {.u8 = {0x00, 0x00}}
+};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_2D1_Struct {
@@ -324,216 +405,382 @@ void initialize_msg(TESLA_2D1_Struct& msg) {
   msg.uiOkToUseHighPower = 1;       // 0 = false, 1 = true
   msg.uiAudioOkToUseHighPower = 1;  // 0 = false, 1 = true
   msg.cpOkToUseHighPower = 1;       // 0 = false, 1 = true
-  msg.premAudioOkToUseHiPower = 0;  // 0 = false, 1 = true
+  msg.premAudioOkToUseHiPower = 1;  // 0 = false, 1 = true
 }
 
-// Function to update the CAN frame 0x2D1 with the signal values
+// Function to pack struct data into CAN frame
 void update_CAN_frame_2D1(CAN_frame& frame, const TESLA_2D1_Struct& msg) {
-  frame.data.u8[0] = (msg.vcleftOkToUseHighPower << 0) | (msg.vcrightOkToUseHighPower << 1) |
-                     (msg.das1OkToUseHighPower << 2) | (msg.das2OkToUseHighPower << 3) | (msg.uiOkToUseHighPower << 4) |
-                     (msg.uiAudioOkToUseHighPower << 5) | (msg.cpOkToUseHighPower << 6) |
+  // Pack all bits into byte 0
+  frame.data.u8[0] = (msg.vcleftOkToUseHighPower) |
+                     (msg.vcrightOkToUseHighPower << 1) |
+                     (msg.das1OkToUseHighPower << 2) |
+                     (msg.das2OkToUseHighPower << 3) |
+                     (msg.uiOkToUseHighPower << 4) |
+                     (msg.uiAudioOkToUseHighPower << 5) |
+                     (msg.cpOkToUseHighPower << 6) |
                      (msg.premAudioOkToUseHiPower << 7);
-  frame.data.u8[1] = 0x01;  // No signals in data[1]
+
+  // Byte 1 is reserved/unused according to DBC
+  frame.data.u8[1] = 0x00;
 }
 
-// Function to initialize and update the CAN frame 0x2D1
+// Function to initialize and update CAN frame
 void initialize_and_update_CAN_frame_2D1() {
-  // Declare the msg variable
   TESLA_2D1_Struct msg;
-
-  // Initialize the message structure
   initialize_msg(msg);
-
-  // Update the CAN frame data based on the signal values
   update_CAN_frame_2D1(TESLA_2D1, msg);
 }
 
+//BO_ 721 VCFRONT_okToUseHighPower: 2 VEH
+ //SG_ VCFRONT_cpOkToUseHighPower : 6|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_das1OkToUseHighPower : 2|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_das2OkToUseHighPower : 3|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_premAudioOkToUseHiPower : 7|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_uiAudioOkToUseHighPower : 5|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_uiOkToUseHighPower : 4|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_vcleftOkToUseHighPower : 0|1@1+ (1,0) [0|0] ""  X
+ //SG_ VCFRONT_vcrightOkToUseHighPower : 1|1@1+ (1,0) [0|0] ""  X
+
 // CAN frame definition for ID 0x3A1 929 VCFRONT_vehicleStatus GenMsgCycleTime 100ms
 CAN_frame TESLA_3A1 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x3A1,
-                       .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
+  .ext_ID = false,
+  .DLC = 8,
+  .ID = 0x3A1,
+  .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
 
-// Structure to hold the signal values for the CAN frame
 struct TESLA_3A1_Struct {
-  uint8_t bmsHvChargeEnable : 1;        // 1 bit
-  uint8_t preconditionRequest : 1;      // 1 bit
-  uint8_t APGlassHeaterState : 3;       // 3 bits
-  uint8_t is12VBatterySupported : 1;    // 1 bit
-  uint8_t standbySupplySupported : 1;   // 1 bit
-  uint8_t thermalSystemType : 1;        // 1 bit
-  uint8_t LVLoadRequest : 1;            // 1 bit
-  uint8_t diPowerOnState : 3;           // 3 bits
-  uint8_t driverIsLeavingAnySpeed : 1;  // 1 bit
-  uint8_t statusForDrive : 2;           // 2 bits
-  uint8_t batterySupportRequest : 1;    // 1 bit
-  uint8_t driverIsLeaving : 1;          // 1 bit
-  uint8_t ota12VSupportRequest : 1;     // 1 bit
-  uint8_t driverBuckleStatus : 1;       // 1 bit
-  uint8_t driverDoorStatus : 1;         // 1 bit
-  uint8_t driverUnbuckled : 2;          // 2 bits
-  uint8_t passengerUnbuckled : 2;       // 2 bits
-  uint8_t rowLeftUnbuckled : 2;         // 2 bits
-  uint8_t rowCenterUnbuckled : 2;       // 2 bits
-  uint8_t rowRightUnbuckled : 2;        // 2 bits
-  uint16_t pcsEFuseVoltage : 10;        // 10 bits
-  uint16_t pcs12vVoltageTarget : 11;    // 11 bits
-  uint8_t vehicleStatusCounter : 4;     // 4 bits
-  uint8_t vehicleStatusChecksum : 8;    // 8 bits
-};
+// Byte 0
+uint8_t bmsHvChargeEnable : 1;       
+uint8_t preconditionRequest : 1;      
+uint8_t APGlassHeaterState : 3;       
+uint8_t is12VBatterySupported : 1;    
+uint8_t standbySupplySupported : 1;   
+uint8_t thermalSystemType : 1;       
 
-// Function prototypes
+// Byte 1  
+uint8_t LVLoadRequest : 1;            
+uint8_t diPowerOnState : 3;           
+uint8_t driverIsLeavingAnySpeed : 1;   
+uint8_t statusForDrive : 2;            
+uint8_t reserved1 : 1;      
+
+// Bytes 2-3
+uint16_t pcs12vVoltageTarget : 11;
+uint8_t batterySupportRequest : 1;
+uint8_t driverIsLeaving : 1;
+uint8_t ota12VSupportRequest : 1;
+uint8_t driverBuckleStatus : 1;
+uint8_t driverDoorStatus : 1;
+
+// Bytes 4-5
+uint8_t driverUnbuckled : 2;
+uint8_t passengerUnbuckled : 2;
+uint8_t rowLeftUnbuckled : 2; 
+uint8_t rowCenterUnbuckled : 2; 
+uint8_t rowRightUnbuckled : 2;
+uint16_t pcsEFuseVoltage : 10;
+
+// Bytes 6-7  
+uint8_t vehicleStatusCounter : 4;
+uint8_t vehicleStatusChecksum : 8;
+} __attribute__((packed));
+
+// Function prototypes after struct definition
 uint8_t calculateChecksum(const TESLA_3A1_Struct& msg);
 uint8_t calculateCounter();
 void update_CAN_frame_3A1(CAN_frame& frame, const TESLA_3A1_Struct& msg);
 void initialize_msg(TESLA_3A1_Struct& msg);
 
-// Function to initialize the TESLA_3A1_Struct
-void initialize_msg(TESLA_3A1_Struct& msg) {
-  msg.bmsHvChargeEnable = 1;       // true = 1, false = 0
-  msg.preconditionRequest = 0;     // true = 1, false = 0
-  msg.APGlassHeaterState = 2;      // SNA = 0, ON = 1, OFF = 2, OFF_UNAVAILABLE = 3, FAULT = 4
-  msg.is12VBatterySupported = 1;   // true = 1, false = 0
-  msg.standbySupplySupported = 0;  // true = 1, false = 0
-  msg.thermalSystemType = 0;       // true = 1, false = 0
-  msg.LVLoadRequest = 1;           // true = 1, false = 0
-  msg.diPowerOnState =
-      2;  // POWERED_OFF = 0, POWERED_ON_FOR_POST_RUN = 1, POWERED_ON_FOR_STATIONARY_HEAT = 2, POWERED_ON_FOR_DRIVE = 3, POWER_GOING_DOWN = 4
-  msg.driverIsLeavingAnySpeed = 0;  // true = 1, false = 0
-  msg.statusForDrive = 1;          // NOT_READY_FOR_DRIVE_12V = 0, READY_FOR_DRIVE_12V = 1, EXIT_DRIVE_REQUESTED_12V = 2
-  msg.batterySupportRequest = 1;   // true = 1, false = 0
-  msg.driverIsLeaving = 0;         // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.ota12VSupportRequest = 0;    // true = 1, false = 0
-  msg.driverBuckleStatus = 0;      // UNBUCKLED = 0, BUCKLED = 1
-  msg.driverDoorStatus = 0;        // OPEN = 0, CLOSED = 1
-  msg.driverUnbuckled = 0;         // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.passengerUnbuckled = 0;      // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.rowLeftUnbuckled = 0;        // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.rowCenterUnbuckled = 0;      // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.rowRightUnbuckled = 0;       // NONE = 0, OCCUPIED_AND_UNBUCKLED = 1, SNA = 2
-  msg.pcsEFuseVoltage = 13.0;      // SNA = 1023
-  msg.pcs12vVoltageTarget = 13.6;  // SNA = 0
-  msg.vehicleStatusCounter = calculateCounter();       // Counter
-  msg.vehicleStatusChecksum = calculateChecksum(msg);  // Checksum
+// Define voltage scaling constants
+#define PCS_12V_VOLTAGE_SCALE 0.01    // For 12V voltage (0.01V/bit)
+#define PCS_EFUSE_VOLTAGE_SCALE 0.1   // For eFuse voltage (0.1V/bit)
+
+// Helper functions for scaling and conversion
+uint16_t scale_pcs12vVoltageTarget(double voltage) {
+return static_cast<uint16_t>(voltage / PCS_12V_VOLTAGE_SCALE);
 }
 
-// Function to update the CAN frame 0x3A1 with the signal values
-void update_CAN_frame_3A1(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
-  frame.data.u8[0] = (msg.bmsHvChargeEnable << 0) | (msg.preconditionRequest << 1) | (msg.APGlassHeaterState << 2) |
-                     (msg.is12VBatterySupported << 5) | (msg.standbySupplySupported << 6) |
-                     (msg.thermalSystemType << 7);
-  frame.data.u8[1] = (msg.LVLoadRequest << 1) | (msg.diPowerOnState << 2);
-  frame.data.u8[2] = (msg.driverIsLeavingAnySpeed << 5) | (msg.statusForDrive << 6);
-  frame.data.u8[3] = (msg.batterySupportRequest << 3) | (msg.driverIsLeaving << 4) | (msg.ota12VSupportRequest << 5) |
-                     (msg.driverBuckleStatus << 6) | (msg.driverDoorStatus << 7);
-  frame.data.u8[4] = (msg.driverUnbuckled << 0) | (msg.passengerUnbuckled << 2) | (msg.rowLeftUnbuckled << 4) |
-                     (msg.rowCenterUnbuckled << 6);
-  frame.data.u8[5] = (msg.rowRightUnbuckled << 0) | ((msg.pcsEFuseVoltage & 0x03FF) >> 2);
-  frame.data.u8[6] = (((msg.pcsEFuseVoltage & 0x03FF) << 6) & 0xC0) | ((msg.pcs12vVoltageTarget & 0x07FF) >> 2);
-  frame.data.u8[7] = (((msg.pcs12vVoltageTarget & 0x07FF) << 6) & 0xC0) | (msg.vehicleStatusCounter << 4) |
-                     (msg.vehicleStatusChecksum << 0);
+uint16_t scale_pcsEFuseVoltage(double voltage) {
+return static_cast<uint16_t>(voltage / PCS_EFUSE_VOLTAGE_SCALE);
 }
 
-// Function to calculate the checksum for the CAN frame 0x3A1
+double unscale_pcs12vVoltageTarget(uint16_t scaled_voltage) {
+return scaled_voltage * PCS_12V_VOLTAGE_SCALE;
+}
+
+double unscale_pcsEFuseVoltage(uint16_t scaled_voltage) {
+return scaled_voltage * PCS_EFUSE_VOLTAGE_SCALE;
+}
+
+// Update checksum calculation to handle scaled values properly
 uint8_t calculateChecksum(const TESLA_3A1_Struct& msg) {
-  uint8_t checksum = 0;
-  checksum += msg.bmsHvChargeEnable;
-  checksum += msg.preconditionRequest;
-  checksum += msg.APGlassHeaterState;
-  checksum += msg.is12VBatterySupported;
-  checksum += msg.standbySupplySupported;
-  checksum += msg.thermalSystemType;
-  checksum += msg.LVLoadRequest;
-  checksum += msg.diPowerOnState;
-  checksum += msg.driverIsLeavingAnySpeed;
-  checksum += msg.statusForDrive;
-  checksum += msg.batterySupportRequest;
-  checksum += msg.driverIsLeaving;
-  checksum += msg.ota12VSupportRequest;
-  checksum += msg.driverBuckleStatus;
-  checksum += msg.driverDoorStatus;
-  checksum += msg.driverUnbuckled;
-  checksum += msg.passengerUnbuckled;
-  checksum += msg.rowLeftUnbuckled;
-  checksum += msg.rowCenterUnbuckled;
-  checksum += msg.rowRightUnbuckled;
-  checksum += static_cast<uint8_t>(msg.pcsEFuseVoltage);
-  checksum += static_cast<uint8_t>(msg.pcs12vVoltageTarget);
-  checksum += msg.vehicleStatusCounter;
-  return checksum;
+uint16_t checksum = 0;
+
+// Add all status bits
+checksum += msg.bmsHvChargeEnable & 0x01;
+checksum += msg.preconditionRequest & 0x01;
+checksum += msg.APGlassHeaterState & 0x07; 
+checksum += msg.is12VBatterySupported & 0x01;
+checksum += msg.standbySupplySupported & 0x01;
+checksum += msg.thermalSystemType & 0x01;
+
+// Add control bits
+checksum += msg.LVLoadRequest & 0x01;
+checksum += msg.diPowerOnState & 0x07;
+checksum += msg.driverIsLeavingAnySpeed & 0x01;
+checksum += msg.statusForDrive & 0x03;
+
+// Add scaled voltage values
+uint16_t scaled_12v = scale_pcs12vVoltageTarget(msg.pcs12vVoltageTarget);
+uint16_t scaled_efuse = scale_pcsEFuseVoltage(msg.pcsEFuseVoltage);
+checksum += scaled_12v & 0xFF;
+checksum += scaled_efuse & 0xFF;
+
+// Add remaining status bits
+checksum += msg.batterySupportRequest & 0x01;
+checksum += msg.driverIsLeaving & 0x01;
+checksum += msg.ota12VSupportRequest & 0x01;
+checksum += msg.driverBuckleStatus & 0x01;
+checksum += msg.driverDoorStatus & 0x01;
+
+// Add unbuckled states
+checksum += msg.driverUnbuckled & 0x03;
+checksum += msg.passengerUnbuckled & 0x03;
+checksum += msg.rowLeftUnbuckled & 0x03;
+checksum += msg.rowCenterUnbuckled & 0x03;
+checksum += msg.rowRightUnbuckled & 0x03;
+
+// Add counter
+checksum += msg.vehicleStatusCounter & 0x0F;
+
+return checksum & 0xFF;
 }
 
-// Function to initialize and update the CAN frame 0x3A1
+void update_CAN_frame_3A1(CAN_frame& frame, const TESLA_3A1_Struct& msg) {
+memset(frame.data.u8, 0, sizeof(frame.data.u8));
+
+// Byte 0: Base signals 
+frame.data.u8[0] = msg.bmsHvChargeEnable |
+(msg.preconditionRequest << 1) |
+(msg.APGlassHeaterState << 2) |
+(msg.is12VBatterySupported << 5) |
+(msg.standbySupplySupported << 6) |
+(msg.thermalSystemType << 7);
+
+// Byte 1: Status signals
+frame.data.u8[1] = msg.LVLoadRequest |
+(msg.diPowerOnState << 2) |
+(msg.driverIsLeavingAnySpeed << 5) |
+(msg.statusForDrive << 6);
+
+// Bytes 2-3: Voltage and status
+uint16_t scaled_voltage = scale_pcs12vVoltageTarget(msg.pcs12vVoltageTarget);
+frame.data.u8[2] = scaled_voltage & 0xFF;
+frame.data.u8[3] = (scaled_voltage >> 8) & 0x07;
+frame.data.u8[3] |= (msg.batterySupportRequest << 3) |
+ (msg.driverIsLeaving << 4) |
+ (msg.ota12VSupportRequest << 5) |
+ (msg.driverBuckleStatus << 6) |
+ (msg.driverDoorStatus << 7);
+
+// Byte 4: Unbuckled states
+frame.data.u8[4] = msg.driverUnbuckled |
+(msg.passengerUnbuckled << 2) |
+(msg.rowLeftUnbuckled << 4) |
+(msg.rowCenterUnbuckled << 6);
+
+// Byte 5: Row right and eFuse voltage
+uint16_t efuse_voltage = scale_pcsEFuseVoltage(msg.pcsEFuseVoltage);
+frame.data.u8[5] = msg.rowRightUnbuckled |
+((efuse_voltage & 0x3F) << 2);
+
+// Byte 6: Counter and remaining eFuse voltage
+frame.data.u8[6] = ((efuse_voltage >> 6) & 0x0F) |
+(msg.vehicleStatusCounter << 4);
+
+// Byte 7: Checksum
+frame.data.u8[7] = msg.vehicleStatusChecksum;
+}
+
+void initialize_msg(TESLA_3A1_Struct& msg) {
+msg.bmsHvChargeEnable = 1;         // Enable HV charging (0=Disable, 1=Enable)
+msg.preconditionRequest = 0;        // No preconditioning (0=No, 1=Yes)
+msg.APGlassHeaterState = 2;        // OFF state (0=SNA, 1=ON, 2=OFF, 3=OFF_UNAVAILABLE, 4=FAULT)
+msg.is12VBatterySupported = 1;     // 12V battery is supported (0=No, 1=Yes)
+msg.standbySupplySupported = 0;    // No standby supply (0=No, 1=Yes)
+msg.thermalSystemType = 0;         // Standard thermal system (0=Standard, 1=Performance)
+msg.LVLoadRequest = 1;             // Request LV load (0=No, 1=Yes)
+msg.diPowerOnState = 3;            // Powered for stationary heat (0=POWERED_OFF, 1=POWERED_ON_FOR_POST_RUN, 2=POWERED_ON_FOR_STATIONARY_HEAT, 3=POWERED_ON_FOR_DRIVE, 4=POWER_GOING_DOWN)
+msg.driverIsLeavingAnySpeed = 0;   // Driver not leaving (0=No, 1=Yes)
+msg.statusForDrive = 1;            // Ready for drive (0=NOT_READY_FOR_DRIVE_12V, 1=READY_FOR_DRIVE_12V, 2=EXIT_DRIVE_REQUESTED_12V)
+msg.pcs12vVoltageTarget = 13.60;    // 13.60V target
+msg.batterySupportRequest = 1;      // Request battery support (0=No, 1=Yes)
+msg.driverIsLeaving = 0;           // Driver not leaving (0=No, 1=Yes)
+msg.ota12VSupportRequest = 0;      // No OTA support request (0=No, 1=Yes)
+msg.driverBuckleStatus = 0;        // Not buckled (0=UNBUCKLED, 1=BUCKLED)
+msg.driverDoorStatus = 0;          // Door open (0=OPEN, 1=CLOSED)
+msg.driverUnbuckled = 0;           // No unbuckle warning (0=NONE, 1=OCCUPIED_AND_UNBUCKLED, 2=SNA)
+msg.passengerUnbuckled = 0;        // No unbuckle warning (0=NONE, 1=OCCUPIED_AND_UNBUCKLED, 2=SNA)
+msg.rowLeftUnbuckled = 0;          // No unbuckle warning (0=NONE, 1=OCCUPIED_AND_UNBUCKLED, 2=SNA)
+msg.rowCenterUnbuckled = 0;        // No unbuckle warning (0=NONE, 1=OCCUPIED_AND_UNBUCKLED, 2=SNA)
+msg.rowRightUnbuckled = 0;         // No unbuckle warning (0=NONE, 1=OCCUPIED_AND_UNBUCKLED, 2=SNA)
+msg.pcsEFuseVoltage = 13.0;         // 13.0V
+msg.vehicleStatusCounter = calculateCounter(); // 4-bit rolling counter
+msg.vehicleStatusChecksum = calculateChecksum(msg); // 8-bit checksum
+}
+
+// Function to initialize and update CAN frame
 void initialize_and_update_CAN_frame_3A1() {
-  // Declare the msg variable
-  TESLA_3A1_Struct msg;
-
-  // Initialize the message structure
-  initialize_msg(msg);
-
-  // Update the CAN frame data based on the signal values
-  update_CAN_frame_3A1(TESLA_3A1, msg);
+TESLA_3A1_Struct msg;
+initialize_msg(msg);
+update_CAN_frame_3A1(TESLA_3A1, msg);
 }
+
+// BO_ 929 VCFRONT_vehicleStatus: 8 VEH
+// SG_ VCFRONT_12vStatusForDrive: 14|2@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_2RowCenterUnbuckled: 38|2@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_2RowLeftUnbuckled: 36|2@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_2RowRightUnbuckled: 40|2@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_APGlassHeaterState: 2|3@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_LVLoadRequest: 9|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_batterySupportRequest: 27|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_bmsHvChargeEnable: 0|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_diPowerOnState: 10|3@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_driverBuckleStatus: 30|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_driverDoorStatus: 31|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_driverIsLeaving: 28|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_driverIsLeavingAnySpeed: 13|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_driverUnbuckled: 32|2@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_is12VBatterySupported: 5|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_ota12VSupportRequest: 29|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_passengerUnbuckled: 34|2@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_pcs12vVoltageTarget: 16|11@1+ (0.01,0) [0|0] "V" X
+// SG_ VCFRONT_pcsEFuseVoltage: 42|10@1+ (0.1,0) [0|0] "V" X
+// SG_ VCFRONT_preconditionRequest: 1|1@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_standbySupplySupported : 6|1@1+ (1,0) [0|1] "" X
+// SG_ VCFRONT_thermalSystemType : 5|1@1+ (1,0) [0|1] "" X
+// SG_ VCFRONT_vehicleStatusChecksum: 56|8@1+ (1,0) [0|0] "" X
+// SG_ VCFRONT_vehicleStatusCounter: 52|4@1+ (1,0) [0|0] "" X
+
+//VAL_ 929 VCFRONT_12vStatusForDrive 0 "NOT_READY_FOR_DRIVE_12V" 1 "READY_FOR_DRIVE_12V" 2 "EXIT_DRIVE_REQUESTED_12V" ;
+//VAL_ 929 VCFRONT_2RowCenterUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_2RowLeftUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_2RowRightUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_APGlassHeaterState 0 "SNA" 1 "ON" 2 "OFF" 3 "OFF_UNAVAILABLE" 4 "FAULT" ;
+//VAL_ 929 VCFRONT_diPowerOnState 0 "POWERED_OFF" 1 "POWERED_ON_FOR_POST_RUN" 2 "POWERED_ON_FOR_STATIONARY_HEAT" 3 "POWERED_ON_FOR_DRIVE" 4 "POWER_GOING_DOWN" ;
+//VAL_ 929 VCFRONT_driverBuckleStatus 0 "UNBUCKLED" 1 "BUCKLED" ;
+//VAL_ 929 VCFRONT_driverDoorStatus 0 "OPEN" 1 "CLOSED" ;
+//VAL_ 929 VCFRONT_driverUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_passengerUnbuckled 0 "NONE" 1 "OCCUPIED_AND_UNBUCKLED" 2 "SNA" ;
+//VAL_ 929 VCFRONT_pcsEFuseVoltage 1023 "SNA" ;
 
 // CAN frame definition for ID 0x333 819 UI_chargeRequest GenMsgCycleTime 500ms
-CAN_frame TESLA_333 = {.FD = false, .ext_ID = false, .DLC = 4, .ID = 0x333, .data = {.u8 = {0x00, 0x00, 0x00, 0x00}}};
+CAN_frame TESLA_333 = {
+  .FD = false,
+  .ext_ID = false,
+  .DLC = 5,
+  .ID = 0x333, 
+  .data = {.u8 = {0x00, 0x00, 0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_333_Struct {
   uint8_t UI_openChargePortDoorRequest : 1;   // 1 bit
   uint8_t UI_closeChargePortDoorRequest : 1;  // 1 bit
   uint8_t UI_chargeEnableRequest : 1;         // 1 bit
+  uint8_t UI_brickVLoggingRequest : 1;        // 1 bit
+  uint8_t UI_brickBalancingDisabled : 1;      // 1 bit
   uint8_t UI_acChargeCurrentLimit : 7;        // 7 bits
   uint16_t UI_chargeTerminationPct : 10;      // 10 bits
+  uint8_t UI_smartAcChargingEnabled : 1;      // 1 bit
+  uint8_t UI_scheduledDepartureEnabled : 1;   // 1 bit
+  uint8_t UI_socSnapshotExpirationTime : 4;   // 4 bits
+  uint8_t UI_cpInletHeaterRequest : 1;        // 1 bit
 };
 
 // Function prototypes
 void update_CAN_frame_333(CAN_frame& frame, const TESLA_333_Struct& msg);
 void initialize_msg(TESLA_333_Struct& msg);
 
-// Function to initialize the TESLA_333_Struct
+// Function to initialize message struct with default values
 void initialize_msg(TESLA_333_Struct& msg) {
-  msg.UI_openChargePortDoorRequest = 0;      // 0 = No, 1 = Yes
-  msg.UI_closeChargePortDoorRequest = 0;     // 0 = No, 1 = Yes
-  msg.UI_chargeEnableRequest = 1;            // 0 = No, 1 = Yes
-  msg.UI_acChargeCurrentLimit = 16;          // Amps
-  msg.UI_chargeTerminationPct = 10 * 102.3;  // (0.1,0) * 102.3 %
+  msg.UI_openChargePortDoorRequest = 1;     // 0 = Don't open, 1 = Request open
+  msg.UI_closeChargePortDoorRequest = 0;    // 0 = Don't close, 1 = Request close
+  msg.UI_chargeEnableRequest = 1;           // 0 = Disable charging, 1 = Enable charging
+  msg.UI_brickVLoggingRequest = 0;          // 0 = Disable logging, 1 = Enable logging
+  msg.UI_brickBalancingDisabled = 0;        // 0 = Enable balancing, 1 = Disable balancing
+  msg.UI_acChargeCurrentLimit = 16;         // 16A default charging current
+  msg.UI_chargeTerminationPct = 1023;       // Set to 100.0% (1000 * 0.1%)
+  msg.UI_smartAcChargingEnabled = 0;        // 0 = Disabled, 1 = Enabled
+  msg.UI_scheduledDepartureEnabled = 0;     // 0 = Disabled, 1 = Enabled
+  msg.UI_socSnapshotExpirationTime = 0;     // 0 weeks
+  msg.UI_cpInletHeaterRequest = 0;          // 0 = No request, 1 = Request
 }
+
+// BO_ 819 ID333UI_chargeRequest: 5 VehicleBus
+// SG_ UI_openChargePortDoorRequest : 0|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_closeChargePortDoorRequest : 1|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_chargeEnableRequest : 2|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_brickVLoggingRequest : 3|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_brickBalancingDisabled : 4|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_acChargeCurrentLimit : 8|7@1+ (1,0) [0|127] "A"  Receiver
+// SG_ UI_chargeTerminationPct : 16|10@1+ (0.1,0) [25|100] "%"  Receiver
+// SG_ UI_smartAcChargingEnabled : 26|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_scheduledDepartureEnabled : 27|1@1+ (1,0) [0|1] ""  Receiver
+// SG_ UI_socSnapshotExpirationTime : 28|4@1+ (1,2) [0|0] "weeks"  Receiver
+// SG_ UI_cpInletHeaterRequest : 32|1@1+ (1,0) [0|0] ""  Receiver
+// VAL_ 819 UI_acChargeCurrentLimit 127 "SNA" ;
+// VAL_ 819 UI_brickBalancingDisabled 0 "FALSE" 1 "TRUE" ;
+// VAL_ 819 UI_brickVLoggingRequest 0 "FALSE" 1 "TRUE" ;
 
 // Function to update the CAN frame 0x333 with the signal values
 void update_CAN_frame_333(CAN_frame& frame, const TESLA_333_Struct& msg) {
-  uint8_t acChargeCurrentLimit = msg.UI_acChargeCurrentLimit;        //
-  uint16_t chargeTerminationPct = msg.UI_chargeTerminationPct * 10;  // Apply factor
-  frame.data.u8[0] = (msg.UI_openChargePortDoorRequest << 0) |       // Bit 0, Length 1
-                     (msg.UI_closeChargePortDoorRequest << 1) |      // Bit 1, Length 1
-                     (msg.UI_chargeEnableRequest << 2) |             // Bit 2, Length 1
-                     0x80;                                           // Set bit 7 to 1
-  frame.data.u8[1] = (acChargeCurrentLimit << 1) | 0x10;  // Bit 8, Length 7 (shift left by 1) and set bit 4 to 1
-  frame.data.u8[2] = (chargeTerminationPct & 0xFF);       // Bit 16, Length 10 (split across data[2] and data[3])
-  frame.data.u8[3] = (chargeTerminationPct >> 8) & 0x07;  // Bit 16, Length 10 (split across data[2] and data[3])
-  frame.data.u8[3] |= 0xE0;                               // Set bits 5, 6, and 7 to 1
+  // Clear frame data first
+  memset(frame.data.u8, 0, frame.DLC);
+
+  // Pack signals into CAN frame bytes
+  frame.data.u8[0] = (msg.UI_openChargePortDoorRequest & 0x01) |
+                     ((msg.UI_closeChargePortDoorRequest & 0x01) << 1) |
+                     ((msg.UI_chargeEnableRequest & 0x01) << 2) |
+                     ((msg.UI_brickVLoggingRequest & 0x01) << 3) |
+                     ((msg.UI_brickBalancingDisabled & 0x01) << 4);
+
+  frame.data.u8[1] = (msg.UI_acChargeCurrentLimit & 0x7F) << 1;
+
+  frame.data.u8[2] = msg.UI_chargeTerminationPct & 0xFF;
+
+  frame.data.u8[3] = ((msg.UI_chargeTerminationPct >> 8) & 0x03) |
+                     ((msg.UI_smartAcChargingEnabled & 0x01) << 2) |
+                     ((msg.UI_scheduledDepartureEnabled & 0x01) << 3) |
+                     ((msg.UI_socSnapshotExpirationTime & 0x0F) << 4);
+
+  frame.data.u8[4] = (msg.UI_cpInletHeaterRequest & 0x01);
 }
 
 // Function to initialize and update the CAN frame 0x333
 void initialize_and_update_CAN_frame_333() {
-  // Declare the msg variable
   TESLA_333_Struct msg;
-
-  // Initialize the message structure
   initialize_msg(msg);
-
-  // Update the CAN frame data based on the signal values
   update_CAN_frame_333(TESLA_333, msg);
 }
 
+//BO_ 505 VCSEC_requests: 1 VEH
+// SG_ VCSEC_chargePortRequest : 0|2@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_driveAttemptedWithoutAuth : 2|1@1+ (1,0) [0|0] ""  X
+// VAL_ 505 VCSEC_chargePortRequest 0 "NONE" 1 "OPEN" 2 "CLOSE" 3 "SNA" ;
+
 // CAN frame definition for ID 0x1F9 505 VCSEC_requests GenMsgCycleTime 100ms
-CAN_frame TESLA_1F9 = {.FD = false, .ext_ID = false, .DLC = 1, .ID = 0x1F9, .data = {.u8 = {0x00}}};
+CAN_frame TESLA_1F9 = {
+  .FD = false,
+  .ext_ID = false, 
+  .DLC = 1,
+  .ID = 0x1F9,
+  .data = {.u8 = {0x00}}
+};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_1F9_Struct {
-  uint8_t VCSEC_chargePortRequest : 2;
-  uint8_t VCSEC_driveAttemptedWithoutAuth : 1;
+  uint8_t VCSEC_chargePortRequest : 2;        // Bit 0-1, Length 2
+  uint8_t VCSEC_driveAttemptedWithoutAuth : 1;  // Bit 2, Length 1
 };
 
 // Function prototypes
@@ -542,218 +789,316 @@ void initialize_msg(TESLA_1F9_Struct& msg);
 
 // Function to initialize the TESLA_1F9_Struct
 void initialize_msg(TESLA_1F9_Struct& msg) {
-  msg.VCSEC_chargePortRequest = 1;          // 0 = NONE, 1 = OPEN, 2 = CLOSE, 3 = SNA
-  msg.VCSEC_driveAttemptedWithoutAuth = 0;  // 0 = No, 1 = Yes
+  msg.VCSEC_chargePortRequest = 1;          // Values: 0=NONE, 1=OPEN, 2=CLOSE, 3=SNA
+  msg.VCSEC_driveAttemptedWithoutAuth = 0;  // Values: 0=No attempt, 1=Attempt detected
 }
 
-// Function to update the CAN frame 0x1F9 with the signal values
+// Pack signal values into CAN frame bytes
 void update_CAN_frame_1F9(CAN_frame& frame, const TESLA_1F9_Struct& msg) {
-  frame.data.u8[0] = (msg.VCSEC_chargePortRequest & 0x03) |                // Bit 0-1, Length 2
-                     ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2);  // Bit 2, Length 1
+  // Clear frame data first
+  frame.data.u8[0] = 0x00;
+
+  // Pack signals:
+  // - VCSEC_chargePortRequest in bits 0-1
+  // - VCSEC_driveAttemptedWithoutAuth in bit 2
+  frame.data.u8[0] = (msg.VCSEC_chargePortRequest & 0x03) |         // Bits 0-1 
+                     ((msg.VCSEC_driveAttemptedWithoutAuth & 0x01) << 2); // Bit 2
 }
 
-// Function to initialize and update the CAN frame 0x1F9
+// Initialize and update CAN frame
 void initialize_and_update_CAN_frame_1F9() {
-  // Declare the msg variable
   TESLA_1F9_Struct msg;
-
-  // Initialize the message structure
   initialize_msg(msg);
-
-  // Update the CAN frame data based on the signal values
   update_CAN_frame_1F9(TESLA_1F9, msg);
 }
 
+// BO_ 825 VCSEC_authentication: 8 VEH
+// SG_ VCSEC_MCUCommandType : 36|3@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_alarmStatus : 43|4@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_authRequested : 60|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_authenticationStatus : 16|2@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_chargePortLockStatus : 18|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_frunkRequest : 34|2@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_immobilizerState : 48|3@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_keyChannelIndexed : 56|4@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_leftFrontLockStatus : 19|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_leftRearLockStatus : 20|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_lockIndicationRequest : 51|3@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_lockRequestType : 24|5@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_numberOfPubKeysOnWhitelist : 6|5@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnDeltaD : 3|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnDeltaP : 39|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnDeltaR : 4|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnHighThresholdC : 0|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnHighThresholdD : 1|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnHighThresholdP : 2|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_prsntRsnHighThresholdR : 5|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_rightFrontLockStatus : 21|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_rightRearLockStatus : 22|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_simpleLockStatus : 54|2@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_summonRequest : 29|3@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_trunkLockStatus : 23|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_trunkRequest : 32|2@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_usingModifiedMACAddress : 40|1@1+ (1,0) [0|0] ""  X
+// SG_ VCSEC_vehicleLockStatus : 12|4@1+ (1,0) [0|0] ""  X
+// VAL_ 825 VCSEC_MCUCommandType 0 "NONE" 1 "REMOTE_UNLOCK" 2 "REMOTE_START" 3 "COMMAND3" 4 "COMMAND4" 5 "COMMAND5" ;
+// VAL_ 825 VCSEC_alarmStatus 0 "DISARMED" 1 "ARMED" 2 "PARTIAL_ARMED" 3 "TRIGGERED_FLASH_ACTIVE" 4 "ERROR" 5 "TRIGGERED_FLASH_INACTIVE" 6 "IMMINENT" 7 "DEFAULT" 15 "SNA" ;
+// VAL_ 825 VCSEC_authenticationStatus 0 "NONE" 1 "AUTHENTICATED_FOR_UNLOCK" 2 "AUTHENTICATED_FOR_DRIVE" ;
+// VAL_ 825 VCSEC_chargePortLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+// VAL_ 825 VCSEC_frunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
+// VAL_ 825 VCSEC_immobilizerState 0 "IDLE" 1 "PREPARE" 2 "ENCRYPT_BEGIN" 3 "ENCRYPT" 4 "SEND_AUTH_RESPONSE" 5 "SEND_NO_GO_AUTH_RESPONSE" ;
+// VAL_ 825 VCSEC_keyChannelIndexed 15 "SNA" ;
+// VAL_ 825 VCSEC_leftFrontLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+// VAL_ 825 VCSEC_leftRearLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+// VAL_ 825 VCSEC_lockIndicationRequest 0 "NONE_SNA" 1 "SINGLE" 2 "DOUBLE" 3 "TRIPLE" 4 "HOLD" ;
+// VAL_ 825 VCSEC_lockRequestType 0 "NONE" 1 "PASSIVE_SHIFT_TO_P_UNLOCK" 2 "PASSIVE_PARKBUTTON_UNLOCK" 3 "PASSIVE_INTERNAL_HANDLE_UNLOCK" 4 "PASSIVE_DRIVE_AWAY_LOCK" 5 "PASSIVE_BLE_WALKUP_UNLOCK" 6 "PASSIVE_BLE_EXTERIOR_CHARGEHANDLEBUTTON_UNLOCK" 7 "PASSIVE_BLE_EXTERIOR_HANDLE_UNLOCK" 8 "PASSIVE_BLE_INTERIOR_HANDLE_UNLOCK" 9 "PASSIVE_BLE_LOCK" 10 "CRASH_UNLOCK" 11 "ACTIVE_UI_BUTTON_UNLOCK" 12 "ACTIVE_UI_BUTTON_LOCK" 13 "ACTIVE_REMOTE_UNLOCK" 14 "ACTIVE_REMOTE_LOCK" 15 "ACTIVE_NFC_UNLOCK" 16 "ACTIVE_NFC_LOCK" 17 "ACTIVE_BLE_UNLOCK" 18 "ACTIVE_BLE_LOCK" 19 "PASSIVE_INTERNAL_LOCK_PROMOTION" ;
+// VAL_ 825 VCSEC_rightFrontLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+// VAL_ 825 VCSEC_rightRearLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+// VAL_ 825 VCSEC_simpleLockStatus 0 "SNA" 1 "UNLOCKED" 2 "LOCKED" ;
+// VAL_ 825 VCSEC_summonRequest 0 "IDLE" 1 "PRIME" 2 "FORWARD" 3 "BACKWARD" 4 "STOP" 5 "SNA" ;
+// VAL_ 825 VCSEC_trunkLockStatus 0 "UNLOCKED" 1 "LOCKED" ;
+// VAL_ 825 VCSEC_trunkRequest 0 "NONE" 1 "OPEN" 2 "SNA" ;
+// VAL_ 825 VCSEC_vehicleLockStatus 0 "SNA" 1 "ACTIVE_NFC_UNLOCKED" 2 "ACTIVE_NFC_LOCKED" 3 "PASSIVE_SELECTIVE_UNLOCKED" 4 "PASSIVE_BLE_UNLOCKED" 5 "PASSIVE_BLE_LOCKED" 6 "ACTIVE_SELECTIVE_UNLOCKED" 7 "ACTIVE_BLE_UNLOCKED" 8 "ACTIVE_BLE_LOCKED" 9 "ACTIVE_UI_UNLOCKED" 10 "ACTIVE_UI_LOCKED" 11 "ACTIVE_REMOTE_UNLOCKED" 12 "ACTIVE_REMOTE_LOCKED" 13 "CRASH_UNLOCKED" 14 "PASSIVE_INTERNAL_UNLOCKED" 15 "PASSIVE_INTERNAL_LOCKED" ;
+
 // CAN frame definition for ID 0x339 825 VCSEC_authentication GenMsgCycleTime 100ms
 CAN_frame TESLA_339 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x339,
-                       .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
+  .ext_ID = false,
+  .DLC = 8,
+  .ID = 0x339,
+  .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
 
-// Structure to hold the signal values for the CAN frame
+// Structure to hold signal values with proper bit lengths
 struct TESLA_339_Struct {
-  uint8_t VCSEC_prsntRsnHighThresholdC : 1;
-  uint8_t VCSEC_prsntRsnHighThresholdD : 1;
-  uint8_t VCSEC_prsntRsnHighThresholdP : 1;
-  uint8_t VCSEC_prsntRsnDeltaD : 1;
-  uint8_t VCSEC_prsntRsnHighThresholdR : 1;
-  uint8_t VCSEC_prsntRsnDeltaR : 1;
-  uint8_t VCSEC_prsntRsnDeltaP : 1;
-  uint8_t VCSEC_numberOfPubKeysOnWhitelist : 5;
-  uint8_t VCSEC_vehicleLockStatus : 4;
-  uint8_t VCSEC_lockRequestType : 5;
-  uint8_t VCSEC_authenticationStatus : 2;
-  uint8_t VCSEC_chargePortLockStatus : 1;
-  uint8_t VCSEC_leftFrontLockStatus : 1;
-  uint8_t VCSEC_leftRearLockStatus : 1;
-  uint8_t VCSEC_trunkLockStatus : 1;
-  uint8_t VCSEC_frunkRequest : 2;
-  uint8_t VCSEC_MCUCommandType : 3;
-  uint8_t VCSEC_lockIndicationRequest : 3;
-  uint8_t VCSEC_immobilizerState : 3;
-  uint8_t VCSEC_rightFrontLockStatus : 1;
-  uint8_t VCSEC_rightRearLockStatus : 1;
-  uint8_t VCSEC_simpleLockStatus : 2;
-  uint8_t VCSEC_summonRequest : 3;
-  uint8_t VCSEC_alarmStatus : 4;
-  uint8_t VCSEC_keyChannelIndexed : 4;
-  uint8_t VCSEC_usingModifiedMACAddress : 1;
-  uint8_t VCSEC_authRequested : 1;
-  uint8_t VCSEC_trunkRequest : 2;
+// Byte 0
+uint8_t VCSEC_prsntRsnHighThresholdC : 1;    // Bit 0
+uint8_t VCSEC_prsntRsnHighThresholdD : 1;    // Bit 1  
+uint8_t VCSEC_prsntRsnHighThresholdP : 1;    // Bit 2
+uint8_t VCSEC_prsntRsnDeltaD : 1;            // Bit 3
+uint8_t VCSEC_prsntRsnHighThresholdR : 1;    // Bit 4
+uint8_t VCSEC_prsntRsnDeltaR : 1;            // Bit 5
+uint8_t VCSEC_numberOfPubKeysOnWhitelist : 5; // Bits 6-10
+uint8_t VCSEC_prsntRsnDeltaP : 1;            // Bit 39
+
+// Authentication and status signals
+uint8_t VCSEC_vehicleLockStatus : 4;         // Bits 12-15
+uint8_t VCSEC_authenticationStatus : 2;       // Bits 16-17
+uint8_t VCSEC_chargePortLockStatus : 1;      // Bit 18
+uint8_t VCSEC_leftFrontLockStatus : 1;       // Bit 19
+uint8_t VCSEC_leftRearLockStatus : 1;        // Bit 20
+uint8_t VCSEC_rightFrontLockStatus : 1;      // Bit 21
+uint8_t VCSEC_rightRearLockStatus : 1;       // Bit 22
+uint8_t VCSEC_trunkLockStatus : 1;           // Bit 23
+uint8_t VCSEC_lockRequestType : 5;           // Bits 24-28
+uint8_t VCSEC_summonRequest : 3;             // Bits 29-31
+uint8_t VCSEC_trunkRequest : 2;              // Bits 32-33
+uint8_t VCSEC_frunkRequest : 2;              // Bits 34-35
+uint8_t VCSEC_MCUCommandType : 3;            // Bits 36-38
+uint8_t VCSEC_usingModifiedMACAddress : 1;   // Bit 40
+uint8_t VCSEC_alarmStatus : 4;               // Bits 43-46
+uint8_t VCSEC_immobilizerState : 3;          // Bits 48-50
+uint8_t VCSEC_lockIndicationRequest : 3;     // Bits 51-53
+uint8_t VCSEC_simpleLockStatus : 2;          // Bits 54-55
+uint8_t VCSEC_keyChannelIndexed : 4;         // Bits 56-59
+uint8_t VCSEC_authRequested : 1;             // Bit 60
 };
 
 // Function prototypes
 void update_CAN_frame_339(CAN_frame& frame, const TESLA_339_Struct& msg);
 void initialize_msg(TESLA_339_Struct& msg);
 
-// Function to initialize the TESLA_339_Struct
 void initialize_msg(TESLA_339_Struct& msg) {
-  msg.VCSEC_prsntRsnHighThresholdC = 0;      // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnHighThresholdD = 0;      // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnHighThresholdP = 0;      // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnDeltaD = 0;              // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnHighThresholdR = 0;      // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnDeltaR = 0;              // 0 = No, 1 = Yes
-  msg.VCSEC_prsntRsnDeltaP = 0;              // 0 = No, 1 = Yes
-  msg.VCSEC_numberOfPubKeysOnWhitelist = 0;  // Example value
-  msg.VCSEC_vehicleLockStatus = 0;           // Example value
-  msg.VCSEC_lockRequestType = 0;             // Example value
-  msg.VCSEC_authenticationStatus = 1;        // 0 = NONE, 1 = AUTHENTICATED_FOR_UNLOCK, 2 = AUTHENTICATED_FOR_DRIVE
-  msg.VCSEC_chargePortLockStatus = 0;        // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_leftFrontLockStatus = 0;         // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_leftRearLockStatus = 0;          // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_trunkLockStatus = 0;             // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_frunkRequest = 0;                // 0 = NONE, 1 = OPEN, 2 = SNA
-  msg.VCSEC_MCUCommandType =
-      1;  // 0 = NONE, 1 = REMOTE_UNLOCK, 2 = REMOTE_START, 3 = COMMAND3, 4 = COMMAND4, 5 = COMMAND5
-  msg.VCSEC_lockIndicationRequest = 0;  // 0 = NONE_SNA, 1 = SINGLE, 2 = DOUBLE, 3 = TRIPLE, 4 = HOLD
-  msg.VCSEC_immobilizerState =
-      0;  // 0 = IDLE, 1 = PREPARE, 2 = ENCRYPT_BEGIN, 3 = ENCRYPT, 4 = SEND_AUTH_RESPONSE, 5 = SEND_NO_GO_AUTH_RESPONSE
-  msg.VCSEC_rightFrontLockStatus = 0;  // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_rightRearLockStatus = 0;   // 0 = UNLOCKED, 1 = LOCKED
-  msg.VCSEC_simpleLockStatus = 0;      // 0 = SNA, 1 = UNLOCKED, 2 = LOCKED
-  msg.VCSEC_summonRequest = 0;         // 0 = IDLE, 1 = PRIME, 2 = FORWARD, 3 = BACKWARD, 4 = STOP, 5 = SNA
-  msg.VCSEC_alarmStatus =
-      0;  // 0 = DISARMED, 1 = ARMED, 2 = PARTIAL_ARMED, 3 = TRIGGERED_FLASH_ACTIVE, 4 = ERROR, 5 = TRIGGERED_FLASH_INACTIVE, 6 = IMMINENT, 7 = DEFAULT, 15 = SNA
-  msg.VCSEC_keyChannelIndexed = 15;       // 15 = SNA
-  msg.VCSEC_usingModifiedMACAddress = 0;  // 0 = No, 1 = Yes
-  msg.VCSEC_authRequested = 0;            // 0 = No, 1 = Yes
-  msg.VCSEC_trunkRequest = 0;             // 0 = NONE, 1 = OPEN, 2 = SNA
+// Initialize presence reason thresholds and deltas
+msg.VCSEC_prsntRsnHighThresholdC = 0;  // Threshold C high
+msg.VCSEC_prsntRsnHighThresholdD = 0;  // Threshold D high
+msg.VCSEC_prsntRsnHighThresholdP = 0;  // Threshold P high
+msg.VCSEC_prsntRsnDeltaD = 0;          // Delta D
+msg.VCSEC_prsntRsnHighThresholdR = 0;  // Threshold R high
+msg.VCSEC_prsntRsnDeltaR = 0;          // Delta R
+msg.VCSEC_numberOfPubKeysOnWhitelist = 0;  // Number of public keys
+msg.VCSEC_prsntRsnDeltaP = 0;          // Delta P
+
+// Authentication and lock status
+msg.VCSEC_vehicleLockStatus = 0;        // 0 "SNA" 1 "ACTIVE_NFC_UNLOCKED" 2 "ACTIVE_NFC_LOCKED" 3 "PASSIVE_SELECTIVE_UNLOCKED" 4 "PASSIVE_BLE_UNLOCKED" 5 "PASSIVE_BLE_LOCKED" 6 "ACTIVE_SELECTIVE_UNLOCKED" 7 "ACTIVE_BLE_UNLOCKED" 8 "ACTIVE_BLE_LOCKED" 9 "ACTIVE_UI_UNLOCKED" 10 "ACTIVE_UI_LOCKED" 11 "ACTIVE_REMOTE_UNLOCKED" 12 "ACTIVE_REMOTE_LOCKED" 13 "CRASH_UNLOCKED" 14 "PASSIVE_INTERNAL_UNLOCKED" 15 "PASSIVE_INTERNAL_LOCKED"
+msg.VCSEC_authenticationStatus = 2;      // 0=NONE, 1=AUTHENTICATED_FOR_UNLOCK, 2=AUTHENTICATED_FOR_DRIVE
+msg.VCSEC_chargePortLockStatus = 0;     // 0=UNLOCKED, 1=LOCKED
+
+// Door lock statuses
+msg.VCSEC_leftFrontLockStatus = 0;      // 0=UNLOCKED, 1=LOCKED
+msg.VCSEC_leftRearLockStatus = 0;       // 0=UNLOCKED, 1=LOCKED
+msg.VCSEC_rightFrontLockStatus = 0;     // 0=UNLOCKED, 1=LOCKED
+msg.VCSEC_rightRearLockStatus = 0;      // 0=UNLOCKED, 1=LOCKED
+msg.VCSEC_trunkLockStatus = 0;          // 0=UNLOCKED, 1=LOCKED
+
+// Request statuses
+msg.VCSEC_lockRequestType = 0;          // 0 "NONE" 1 "PASSIVE_SHIFT_TO_P_UNLOCK" 2 "PASSIVE_PARKBUTTON_UNLOCK" 3 "PASSIVE_INTERNAL_HANDLE_UNLOCK" 4 "PASSIVE_DRIVE_AWAY_LOCK" 5 "PASSIVE_BLE_WALKUP_UNLOCK" 6 "PASSIVE_BLE_EXTERIOR_CHARGEHANDLEBUTTON_UNLOCK" 7 "PASSIVE_BLE_EXTERIOR_HANDLE_UNLOCK" 8 "PASSIVE_BLE_INTERIOR_HANDLE_UNLOCK" 9 "PASSIVE_BLE_LOCK" 10 "CRASH_UNLOCK" 11 "ACTIVE_UI_BUTTON_UNLOCK" 12 "ACTIVE_UI_BUTTON_LOCK" 13 "ACTIVE_REMOTE_UNLOCK" 14 "ACTIVE_REMOTE_LOCK" 15 "ACTIVE_NFC_UNLOCK" 16 "ACTIVE_NFC_LOCK" 17 "ACTIVE_BLE_UNLOCK" 18 "ACTIVE_BLE_LOCK" 19 "PASSIVE_INTERNAL_LOCK_PROMOTION"
+msg.VCSEC_summonRequest = 0;            // 0=IDLE, 1=PRIME, 2=FORWARD, 3=BACKWARD, 4=STOP, 5=SNA
+msg.VCSEC_trunkRequest = 0;             // 0=NONE, 1=OPEN, 2=SNA
+msg.VCSEC_frunkRequest = 0;             // 0=NONE, 1=OPEN, 2=SNA
+
+// Command and status fields
+msg.VCSEC_MCUCommandType = 0;           //0 "NONE" 1 "REMOTE_UNLOCK" 2 "REMOTE_START" 3 "COMMAND3" 4 "COMMAND4" 5 "COMMAND5" ;
+msg.VCSEC_usingModifiedMACAddress = 0;  // Modified MAC address flag
+msg.VCSEC_alarmStatus = 0;              // 0 "DISARMED" 1 "ARMED" 2 "PARTIAL_ARMED" 3 "TRIGGERED_FLASH_ACTIVE" 4 "ERROR" 5 "TRIGGERED_FLASH_INACTIVE" 6 "IMMINENT" 7 "DEFAULT" 15 "SNA"
+msg.VCSEC_immobilizerState = 0;         //  0 "IDLE" 1 "PREPARE" 2 "ENCRYPT_BEGIN" 3 "ENCRYPT" 4 "SEND_AUTH_RESPONSE" 5 "SEND_NO_GO_AUTH_RESPONSE"
+msg.VCSEC_lockIndicationRequest = 0;    // 0=NONE_SNA, 1=SINGLE, 2=DOUBLE, 3=TRIPLE, 4=HOLD
+msg.VCSEC_simpleLockStatus = 0;         // 0=SNA, 1=UNLOCKED, 2=LOCKED
+msg.VCSEC_keyChannelIndexed = 15;       // 15=SNA
+msg.VCSEC_authRequested = 0;            // Authentication request flag
 }
 
-// Function to update the CAN frame 0x339 with the signal values
 void update_CAN_frame_339(CAN_frame& frame, const TESLA_339_Struct& msg) {
-  frame.data.u8[0] = (msg.VCSEC_prsntRsnHighThresholdC << 0) |     // Bit 0, Length 1
-                     (msg.VCSEC_prsntRsnHighThresholdD << 1) |     // Bit 1, Length 1
-                     (msg.VCSEC_prsntRsnHighThresholdP << 2) |     // Bit 2, Length 1
-                     (msg.VCSEC_prsntRsnDeltaD << 3);              // Bit 3, Length 1
-  frame.data.u8[1] = (msg.VCSEC_prsntRsnHighThresholdR << 4) |     // Bit 4, Length 1
-                     (msg.VCSEC_prsntRsnDeltaR << 5) |             // Bit 5, Length 1
-                     (msg.VCSEC_prsntRsnDeltaP << 6) |             // Bit 39, Length 1
-                     (msg.VCSEC_numberOfPubKeysOnWhitelist << 0);  // Bit 6, Length 5
-  frame.data.u8[2] = (msg.VCSEC_vehicleLockStatus << 0) |          // Bit 12, Length 4
-                     (msg.VCSEC_lockRequestType << 4);             // Bit 24, Length 5
-  frame.data.u8[3] = (msg.VCSEC_authenticationStatus << 0) |       // Bit 16, Length 2
-                     (msg.VCSEC_chargePortLockStatus << 2) |       // Bit 18, Length 1
-                     (msg.VCSEC_leftFrontLockStatus << 3) |        // Bit 19, Length 1
-                     (msg.VCSEC_leftRearLockStatus << 4) |         // Bit 20, Length 1
-                     (msg.VCSEC_trunkLockStatus << 5);             // Bit 23, Length 1
-  frame.data.u8[4] = (msg.VCSEC_frunkRequest << 0) |               // Bit 34, Length 2
-                     (msg.VCSEC_MCUCommandType << 4);              // Bit 36, Length 3
-  frame.data.u8[5] = (msg.VCSEC_lockIndicationRequest << 0) |      // Bit 51, Length 3
-                     (msg.VCSEC_immobilizerState << 3);            // Bit 48, Length 3
-  frame.data.u8[6] = (msg.VCSEC_rightFrontLockStatus << 0) |       // Bit 21, Length 1
-                     (msg.VCSEC_rightRearLockStatus << 1) |        // Bit 22, Length 1
-                     (msg.VCSEC_simpleLockStatus << 4);            // Bit 54, Length 2
-  frame.data.u8[7] = (msg.VCSEC_summonRequest << 1) |              // Bit 29, Length 3
-                     (msg.VCSEC_alarmStatus << 3) |                // Bit 43, Length 4
-                     (msg.VCSEC_keyChannelIndexed << 0) |          // Bit 56, Length 4
-                     (msg.VCSEC_usingModifiedMACAddress << 5) |    // Bit 40, Length 1
-                     (msg.VCSEC_authRequested << 0) |              // Bit 60, Length 1
-                     (msg.VCSEC_trunkRequest << 6);                // Bit 32, Length 2
+// Clear frame data
+memset(frame.data.u8, 0, sizeof(frame.data.u8));
+
+// Pack signals into CAN frame bytes
+frame.data.u8[0] = (msg.VCSEC_prsntRsnHighThresholdC) |
+(msg.VCSEC_prsntRsnHighThresholdD << 1) |
+(msg.VCSEC_prsntRsnHighThresholdP << 2) |
+(msg.VCSEC_prsntRsnDeltaD << 3) |
+(msg.VCSEC_prsntRsnHighThresholdR << 4) |
+(msg.VCSEC_prsntRsnDeltaR << 5) |
+((msg.VCSEC_numberOfPubKeysOnWhitelist & 0x1F) << 6);
+
+frame.data.u8[1] = ((msg.VCSEC_numberOfPubKeysOnWhitelist >> 2) & 0x07) |
+(msg.VCSEC_prsntRsnDeltaP << 3) |
+(msg.VCSEC_vehicleLockStatus << 4);
+
+frame.data.u8[2] = (msg.VCSEC_authenticationStatus) |
+(msg.VCSEC_chargePortLockStatus << 2) |
+(msg.VCSEC_leftFrontLockStatus << 3) |
+(msg.VCSEC_leftRearLockStatus << 4) |
+(msg.VCSEC_rightFrontLockStatus << 5) |
+(msg.VCSEC_rightRearLockStatus << 6) |
+(msg.VCSEC_trunkLockStatus << 7);
+
+frame.data.u8[3] = (msg.VCSEC_lockRequestType) |
+(msg.VCSEC_summonRequest << 5);
+
+frame.data.u8[4] = (msg.VCSEC_trunkRequest) |
+(msg.VCSEC_frunkRequest << 2) |
+(msg.VCSEC_MCUCommandType << 4);
+
+frame.data.u8[5] = (msg.VCSEC_usingModifiedMACAddress << 4) |
+(msg.VCSEC_alarmStatus << 5);
+
+frame.data.u8[6] = (msg.VCSEC_immobilizerState) |
+(msg.VCSEC_lockIndicationRequest << 3) |
+(msg.VCSEC_simpleLockStatus << 6);
+
+frame.data.u8[7] = (msg.VCSEC_keyChannelIndexed) |
+(msg.VCSEC_authRequested << 4);
 }
 
 // Function to initialize and update the CAN frame 0x339
 void initialize_and_update_CAN_frame_339() {
-  // Declare the msg variable
-  TESLA_339_Struct msg;
-
-  // Initialize the message structure
-  initialize_msg(msg);
-
-  // Update the CAN frame data based on the signal values
-  update_CAN_frame_339(TESLA_339, msg);
+TESLA_339_Struct msg;
+initialize_msg(msg);
+update_CAN_frame_339(TESLA_339, msg);
 }
+
+// BO_ 801 VCFRONT_sensors: 8 VEH
+// SG_ VCFRONT_tempCoolantBatInlet : 0|10@1+ (0.125,-40) [0|0] "degC"  X
+// SG_ VCFRONT_tempCoolantPTInlet : 10|11@1+ (0.125,-40) [0|0] "degC"  X
+// SG_ VCFRONT_coolantLevel : 21|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_brakeFluidLevel : 22|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_tempAmbient : 24|8@1+ (0.5,-40) [0|0] "degC"  X
+// SG_ VCFRONT_tempAmbientFiltered : 40|8@1+ (0.5,-40) [0|0] "degC"  X
+// SG_ VCFRONT_washerFluidLevel : 32|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_ptSensorIrrational : 49|1@1+ (1,0) [0|0] ""  X
+// VAL_ 801 VCFRONT_brakeFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
+// VAL_ 801 VCFRONT_coolantLevel 0 "NOT_OK" 1 "FILLED" ;
+// VAL_ 801 VCFRONT_tempAmbient 0 "SNA" ;
+// VAL_ 801 VCFRONT_tempAmbientFiltered 0 "SNA" ;
+// VAL_ 801 VCFRONT_tempCoolantBatInlet 1023 "SNA" ;
+// VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
+// VAL_ 801 VCFRONT_washerFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
 
 // CAN frame definition for ID 0x321 801 VCFRONT_sensors GenMsgCycleTime 1000ms
 CAN_frame TESLA_321 = {.FD = false,
-                       .ext_ID = false,
-                       .DLC = 8,
-                       .ID = 0x321,
-                       .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
+  .ext_ID = false,
+  .DLC = 8,
+  .ID = 0x321,
+  .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_321_Struct {
-  uint8_t VCFRONT_battSensorIrrational : 1;   // 1 bit
-  uint8_t VCFRONT_brakeFluidLevel : 2;        // 2 bits
-  uint8_t VCFRONT_coolantLevel : 1;           // 1 bit
-  uint8_t VCFRONT_ptSensorIrrational : 1;     // 1 bit
-  uint8_t VCFRONT_tempAmbient : 8;            // 8 bits
-  uint8_t VCFRONT_tempAmbientFiltered : 8;    // 8 bits
-  uint16_t VCFRONT_tempCoolantBatInlet : 10;  // 10 bits
-  uint16_t VCFRONT_tempCoolantPTInlet : 11;   // 11 bits
-  uint8_t VCFRONT_washerFluidLevel : 2;       // 2 bits
+uint8_t VCFRONT_battSensorIrrational : 1;   // 1 bit
+uint8_t VCFRONT_brakeFluidLevel : 2;        // 2 bits
+uint8_t VCFRONT_coolantLevel : 1;           // 1 bit
+uint8_t VCFRONT_ptSensorIrrational : 1;     // 1 bit
+uint8_t VCFRONT_tempAmbient : 8;            // 8 bits
+uint8_t VCFRONT_tempAmbientFiltered : 8;    // 8 bits
+uint16_t VCFRONT_tempCoolantBatInlet : 10;  // 10 bits
+uint16_t VCFRONT_tempCoolantPTInlet : 11;   // 11 bits
+uint8_t VCFRONT_washerFluidLevel : 2;       // 2 bits
 };
 
 // Function prototypes
 void update_CAN_frame_321(CAN_frame& frame, const TESLA_321_Struct& msg);
 void initialize_msg(TESLA_321_Struct& msg);
 
-// Function to initialize the TESLA_321_Struct
+// Function to initialize message struct with default values
 void initialize_msg(TESLA_321_Struct& msg) {
-  msg.VCFRONT_battSensorIrrational = 0;  // 0 = No, 1 = Yes
-  msg.VCFRONT_brakeFluidLevel = 2;       // 0 = SNA, 1 = LOW, 2 = NORMAL
-  msg.VCFRONT_coolantLevel = 1;          // 0 = NOT_OK, 1 = FILLED
-  msg.VCFRONT_ptSensorIrrational = 0;    // 0 = No, 1 = Yes
-  msg.VCFRONT_tempAmbient = 25;          // Example value in degrees Celsius
-  msg.VCFRONT_tempAmbientFiltered = 25;  // Example value in degrees Celsius
-  msg.VCFRONT_tempCoolantBatInlet = 25;  // Example value in degrees Celsius
-  msg.VCFRONT_tempCoolantPTInlet = 25;   // Example value in degrees Celsius
-  msg.VCFRONT_washerFluidLevel = 2;      // 0 = SNA, 1 = LOW, 2 = NORMAL
+msg.VCFRONT_battSensorIrrational = 0;    // 0 = No, 1 = Yes
+msg.VCFRONT_brakeFluidLevel = 2;         // 0 = SNA, 1 = LOW, 2 = NORMAL  
+msg.VCFRONT_coolantLevel = 1;            // 0 = NOT_OK, 1 = FILLED
+msg.VCFRONT_ptSensorIrrational = 0;      // 0 = No, 1 = Yes
+msg.VCFRONT_tempAmbient = 20.0;            // Example value in °C
+msg.VCFRONT_tempAmbientFiltered = 20.0;    // Example value in °C 
+msg.VCFRONT_tempCoolantBatInlet = 20.0;    // Example value in °C
+msg.VCFRONT_tempCoolantPTInlet = 20.0;     // Example value in °C
+msg.VCFRONT_washerFluidLevel = 2;        // 0 = SNA, 1 = LOW, 2 = NORMAL
 }
 
-// Function to update the CAN frame 0x321 with the signal values
+// Function to update the CAN frame 0x321 with signal values
 void update_CAN_frame_321(CAN_frame& frame, const TESLA_321_Struct& msg) {
-  uint16_t tempCoolantBatInlet = (msg.VCFRONT_tempCoolantBatInlet + 40) * 8;
-  uint16_t tempCoolantPTInlet = (msg.VCFRONT_tempCoolantPTInlet + 40) * 8;
-  uint8_t tempAmbient = (msg.VCFRONT_tempAmbient + 40) * 2;
-  uint8_t tempAmbientFiltered = (msg.VCFRONT_tempAmbientFiltered + 40) * 2;
+// Apply temperature scaling and offset according to DBC:
+// - Battery/PT coolant temps: 0.125°C/bit, -40°C offset
+// - Ambient temps: 0.5°C/bit, -40°C offset
+uint16_t tempCoolantBatInlet = (uint16_t)((msg.VCFRONT_tempCoolantBatInlet + 40) * 8);  // Scale to 0.125°C/bit
+uint16_t tempCoolantPTInlet = (uint16_t)((msg.VCFRONT_tempCoolantPTInlet + 40) * 8);    // Scale to 0.125°C/bit
+uint8_t tempAmbient = (uint8_t)((msg.VCFRONT_tempAmbient + 40) * 2);                    // Scale to 0.5°C/bit 
+uint8_t tempAmbientFiltered = (uint8_t)((msg.VCFRONT_tempAmbientFiltered + 40) * 2);    // Scale to 0.5°C/bit
 
-  frame.data.u8[0] = (tempCoolantBatInlet & 0xFF);          // Bit 0, Length 10
-  frame.data.u8[1] = ((tempCoolantBatInlet >> 8) & 0x03) |  // Bit 10, Length 2
-                     (tempCoolantPTInlet << 2);
-  frame.data.u8[2] = ((tempCoolantPTInlet >> 6) & 0xFF);
-  frame.data.u8[3] = (tempAmbient << 0) |                       // Bit 24, Length 8
-                     (msg.VCFRONT_coolantLevel << 5) |          // Bit 21, Length 1
-                     (msg.VCFRONT_brakeFluidLevel << 6);        // Bit 22, Length 2
-  frame.data.u8[4] = (tempAmbientFiltered << 0);                // Bit 40, Length 8
-  frame.data.u8[5] = (msg.VCFRONT_battSensorIrrational << 0) |  // Bit 48, Length 1
-                     (msg.VCFRONT_washerFluidLevel << 6);       // Bit 32, Length 2
-  frame.data.u8[6] = (msg.VCFRONT_ptSensorIrrational << 1);     // Bit 49, Length 1
+// Clear frame data
+memset(frame.data.u8, 0, sizeof(frame.data.u8));
+
+// Pack signals into CAN frame data bytes
+frame.data.u8[0] = (msg.VCFRONT_tempCoolantBatInlet & 0x03FF); // bits 0-9
+frame.data.u8[1] = ((msg.VCFRONT_tempCoolantBatInlet >> 8) & 0x03) | ((msg.VCFRONT_tempCoolantPTInlet & 0x07FF) << 2); // bits 10-20
+frame.data.u8[2] = (msg.VCFRONT_tempCoolantPTInlet >> 6) & 0xFF; // bits 21-28
+frame.data.u8[3] = ((msg.VCFRONT_tempCoolantPTInlet >> 14) & 0x01) | ((msg.VCFRONT_coolantLevel & 0x01) << 1) | ((msg.VCFRONT_brakeFluidLevel & 0x03) << 2); // bits 29-31
+frame.data.u8[4] = (msg.VCFRONT_tempAmbient & 0xFF); // bits 32-39
+frame.data.u8[5] = (msg.VCFRONT_washerFluidLevel & 0x03); // bits 40-41
+frame.data.u8[6] = (msg.VCFRONT_tempAmbientFiltered & 0xFF); // bits 42-49
+frame.data.u8[7] = (msg.VCFRONT_battSensorIrrational & 0x01) | ((msg.VCFRONT_ptSensorIrrational & 0x01) << 1); // bits 50-51
 }
 
 // Function to initialize and update the CAN frame 0x321
 void initialize_and_update_CAN_frame_321() {
-  // Declare the msg variable
-  TESLA_321_Struct msg;
-
-  // Initialize the message structure
-  initialize_msg(msg);
-
-  // Update the CAN frame with the signal values
-  update_CAN_frame_321(TESLA_321, msg);
+TESLA_321_Struct msg;
+initialize_msg(msg);
+update_CAN_frame_321(TESLA_321, msg);
 }
+
+// BO_ 801 VCFRONT_sensors: 8 VEH
+// SG_ VCFRONT_tempCoolantBatInlet : 0|10@1+ (0.125,-40) [0|0] "degC"  X
+// SG_ VCFRONT_tempCoolantPTInlet : 10|11@1+ (0.125,-40) [0|0] "degC"  X
+// SG_ VCFRONT_coolantLevel : 21|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_brakeFluidLevel : 22|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_tempAmbient : 24|8@1+ (0.5,-40) [0|0] "degC"  X
+// SG_ VCFRONT_tempAmbientFiltered : 40|8@1+ (0.5,-40) [0|0] "degC"  X
+// SG_ VCFRONT_washerFluidLevel : 32|2@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_battSensorIrrational : 48|1@1+ (1,0) [0|0] ""  X
+// SG_ VCFRONT_ptSensorIrrational : 49|1@1+ (1,0) [0|0] ""  X
+// VAL_ 801 VCFRONT_brakeFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
+// VAL_ 801 VCFRONT_coolantLevel 0 "NOT_OK" 1 "FILLED" ;
+// VAL_ 801 VCFRONT_tempAmbient 0 "SNA" ;
+// VAL_ 801 VCFRONT_tempAmbientFiltered 0 "SNA" ;
+// VAL_ 801 VCFRONT_tempCoolantBatInlet 1023 "SNA" ;
+// VAL_ 801 VCFRONT_tempCoolantPTInlet 2047 "SNA" ;
+// VAL_ 801 VCFRONT_washerFluidLevel 0 "SNA" 1 "LOW" 2 "NORMAL" ;
 
 // Add a main function to start the process
 int main() {
@@ -2730,6 +3075,34 @@ unsigned long lastSend118 = 0;
 int index_1CF = 0;
 int index_118 = 0;
 #endif  //defined(TESLA_MODEL_SX_BATTERY) || defined(EXP_TESLA_BMS_DIGITAL_HVIL)
+
+// Modify the initialize_and_update_CAN_frame_221() function:
+void initialize_and_update_CAN_frame_221() {
+  unsigned long currentMillis = millis();
+  
+  // Create and initialize message structure
+  TESLA_221_Struct msg;
+
+  // Handle Mux0 message timing
+  if (currentMillis - previousMux0Time >= MUX0_MESSAGE_INTERVAL) {
+    previousMux0Time = currentMillis;
+    
+    // Initialize and send Mux0 message
+    initialize_msg(msg, true);  // true for Mux0
+    update_CAN_frame_221(TESLA_221, msg, true);
+    transmit_can_frame(&TESLA_221, can_config.battery);
+  }
+
+  // Handle Mux1 message timing
+  if (currentMillis - previousMux1Time >= MUX0_MESSAGE_INTERVAL) {
+    previousMux1Time = currentMillis;
+    
+    // Initialize and send Mux1 message
+    initialize_msg(msg, false);  // false for Mux1
+    update_CAN_frame_221(TESLA_221, msg, false);
+    transmit_can_frame(&TESLA_221, can_config.battery);
+  }
+}
 
 void transmit_can_battery() {
   /*From bielec: My fist 221 message, to close the contactors is 0x41, 0x11, 0x01, 0x00, 0x00, 0x00, 0x20, 0x96 and then, 
