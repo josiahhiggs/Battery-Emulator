@@ -20,6 +20,8 @@ static unsigned long previousMillis50 = 0;   // will store last time a 50ms CAN 
 static unsigned long previousMillis100 = 0;  // will store last time a 100ms CAN Message was sent
 static unsigned long previousMillis500 = 0;  // will store last time a 500ms CAN Message was sent
 static unsigned long previousMillis1s = 0;   // will store last time a 1000ms CAN Message was sent
+static unsigned long previousMux0Time = 0;
+static unsigned long previousMux1Time = 0;
 
 void transmit_can_frame(CAN_frame* tx_frame, int interface);
 
