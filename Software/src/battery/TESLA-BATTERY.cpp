@@ -1054,7 +1054,7 @@ void initialize_and_update_CAN_frame_321() {
 //SG_ GTW_vehBusAsleep : 2|1@1+ (1,0) [0|0] ""  X
 //VAL_ 1080 GTW_VEHWakeUpReason 0 "NONE" 1 "RESET" 2 "GSM_RI" 3 "CH_CAN" 4 "VEH_CAN" 5 "VEH_CAN" 6 "VCFRONT" 7 "RTC_ALARM" 8 "UI_SCHEDULED" ;
 
-CAN_frame TESLA_438 = {.FD = false, .ext_ID = false, .DLC = 2, .ID = 0x438, .data = {u8 = {0x00, 0x00}}};
+CAN_frame TESLA_438 = {.FD = false, .ext_ID = false, .DLC = 2, .ID = 0x438, .data = {.u8 = {0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_438_Struct {
@@ -1076,7 +1076,7 @@ void initialize_msg(TESLA_438_Struct& msg) {
   msg.GTW_vehBusAsleep = 0;  // 0 = No, 1 = Yes
   msg.GTW_VEHWakeUpReason =
       0;  // 0=NONE, 1=RESET, 2=GSM_RI, 3=CH_CAN, 4=VEH_CAN, 5=VEH_CAN, 6=VCFRONT, 7=RTC_ALARM, 8=UI_SCHEDULED
-  msg.GTW_VEHHeartBeatCounter = calculatecounter();  // 0-15
+  msg.GTW_VEHHeartBeatCounter = calculateCounter();  // 0-15
 }
 
 // Function to update the CAN frame 0x438 with signal values
@@ -1113,7 +1113,7 @@ CAN_frame TESLA_458 = {.FD = false,
                        .ext_ID = false,
                        .DLC = 7,
                        .ID = 0x458,
-                       .data = {u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
+                       .data = {.u8 = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}}};
 
 // Structure to hold the signal values for the CAN frame
 struct TESLA_458_Struct {
@@ -3197,6 +3197,8 @@ the first, for a few cycles, then stop all  messages which causes the contactor 
   TESLA_333_Struct msg_333;
   TESLA_321_Struct msg_321;
   TESLA_241_Struct msg_241;
+  TESLA_438_Struct msg_438;
+  TESLA_458_Struct msg_458;
 
   // Declare and initialize mux0
   bool mux0 = true;
