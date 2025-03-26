@@ -506,8 +506,8 @@ String advanced_battery_processor(const String& var) {
     float energy_buffer_m1 = static_cast<float>(datalayer_extended.tesla.battery_energy_buffer_m1) * 0.01;
     float expected_energy_remaining_m1 =
         static_cast<float>(datalayer_extended.tesla.battery_expected_energy_remaining_m1) * 0.02;
-    float total_discharge = static_cast<float>(datalayer_extended.tesla.battery_total_discharge);
-    float total_charge = static_cast<float>(datalayer_extended.tesla.battery_total_charge);
+    float total_discharge = static_cast<float>(datalayer.battery.status.total_discharged_battery_Wh) * 0.001;
+    float total_charge = static_cast<float>(datalayer.battery.status.total_charged_battery_Wh) * 0.001;
     float packMass = static_cast<float>(datalayer_extended.tesla.battery_packMass);
     float platformMaxBusVoltage =
         static_cast<float>(datalayer_extended.tesla.battery_platformMaxBusVoltage) * 0.1 + 375;
@@ -1062,7 +1062,18 @@ String advanced_battery_processor(const String& var) {
       default:
         content += String("? ") + String(datalayer_extended.meb.status_HV_line);
     }
-    content += "</h4><h4>Warning support: ";
+    content += "</h4>";
+    content += datalayer_extended.meb.BMS_fault_performance ? "<h4>BMS fault performance: Active!</h4>"
+                                                            : "<h4>BMS fault performance: Off</h4>";
+    content += datalayer_extended.meb.BMS_fault_emergency_shutdown_crash
+                   ? "<h4>BMS fault emergency shutdown crash: Active!</h4>"
+                   : "<h4>BMS fault emergency shutdown crash: Off</h4>";
+    content += datalayer_extended.meb.BMS_error_shutdown_request ? "<h4>BMS error shutdown request: Active!</h4>"
+                                                                 : "<h4>BMS error shutdown request: Inactive</h4>";
+    content += datalayer_extended.meb.BMS_error_shutdown ? "<h4>BMS error shutdown: Active!</h4>"
+                                                         : "<h4>BMS error shutdown: Off</h4>";
+
+    content += "<h4>Warning support: ";
     switch (datalayer_extended.meb.warning_support) {
       case 0:
         content += String("OK");
@@ -1175,6 +1186,10 @@ String advanced_battery_processor(const String& var) {
       }
       content += " &deg;C</h4>";
     }
+    content +=
+        "<h4>Total charged: " + String(datalayer.battery.status.total_charged_battery_Wh / 1000.0, 1) + " kWh</h4>";
+    content += "<h4>Total discharged: " + String(datalayer.battery.status.total_discharged_battery_Wh / 1000.0, 1) +
+               " kWh</h4>";
 #endif  //MEB_BATTERY
 
 #ifdef RENAULT_ZOE_GEN2_BATTERY
@@ -1321,10 +1336,100 @@ String advanced_battery_processor(const String& var) {
     content += "<button onclick='Volvo_BECMecuReset()'>Restart BECM module</button>";
 #endif  // VOLVO_SPA_BATTERY
 
+#ifdef VOLVO_SPA_HYBRID_BATTERY
+    content += "<h4>BECM reported SOC: " + String(datalayer_extended.VolvoHybrid.soc_bms) + "</h4>";
+    content += "<h4>Calculated SOC: " + String(datalayer_extended.VolvoHybrid.soc_calc) + "</h4>";
+    content += "<h4>Rescaled SOC: " + String(datalayer_extended.VolvoHybrid.soc_rescaled / 10) + "</h4>";
+    content += "<h4>BECM reported SOH: " + String(datalayer_extended.VolvoHybrid.soh_bms) + "</h4>";
+    content += "<h4>BECM supply voltage: " + String(datalayer_extended.VolvoHybrid.BECMsupplyVoltage) + " mV</h4>";
+
+    content += "<h4>HV voltage: " + String(datalayer_extended.VolvoHybrid.BECMBatteryVoltage) + " V</h4>";
+    content += "<h4>HV current: " + String(datalayer_extended.VolvoHybrid.BECMBatteryCurrent) + " A</h4>";
+    content += "<h4>Dynamic max voltage: " + String(datalayer_extended.VolvoHybrid.BECMUDynMaxLim) + " V</h4>";
+    content += "<h4>Dynamic min voltage: " + String(datalayer_extended.VolvoHybrid.BECMUDynMinLim) + " V</h4>";
+
+    content += "<h4>Discharge power limit 1: " + String(datalayer_extended.VolvoHybrid.HvBattPwrLimDcha1) + " kW</h4>";
+    content +=
+        "<h4>Discharge soft power limit: " + String(datalayer_extended.VolvoHybrid.HvBattPwrLimDchaSoft) + " kW</h4>";
+
+    content += "<h4>HV system relay status: ";
+    switch (datalayer_extended.VolvoHybrid.HVSysRlySts) {
+      case 0:
+        content += String("Open");
+        break;
+      case 1:
+        content += String("Closed");
+        break;
+      case 2:
+        content += String("KeepStatus");
+        break;
+      case 3:
+        content += String("OpenAndRequestActiveDischarge");
+        break;
+      default:
+        content += String("Not valid");
+    }
+    content += "</h4><h4>HV system relay status 1: ";
+    switch (datalayer_extended.VolvoHybrid.HVSysDCRlySts1) {
+      case 0:
+        content += String("Open");
+        break;
+      case 1:
+        content += String("Closed");
+        break;
+      case 2:
+        content += String("KeepStatus");
+        break;
+      case 3:
+        content += String("Fault");
+        break;
+      default:
+        content += String("Not valid");
+    }
+    content += "</h4><h4>HV system relay status 2: ";
+    switch (datalayer_extended.VolvoHybrid.HVSysDCRlySts2) {
+      case 0:
+        content += String("Open");
+        break;
+      case 1:
+        content += String("Closed");
+        break;
+      case 2:
+        content += String("KeepStatus");
+        break;
+      case 3:
+        content += String("Fault");
+        break;
+      default:
+        content += String("Not valid");
+    }
+    content += "</h4><h4>HV system isolation resistance monitoring status: ";
+    switch (datalayer_extended.VolvoHybrid.HVSysIsoRMonrSts) {
+      case 0:
+        content += String("Not valid 1");
+        break;
+      case 1:
+        content += String("False");
+        break;
+      case 2:
+        content += String("True");
+        break;
+      case 3:
+        content += String("Not valid 2");
+        break;
+      default:
+        content += String("Not valid");
+    }
+
+    content += "<br><br><button onclick='Volvo_askEraseDTC()'>Erase DTC</button><br>";
+    content += "<button onclick='Volvo_askReadDTC()'>Read DTC (result must be checked in CANlog)</button><br>";
+    content += "<button onclick='Volvo_BECMecuReset()'>Restart BECM module</button>";
+#endif  // VOLVO_SPA_HYBRID_BATTERY
+
 #if !defined(BMW_PHEV_BATTERY) && !defined(BMW_IX_BATTERY) && !defined(BOLT_AMPERA_BATTERY) &&       \
     !defined(TESLA_BATTERY) && !defined(NISSAN_LEAF_BATTERY) && !defined(BMW_I3_BATTERY) &&          \
     !defined(BYD_ATTO_3_BATTERY) && !defined(RENAULT_ZOE_GEN2_BATTERY) && !defined(CELLPOWER_BMS) && \
-    !defined(MEB_BATTERY) && !defined(VOLVO_SPA_BATTERY) &&                                          \
+    !defined(MEB_BATTERY) && !defined(VOLVO_SPA_BATTERY) && !defined(VOLVO_SPA_HYBRID_BATTERY) &&    \
     !defined(KIA_HYUNDAI_64_BATTERY)  //Only the listed types have extra info
     content += "No extra information available for this battery type";
 #endif

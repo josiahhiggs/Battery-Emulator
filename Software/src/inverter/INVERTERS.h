@@ -7,6 +7,10 @@
 #include "AFORE-CAN.h"
 #endif
 
+#ifdef BYD_CAN_DEYE
+#define BYD_CAN
+#endif
+
 #ifdef BYD_CAN
 #include "BYD-CAN.h"
 #endif
@@ -73,10 +77,6 @@
 
 #ifdef SUNGROW_CAN
 #include "SUNGROW-CAN.h"
-#endif
-
-#ifdef SERIAL_LINK_TRANSMITTER
-#include "SERIAL-LINK-TRANSMITTER-INVERTER.h"
 #endif
 
 #ifdef CAN_INVERTER_SELECTED

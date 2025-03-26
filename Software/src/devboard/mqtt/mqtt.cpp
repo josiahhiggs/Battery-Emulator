@@ -25,16 +25,30 @@ static String object_id_prefix = "";
 static String device_name = "";
 static String device_id = "";
 
-static void publish_common_info(void);
-static void publish_cell_voltages(void);
-static void publish_events(void);
+static bool publish_common_info(void);
+static bool publish_cell_voltages(void);
+static bool publish_events(void);
 
 /** Publish global values and call callbacks for specific modules */
 static void publish_values(void) {
-  mqtt_publish((topic_name + "/status").c_str(), "online", false);
-  publish_events();
-  publish_common_info();
-  publish_cell_voltages();
+
+  if (mqtt_publish((topic_name + "/status").c_str(), "online", false) == false) {
+    return;
+  }
+
+  if (publish_events() == false) {
+    return;
+  }
+
+  if (publish_common_info() == false) {
+    return;
+  }
+
+#ifdef MQTT_PUBLISH_CELL_VOLTAGES
+  if (publish_cell_voltages() == false) {
+    return;
+  }
+#endif
 }
 
 #ifdef HA_AUTODISCOVERY
@@ -67,6 +81,10 @@ SensorConfig sensorConfigTemplate[] = {
     {"remaining_capacity_real", "Battery Remaining Capacity (real)", "", "Wh", "energy"},
     {"max_discharge_power", "Battery Max Discharge Power", "", "W", "power"},
     {"max_charge_power", "Battery Max Charge Power", "", "W", "power"},
+#if defined(MEB_BATTERY) || defined(TESLA_BATTERY)
+    {"charged_energy", "Battery Charged Energy", "", "Wh", "energy"},
+    {"discharged_energy", "Battery Discharged Energy", "", "Wh", "energy"},
+#endif
     {"bms_status", "BMS Status", "", "", ""},
     {"pause_status", "Pause Status", "", "", ""}};
 
@@ -165,11 +183,18 @@ void set_battery_attributes(JsonDocument& doc, const DATALAYER_BATTERY_TYPE& bat
   doc["remaining_capacity" + suffix] = ((float)battery.status.reported_remaining_capacity_Wh);
   doc["max_discharge_power" + suffix] = ((float)battery.status.max_discharge_power_W);
   doc["max_charge_power" + suffix] = ((float)battery.status.max_charge_power_W);
+#if defined(MEB_BATTERY) || defined(TESLA_BATTERY)
+  if (datalayer.battery.status.total_charged_battery_Wh != 0 &&
+      datalayer.battery.status.total_discharged_battery_Wh != 0) {
+    doc["charged_energy" + suffix] = ((float)datalayer.battery.status.total_charged_battery_Wh);
+    doc["discharged_energy" + suffix] = ((float)datalayer.battery.status.total_discharged_battery_Wh);
+  }
+#endif
 }
 
 static std::vector<EventData> order_events;
 
-static void publish_common_info(void) {
+static bool publish_common_info(void) {
   static JsonDocument doc;
   static String state_topic = topic_name + "/info";
 #ifdef HA_AUTODISCOVERY
@@ -191,6 +216,8 @@ static void publish_common_info(void) {
       serializeJson(doc, mqtt_msg);
       if (mqtt_publish(generateCommonInfoAutoConfigTopic(config.object_id).c_str(), mqtt_msg, true)) {
         ha_common_info_published = true;
+      } else {
+        return false;
       }
       doc.clear();
     }
@@ -211,18 +238,20 @@ static void publish_common_info(void) {
     }
 #endif  // DOUBLE_BATTERY
     serializeJson(doc, mqtt_msg);
-    if (!mqtt_publish(state_topic.c_str(), mqtt_msg, false)) {
+    if (mqtt_publish(state_topic.c_str(), mqtt_msg, false) == false) {
 #ifdef DEBUG_LOG
       logging.println("Common info MQTT msg could not be sent");
 #endif  // DEBUG_LOG
+      return false;
     }
     doc.clear();
 #ifdef HA_AUTODISCOVERY
   }
 #endif  // HA_AUTODISCOVERY
+  return true;
 }
 
-static void publish_cell_voltages(void) {
+static bool publish_cell_voltages(void) {
   static JsonDocument doc;
   static String state_topic = topic_name + "/spec_data";
 #ifdef DOUBLE_BATTERY
@@ -244,6 +273,7 @@ static void publish_cell_voltages(void) {
         serializeJson(doc, mqtt_msg, sizeof(mqtt_msg));
         if (mqtt_publish(generateCellVoltageAutoConfigTopic(cellNumber, "").c_str(), mqtt_msg, true) == false) {
           failed_to_publish = true;
+          return false;
         }
       }
       doc.clear();  // clear after sending autoconfig
@@ -260,6 +290,7 @@ static void publish_cell_voltages(void) {
         serializeJson(doc, mqtt_msg, sizeof(mqtt_msg));
         if (mqtt_publish(generateCellVoltageAutoConfigTopic(cellNumber, "_2_").c_str(), mqtt_msg, true) == false) {
           failed_to_publish = true;
+          return false;
         }
       }
       doc.clear();  // clear after sending autoconfig
@@ -286,6 +317,7 @@ static void publish_cell_voltages(void) {
 #ifdef DEBUG_LOG
       logging.println("Cell voltage MQTT msg could not be sent");
 #endif  // DEBUG_LOG
+      return false;
     }
     doc.clear();
   }
@@ -306,13 +338,15 @@ static void publish_cell_voltages(void) {
 #ifdef DEBUG_LOG
       logging.println("Cell voltage MQTT msg could not be sent");
 #endif  // DEBUG_LOG
+      return false;
     }
     doc.clear();
   }
 #endif  // DOUBLE_BATTERY
+  return true;
 }
 
-void publish_events() {
+bool publish_events() {
   static JsonDocument doc;
   static String state_topic = topic_name + "/events";
 #ifdef HA_AUTODISCOVERY
@@ -331,6 +365,8 @@ void publish_events() {
     serializeJson(doc, mqtt_msg);
     if (mqtt_publish(generateEventsAutoConfigTopic("event").c_str(), mqtt_msg, true)) {
       ha_events_published = true;
+    } else {
+      return false;
     }
 
     doc.clear();
@@ -368,6 +404,7 @@ void publish_events() {
 #ifdef DEBUG_LOG
         logging.println("Common info MQTT msg could not be sent");
 #endif  // DEBUG_LOG
+        return false;
       } else {
         set_event_MQTTpublished(event_handle);
       }
@@ -378,9 +415,10 @@ void publish_events() {
 #ifdef HA_AUTODISCOVERY
   }
 #endif  // HA_AUTODISCOVERY
+  return true;
 }
 
-static void publish_buttons_discovery(void) {
+static bool publish_buttons_discovery(void) {
 #ifdef HA_AUTODISCOVERY
   if (ha_buttons_published == false) {
 #ifdef DEBUG_LOG
@@ -397,25 +435,31 @@ static void publish_buttons_discovery(void) {
       serializeJson(doc, mqtt_msg);
       if (mqtt_publish(generateButtonAutoConfigTopic(config.object_id).c_str(), mqtt_msg, true)) {
         ha_buttons_published = true;
+      } else {
+        return false;
       }
       doc.clear();
     }
   }
 #endif  // HA_AUTODISCOVERY
+  return true;
 }
 
 static void subscribe() {
   esp_mqtt_client_subscribe(client, (topic_name + "/command/+").c_str(), 1);
 }
 
-void mqtt_message_received(char* topic, int topic_len, char* data, int data_len) {
+void mqtt_message_received(char* topic_raw, int topic_len, char* data, int data_len) {
+
+  char* topic = strndup(topic_raw, topic_len);
+
 #ifdef DEBUG_LOG
   logging.printf("MQTT message arrived: [%.*s]\n", topic_len, topic);
 #endif  // DEBUG_LOG
 
 #ifdef REMOTE_BMS_RESET
   const char* bmsreset_topic = generateButtonTopic("BMSRESET").c_str();
-  if (strncmp(topic, bmsreset_topic, topic_len) == 0) {
+  if (strcmp(topic, bmsreset_topic) == 0) {
 #ifdef DEBUG_LOG
     logging.println("Triggering BMS reset");
 #endif  // DEBUG_LOG
@@ -423,21 +467,21 @@ void mqtt_message_received(char* topic, int topic_len, char* data, int data_len)
   }
 #endif  // REMOTE_BMS_RESET
 
-  if (strncmp(topic, generateButtonTopic("PAUSE").c_str(), topic_len) == 0) {
+  if (strcmp(topic, generateButtonTopic("PAUSE").c_str()) == 0) {
     setBatteryPause(true, false);
   }
 
-  if (strncmp(topic, generateButtonTopic("RESUME").c_str(), topic_len) == 0) {
+  if (strcmp(topic, generateButtonTopic("RESUME").c_str()) == 0) {
     setBatteryPause(false, false, false);
   }
 
-  if (strncmp(topic, generateButtonTopic("RESTART").c_str(), topic_len) == 0) {
+  if (strcmp(topic, generateButtonTopic("RESTART").c_str()) == 0) {
     setBatteryPause(true, true, true, false);
     delay(1000);
     ESP.restart();
   }
 
-  if (strncmp(topic, generateButtonTopic("STOP").c_str(), topic_len) == 0) {
+  if (strcmp(topic, generateButtonTopic("STOP").c_str()) == 0) {
     setBatteryPause(true, false, true);
   }
 }
@@ -511,6 +555,7 @@ void init_mqtt(void) {
   mqtt_cfg.session.last_will.retain = true;
   mqtt_cfg.session.last_will.msg = "offline";
   mqtt_cfg.session.last_will.msg_len = strlen(mqtt_cfg.session.last_will.msg);
+  mqtt_cfg.network.timeout_ms = MQTT_TIMEOUT;
   client = esp_mqtt_client_init(&mqtt_cfg);
   esp_mqtt_client_register_event(client, MQTT_EVENT_ANY, mqtt_event_handler, client);
 }

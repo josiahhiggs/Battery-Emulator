@@ -45,6 +45,9 @@ typedef struct {
    */
   uint32_t reported_remaining_capacity_Wh;
 
+  int32_t total_charged_battery_Wh = 0;
+  int32_t total_discharged_battery_Wh = 0;
+
   /** Maximum allowed battery discharge power in Watts. Set by battery */
   uint32_t max_discharge_power_W = 0;
   /** Maximum allowed battery charge power in Watts. Set by battery */
@@ -97,6 +100,10 @@ typedef struct {
 
   /** The current battery status, which for now has the name real_bms_status */
   real_bms_status_enum real_bms_status = BMS_DISCONNECTED;
+
+  /** LED mode, customizable by user */
+  led_mode_enum led_mode = LED_MODE;
+
 } DATALAYER_BATTERY_STATUS_TYPE;
 
 typedef struct {
@@ -220,10 +227,22 @@ typedef struct {
   size_t logged_can_messages_offset = 0;
   /** bool, determines if CAN messages should be logged for webserver */
   bool can_logging_active = false;
+  /** uint8_t, enumeration which CAN interface should be used for log playback */
+  uint8_t can_replay_interface = CAN_NATIVE;
+  /** bool, determines if CAN replay should loop or not */
+  bool loop_playback = false;
+  /** bool, Native CAN failed to send flag */
+  bool can_native_send_fail = false;
+  /** bool, MCP2515 CAN failed to send flag */
+  bool can_2515_send_fail = false;
+  /** uint16_t, MCP2518 CANFD failed to send flag */
+  bool can_2518_send_fail = false;
 
 } DATALAYER_SYSTEM_INFO_TYPE;
 
 typedef struct {
+  /** Millis rollover count. Increments every 49.7 days. Used for keeping track on events */
+  uint8_t millisrolloverCount = 0;
 #ifdef FUNCTION_TIME_MEASUREMENT
   /** Core task measurement variable */
   int64_t core_task_max_us = 0;
@@ -233,8 +252,6 @@ typedef struct {
   int64_t mqtt_task_10s_max_us = 0;
   /** Wifi sub-task measurement variable, reset each 10 seconds */
   int64_t wifi_task_10s_max_us = 0;
-  /** loop() task measurement variable, reset each 10 seconds */
-  int64_t loop_task_10s_max_us = 0;
 
   /** OTA handling function measurement variable */
   int64_t time_ota_us = 0;
@@ -288,6 +305,8 @@ typedef struct {
 #endif
   /** True if the BMS is being reset, by cutting power towards it */
   bool BMS_reset_in_progress = false;
+  /** True if the BMS is starting up */
+  bool BMS_startup_in_progress = false;
 #ifdef PRECHARGE_CONTROL
   /** State of automatic precharge sequence */
   PrechargeState precharge_status = AUTO_PRECHARGE_IDLE;

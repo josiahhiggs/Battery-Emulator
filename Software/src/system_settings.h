@@ -25,6 +25,7 @@
 */
 #define TASK_CORE_PRIO 4
 #define TASK_CONNECTIVITY_PRIO 3
+#define TASK_MQTT_PRIO 2
 #define TASK_MODBUS_PRIO 8
 #define TASK_ACAN2515_PRIORITY 10
 #define TASK_ACAN2517FD_PRIORITY 10
@@ -36,22 +37,5 @@
  * Basically the length of the array used to hold individual cell voltages
 */
 #define MAX_AMOUNT_CELLS 192
-
-/** LED 
- * 
- * Parameter: LED_MODE_DEFAULT
- * Description:
- * The default LED mode. Available modes:
- * CLASSIC   - slow up/down ramp
- * FLOW      - slow ramp up or down depending on flow of energy
- * HEARTBEAT - Heartbeat-like LED pattern that reacts to the system state with color and BPM
- * 
- * Parameter: LED_PERIOD_MS
- * Description:
- * The period of whatever LED mode is active. If CLASSIC, then a ramp up and ramp down will finish in
- * LED_PERIOD_MS milliseconds
-*/
-#define LED_MODE_DEFAULT FLOW
-#define LED_PERIOD_MS 3000
 
 #endif

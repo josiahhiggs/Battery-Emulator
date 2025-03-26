@@ -6,6 +6,7 @@
 
 CAN_device_t CAN_cfg;          // CAN Config
 const int rx_queue_size = 10;  // Receive Queue size
+volatile bool send_ok_native = 0;
 volatile bool send_ok_2515 = 0;
 volatile bool send_ok_2518 = 0;
 
@@ -146,7 +147,10 @@ void transmit_can_frame(CAN_frame* tx_frame, int interface) {
       for (uint8_t i = 0; i < tx_frame->DLC; i++) {
         frame.data.u8[i] = tx_frame->data.u8[i];
       }
-      ESP32Can.CANWriteFrame(&frame);
+      send_ok_native = ESP32Can.CANWriteFrame(&frame);
+      if (!send_ok_native) {
+        datalayer.system.info.can_native_send_fail = true;
+      }
       break;
     case CAN_ADDON_MCP2515: {
 #ifdef CAN_ADDON
@@ -162,9 +166,7 @@ void transmit_can_frame(CAN_frame* tx_frame, int interface) {
 
       send_ok_2515 = can.tryToSend(MCP2515Frame);
       if (!send_ok_2515) {
-        set_event(EVENT_CAN_BUFFER_FULL, interface);
-      } else {
-        clear_event(EVENT_CAN_BUFFER_FULL);
+        datalayer.system.info.can_2515_send_fail = true;
       }
 #else   // Interface not compiled, and settings try to use it
       set_event(EVENT_INTERFACE_MISSING, interface);
@@ -187,9 +189,7 @@ void transmit_can_frame(CAN_frame* tx_frame, int interface) {
       }
       send_ok_2518 = canfd.tryToSend(MCP2518Frame);
       if (!send_ok_2518) {
-        set_event(EVENT_CANFD_BUFFER_FULL, interface);
-      } else {
-        clear_event(EVENT_CANFD_BUFFER_FULL);
+        datalayer.system.info.can_2518_send_fail = true;
       }
 #else   // Interface not compiled, and settings try to use it
       set_event(EVENT_INTERFACE_MISSING, interface);
@@ -297,10 +297,18 @@ void print_can_frame(CAN_frame frame, frameDirection msgDir) {
 }
 
 void map_can_frame_to_variable(CAN_frame* rx_frame, int interface) {
-  print_can_frame(*rx_frame, frameDirection(MSG_RX));
+  if (interface !=
+      CANFD_NATIVE) {  //Avoid printing twice due to receive_frame_canfd_addon sending to both FD interfaces
+    //TODO: This check can be removed later when refactored to use inline functions for logging
+    print_can_frame(*rx_frame, frameDirection(MSG_RX));
+  }
 
 #ifdef LOG_CAN_TO_SD
-  add_can_frame_to_buffer(*rx_frame, frameDirection(MSG_RX));
+  if (interface !=
+      CANFD_NATIVE) {  //Avoid printing twice due to receive_frame_canfd_addon sending to both FD interfaces
+    //TODO: This check can be removed later when refactored to use inline functions for logging
+    add_can_frame_to_buffer(*rx_frame, frameDirection(MSG_RX));
+  }
 #endif
 
   if (interface == can_config.battery) {
