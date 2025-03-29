@@ -1843,8 +1843,8 @@ void update_values_battery() {  //This function maps all the values fetched via 
   } else {
     clear_event(EVENT_INTERNAL_OPEN_FAULT);
   }
-  //Voltage missing, pyrofuse most likely blown
-  if (datalayer.battery.status.voltage_dV == 10) {
+  //Voltage between 0.5-5.0V, pyrofuse most likely blown
+  if (datalayer.battery.status.voltage_dV >= 5 && datalayer.battery.status.voltage_dV <= 50) {
     set_event(EVENT_BATTERY_FUSE, 0);
   } else {
     clear_event(EVENT_BATTERY_FUSE);
@@ -2845,7 +2845,7 @@ void handle_incoming_can_frame_battery(CAN_frame rx_frame) {
       battery_OverDchgCurrentFault = ((rx_frame.data.u8[0] & 0x10) >> 4);
       battery_OverChargeCurrentFault = ((rx_frame.data.u8[0] & 0x20) >> 5);
       battery_OverCurrentFault = ((rx_frame.data.u8[0] & 0x40) >> 6);
-      battery_OverTemperatureFault = ((rx_frame.data.u8[1] & 0x80) >> 7);
+      battery_OverTemperatureFault = ((rx_frame.data.u8[0] & 0x80) >> 7);
       battery_OverVoltageFault = (rx_frame.data.u8[1] & 0x01);
       battery_UnderVoltageFault = ((rx_frame.data.u8[1] & 0x02) >> 1);
       battery_PrimaryBmbMiaFault = ((rx_frame.data.u8[1] & 0x04) >> 2);
